@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>ポケチャン 総合バトルダッシュボード v52 (メガシンカ対応)</title>
+    <title>ポケチャン 総合バトルダッシュボード v54 (メガシンカ対応)</title>
     <style>
         body { font-family: 'Helvetica Neue', Arial, sans-serif; background-color: #eef2f5; color: #333; margin: 0; padding: 10px; font-size: 14px; }
         .header { text-align: center; background: #2c3e50; color: white; padding: 10px; border-radius: 8px; margin-bottom: 15px; }
@@ -8148,7 +8148,12 @@ if (document.getElementById('oppSpeedDisplay')) document.getElementById('oppSpee
                 moveSelect.value = moveName;
             }
 
+            // applyMoveData内でmoveSelectの値が変わらないよう、呼び出し後に再セット保険
             applyMoveData();
+            // applyMoveData後にmoveSelectの値を確実に維持
+            if (moveSelect && moveSelect.value !== moveName) {
+                moveSelect.value = moveName;
+            }
 
             executeCalculation();
 
@@ -8156,29 +8161,6 @@ if (document.getElementById('oppSpeedDisplay')) document.getElementById('oppSpee
             if (resultBox && typeof resultBox.scrollIntoView === 'function') {
                 resultBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
-        }
-
-        function _applyMoveDataNoReset() {
-            const moveName = document.getElementById('moveSelect').value;
-            const attackerSideRaw = document.querySelector(`input[name="attackerSide"]:checked`).value;
-            const attackerSide = attackerSideRaw === "me" ? "my" : "opp";
-            const defenderSide = attackerSide === "my" ? "opp" : "my";
-            const atkItem = document.getElementById(`${attackerSide}Item`) ? document.getElementById(`${attackerSide}Item`).value : "なし";
-            const defItem = document.getElementById(`${defenderSide}Item`) ? document.getElementById(`${defenderSide}Item`).value : "なし";
-
-            const condContainer = document.getElementById('moveConditionContainer');
-            if (condContainer) {
-                condContainer.style.display = 'none';
-                condContainer.innerHTML = '';
-            }
-
-            if (!moveName || moveName === '' || moveName === '-- 技を手動で入力 --') return;
-            const mData = window.moveDex ? window.moveDex[moveName] : null;
-            if (!mData) return;
-
-            document.getElementById('movePower').value = mData.power || 0;
-            document.getElementById('moveType').value = mData.type || '';
-            document.getElementById('moveCategory').value = mData.category || '';
         }
 
         function getExactStats(side, idx, pDex) {
@@ -8348,6 +8330,17 @@ if (document.getElementById('oppSpeedDisplay')) document.getElementById('oppSpee
             const attackerSide = document.querySelector(`input[name="attackerSide"]:checked`).value;
             const myPoke = getEffectivePoke('my');
             const oppPoke = getEffectivePoke('opp');
+
+            // どちらかのポケモンが未選択なら計算不可
+            if (!myPoke || !oppPoke) {
+                const out = document.getElementById('resultOutput');
+                if (out) {
+                    out.style.display = 'block';
+                    out.innerHTML = '<div style="color:#e74c3c; font-weight:bold; padding:10px;">⚠️ 自分・相手両方のポケモンを選択してください</div>';
+                }
+                return;
+            }
+
             let power = parseInt(document.getElementById('movePower').value) || 0;
             const moveName = document.getElementById('moveSelect').value;
             
@@ -8365,7 +8358,7 @@ if (document.getElementById('oppSpeedDisplay')) document.getElementById('oppSpee
             }
 
             let moveType = document.getElementById('moveType').value;
-            const moveCat = document.getElementById('moveCategory').value;
+            const moveCat = document.getElementById('moveCategory').value || '物理';
             const myAbil = document.getElementById('myAbility').value;
             const oppAbil = document.getElementById('oppAbility').value;
             const out = document.getElementById('resultOutput');
