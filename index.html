@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>ポケチャン 総合バトルダッシュボード v5 (メガシンカ対応)</title>
+    <title>ポケチャン 総合バトルダッシュボード v51 (メガシンカ対応)</title>
     <style>
         body { font-family: 'Helvetica Neue', Arial, sans-serif; background-color: #eef2f5; color: #333; margin: 0; padding: 10px; font-size: 14px; }
         .header { text-align: center; background: #2c3e50; color: white; padding: 10px; border-radius: 8px; margin-bottom: 15px; }
@@ -7773,7 +7773,8 @@ const allKeys = new Set([...Object.keys(pokedex), ...forceIncludePokeNames]);
         }
 
         function updateMoveDropdown() {
-            const attackerSide = document.querySelector(`input[name="attackerSide"]:checked`).value;
+            const attackerSideRaw = document.querySelector(`input[name="attackerSide"]:checked`).value;
+            const attackerSide = attackerSideRaw === "me" ? "my" : "opp";
             const effPoke = getEffectivePoke(attackerSide);
             const moveSelect = document.getElementById('moveSelect');
 
@@ -8575,7 +8576,7 @@ if (document.getElementById('oppSpeedDisplay')) document.getElementById('oppSpee
                         let minP_0 = (pDmgMin.min / hMin * 100).toFixed(1); let maxP_0 = (pDmgMin.max / hMin * 100).toFixed(1);
                         let minP_32 = (pDmgMax.min / hMax * 100).toFixed(1); let maxP_32 = (pDmgMax.max / hMax * 100).toFixed(1);
 
-                        let pFixed = getFixedDmgPct(pDex, oAbil, true);
+                        let pFixed = getFixedDmgPct(pDex, mAbil, false);
                         let pReqHp = pCurrentHpPct - pFixed;
                         let koStat = '耐え';
                         if (pReqHp <= 0 || pDmgMin.min / hMin * 100 >= pReqHp) koStat = '確1';
@@ -8755,7 +8756,7 @@ if (document.getElementById('oppSpeedDisplay')) document.getElementById('oppSpee
                         let minP = (pDmg.min / hExact * 100).toFixed(1); 
                         let maxP = (pDmg.max / hExact * 100).toFixed(1);
 
-                        let pFixed = getFixedDmgPct(pDex, oAbil, true);
+                        let pFixed = getFixedDmgPct(pDex, mAbil, false);
                         let pReqHp = pCurrentHpPct - pFixed;
                         let koStat = '耐え';
                         if (pReqHp <= 0 || pDmg.min / hExact * 100 >= pReqHp) koStat = '確1';
@@ -8777,7 +8778,7 @@ if (document.getElementById('oppSpeedDisplay')) document.getElementById('oppSpee
                         let minP_0 = (pDmgMin.min / hMin * 100).toFixed(1); let maxP_0 = (pDmgMin.max / hMin * 100).toFixed(1);
                         let minP_32 = (pDmgMax.min / hMax * 100).toFixed(1); let maxP_32 = (pDmgMax.max / hMax * 100).toFixed(1);
 
-                        let pFixed = getFixedDmgPct(pDex, oAbil, true);
+                        let pFixed = getFixedDmgPct(pDex, mAbil, false);
                         let pReqHp = pCurrentHpPct - pFixed;
                         let koStat = '耐え';
                         if (pReqHp <= 0 || pDmgMin.min / hMin * 100 >= pReqHp) koStat = '確1';
