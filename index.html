@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>ポケチャン 総合バトルダッシュボード v51 (メガシンカ対応)</title>
+    <title>ポケチャン 総合バトルダッシュボード v52 (メガシンカ対応)</title>
     <style>
         body { font-family: 'Helvetica Neue', Arial, sans-serif; background-color: #eef2f5; color: #333; margin: 0; padding: 10px; font-size: 14px; }
         .header { text-align: center; background: #2c3e50; color: white; padding: 10px; border-radius: 8px; margin-bottom: 15px; }
@@ -8118,17 +8118,9 @@ if (document.getElementById('oppSpeedDisplay')) document.getElementById('oppSpee
         
         function triggerAttack(side, moveSlot) {
             const moveName = document.getElementById(`${side}Move${moveSlot}`)?.value;
-            if (!moveName || moveName === '' || moveName === String(moveSlot)) {
+            if (!moveName || moveName === '') {
                 alert("技が選択されていません");
                 return;
-            }
-
-            // 攻撃サイドのラジオボタンを正しく切り替える
-            const radioVal = side === 'my' ? 'me' : 'opp';
-            const attackerRadio = document.querySelector(`input[name="attackerSide"][value="${radioVal}"]`);
-            if (attackerRadio) {
-                attackerRadio.checked = true;
-                toggleDamageInput();
             }
 
             // 攻撃・防御側ポケモンの存在チェック
@@ -8138,16 +8130,25 @@ if (document.getElementById('oppSpeedDisplay')) document.getElementById('oppSpee
             const defPoke = getEffectivePoke(defSide);
             if (!defPoke) { alert("相手のポケモンが選択されていません"); return; }
 
-            // 技ドロップダウンを攻撃側に合わせて更新してから技をセット
+            // 攻撃サイドのラジオボタンを切り替え（updateMoveDropdownを呼ばずに直接処理）
+            const radioVal = side === 'my' ? 'me' : 'opp';
+            const attackerRadio = document.querySelector(`input[name="attackerSide"][value="${radioVal}"]`);
+            if (attackerRadio) attackerRadio.checked = true;
+            // actualDamageBoxの表示切り替え（toggleDamageInputを使わず直接行う）
+            document.getElementById('actualDamageBox').style.display = (side === 'opp') ? 'block' : 'none';
+
+            // 技ドロップダウンを攻撃側に合わせて更新
             updateMoveDropdown();
 
+            // updateMoveDropdown後に技をセット（リセット後に上書き）
             const moveSelect = document.getElementById('moveSelect');
             if (moveSelect) {
                 const found = Array.from(moveSelect.options).some(o => o.value === moveName);
                 if (!found) moveSelect.add(new Option(moveName, moveName));
                 moveSelect.value = moveName;
-                applyMoveData();
             }
+
+            applyMoveData();
 
             executeCalculation();
 
@@ -8155,6 +8156,29 @@ if (document.getElementById('oppSpeedDisplay')) document.getElementById('oppSpee
             if (resultBox && typeof resultBox.scrollIntoView === 'function') {
                 resultBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
+        }
+
+        function _applyMoveDataNoReset() {
+            const moveName = document.getElementById('moveSelect').value;
+            const attackerSideRaw = document.querySelector(`input[name="attackerSide"]:checked`).value;
+            const attackerSide = attackerSideRaw === "me" ? "my" : "opp";
+            const defenderSide = attackerSide === "my" ? "opp" : "my";
+            const atkItem = document.getElementById(`${attackerSide}Item`) ? document.getElementById(`${attackerSide}Item`).value : "なし";
+            const defItem = document.getElementById(`${defenderSide}Item`) ? document.getElementById(`${defenderSide}Item`).value : "なし";
+
+            const condContainer = document.getElementById('moveConditionContainer');
+            if (condContainer) {
+                condContainer.style.display = 'none';
+                condContainer.innerHTML = '';
+            }
+
+            if (!moveName || moveName === '' || moveName === '-- 技を手動で入力 --') return;
+            const mData = window.moveDex ? window.moveDex[moveName] : null;
+            if (!mData) return;
+
+            document.getElementById('movePower').value = mData.power || 0;
+            document.getElementById('moveType').value = mData.type || '';
+            document.getElementById('moveCategory').value = mData.category || '';
         }
 
         function getExactStats(side, idx, pDex) {
