@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>ポケチャン 総合バトルダッシュボード v42 (メガシンカ対応)</title>
+    <title>ポケチャン 総合バトルダッシュボード v5 (メガシンカ対応)</title>
     <style>
         body { font-family: 'Helvetica Neue', Arial, sans-serif; background-color: #eef2f5; color: #333; margin: 0; padding: 10px; font-size: 14px; }
         .header { text-align: center; background: #2c3e50; color: white; padding: 10px; border-radius: 8px; margin-bottom: 15px; }
@@ -126,8 +126,8 @@
                     </div>
                     <div class="stat-item">
                         <label>性格(素早さ)</label>
-                        <select id="mySpeNature" onchange="updateRealStats('my'); updateSpeed();" onchange="updateSpeed()">
-                            <option value="1.1" selected>上昇(1.1)</option><option value="1.0">無補正(1.0)</option><option value="0.9">下降(0.9)</option>
+                        <select id="mySpeNature" onchange="updateRealStats('my'); updateSpeed();">
+                            <option value="1.1">上昇(1.1)</option><option value="1.0" selected>無補正(1.0)</option><option value="0.9">下降(0.9)</option>
                         </select>
                     </div>
                 </div>
@@ -236,8 +236,8 @@
                     </div>
                     <div class="stat-item">
                         <label>性格(素早さ)</label>
-                        <select id="oppSpeNature" onchange="updateRealStats('opp'); updateSpeed();" onchange="updateSpeed()">
-                            <option value="1.1" selected>上昇(1.1)</option><option value="1.0">無補正(1.0)</option><option value="0.9">下降(0.9)</option>
+                        <select id="oppSpeNature" onchange="updateRealStats('opp'); updateSpeed();">
+                            <option value="1.1">上昇(1.1)</option><option value="1.0" selected>無補正(1.0)</option><option value="0.9">下降(0.9)</option>
                         </select>
                     </div>
                 </div>
@@ -305,6 +305,49 @@
                         <input type="checkbox" id="condProtect" onchange="executeCalculation()" value="1"> 相手が「まもる」を使用
                     </label>
                 </div>
+            </div>
+        </div>
+
+        
+        <!-- 💥 定数ダメージ・特殊状態 -->
+        <div class="action-panel" style="border-left: 5px solid #e74c3c; margin-top: 15px;">
+            <div class="action-header" style="color: #c0392b;">💥 定数ダメージ・特殊状態 (ダメージ計算・Sラインに反映)</div>
+            <div style="display:flex; flex-wrap:wrap; gap:15px; font-size:0.85rem; background:#fdedec; padding:10px; border-radius:4px; border:1px solid #e74c3c; margin-top:5px;">
+                <label><input type="checkbox" id="srOpp" onchange="executeCalculation()"> 相手の場にステロ</label>
+                <label><input type="checkbox" id="srMy" onchange="executeCalculation()"> 自分の場にステロ</label>
+                <label><input type="checkbox" id="spikesOpp" onchange="executeCalculation()"> 相手にまきびし</label>
+                <label><input type="checkbox" id="loMy" onchange="executeCalculation()"> 自分が珠ダメ</label>
+                <label><input type="checkbox" id="loOpp" onchange="executeCalculation()"> 相手が珠ダメ</label>
+                <label><input type="checkbox" id="tailwindMy" onchange="executeCalculation()"> 自分においかぜ</label>
+                <label><input type="checkbox" id="tailwindOpp" onchange="executeCalculation()"> 相手においかぜ</label>
+            </div>
+        </div>
+
+        <!-- 🏃 素早さライン (Sライン) -->
+        <div class="action-panel" style="border-left: 5px solid #3498db; margin-top: 15px;">
+            <div class="action-header" style="color: #3498db; cursor: pointer; display: flex; justify-content: space-between; align-items: center;" onclick="const el = document.getElementById('speedTierList'); el.style.display = el.style.display === 'none' ? 'block' : 'none'; if(el.style.display==='block') updateSpeedTiers();">
+                <span>🏃 素早さ関係（Sライン）の一覧表</span>
+                <span style="font-size:0.8rem; color:#888; font-weight:normal;">▼ クリックして開く</span>
+            </div>
+            <div id="speedTierList" style="display:none; background:#f9f9f9; padding:10px; border-radius:4px; max-height:250px; overflow-y:auto; font-size:0.85rem; border:1px solid #ddd; margin-top: 10px;">
+                ※「計算 ＆ 予測を実行」を押すと更新されます
+            </div>
+        </div>
+
+        <!-- 💾 パーティの保存・読み込み -->
+        <div class="action-panel" style="border-left: 5px solid #8e44ad; margin-top: 15px; margin-bottom: 30px;">
+            <div class="action-header" style="color: #8e44ad; cursor: pointer; display: flex; justify-content: space-between; align-items: center;" onclick="const el = document.getElementById('saveLoadArea'); el.style.display = el.style.display === 'none' ? 'block' : 'none';">
+                <span>💾 パーティの保存・読み込み</span>
+                <span style="font-size:0.8rem; color:#888; font-weight:normal;">▼ クリックして開く</span>
+            </div>
+            <div id="saveLoadArea" style="display:none; background:#f4ecf7; padding:10px; border-radius:4px; border:1px solid #d2b4de; margin-top: 10px;">
+                <p style="font-size:0.85rem; color:#444; margin-bottom:8px;">現在のパーティ情報を文字データとして出力、または読み込みできます。</p>
+                <textarea id="saveLoadText" style="width:100%; height:80px; font-family:monospace; padding:5px; border-radius:4px; border:1px solid #ccc;"></textarea>
+                <div style="display:flex; gap:10px; margin-top:10px;">
+                    <button onclick="exportData()" style="flex:1; background:#8e44ad; color:#fff; border:none; padding:8px; border-radius:4px; font-weight:bold; cursor:pointer;">出力 (コピーする)</button>
+                    <button onclick="importData()" style="flex:1; background:#2980b9; color:#fff; border:none; padding:8px; border-radius:4px; font-weight:bold; cursor:pointer;">復元 (読み込む)</button>
+                </div>
+                <p id="saveLoadMsg" style="font-size:0.8rem; color:#e74c3c; margin-top:8px; font-weight:bold;"></p>
             </div>
         </div>
 
@@ -7742,7 +7785,8 @@ const allKeys = new Set([...Object.keys(pokedex), ...forceIncludePokeNames]);
 
         function applyMoveData() {
             const moveName = document.getElementById('moveSelect').value;
-            const attackerSide = document.querySelector(`input[name="attackerSide"]:checked`).value;
+            const attackerSideRaw = document.querySelector(`input[name="attackerSide"]:checked`).value;
+            const attackerSide = attackerSideRaw === "me" ? "my" : "opp";
             const defenderSide = attackerSide === "my" ? "opp" : "my";
             const atkItem = document.getElementById(`${attackerSide}Item`) ? document.getElementById(`${attackerSide}Item`).value : "なし";
             const defItem = document.getElementById(`${defenderSide}Item`) ? document.getElementById(`${defenderSide}Item`).value : "なし";
@@ -7984,11 +8028,11 @@ if (document.getElementById('mySpeedDisplay')) document.getElementById('mySpeedD
             const oppPoke = getEffectivePoke('opp');
             if (oppPoke) {
                 let oppRank = parseInt(document.getElementById('oppRankS').value);
-                let oppSpBase = calcStat(oppPoke.spe, parseInt(document.getElementById('oppSpe').value)||0, 1.1, false); 
+                let oppSpBase = calcStat(oppPoke.spe, parseInt(document.getElementById('oppSpe').value)||0, parseFloat(document.getElementById('oppSpeNature').value)||1.0, false); 
                 let oppSp = Math.floor(oppSpBase * getRankMod(oppRank));
                 if(document.getElementById('oppItem').value === 'こだわりスカーフ' && !oppPoke.isMega) oppSp = Math.floor(oppSp * 1.5);
 
-                let oppSpMax = Math.floor(calcStat(oppPoke.spe, 32, 1.1, false) * getRankMod(oppRank));
+                let oppSpMax = Math.floor(calcStat(oppPoke.spe, 32, parseFloat(document.getElementById('oppSpeNature').value)||1.0, false) * getRankMod(oppRank));
                 if(document.getElementById('oppItem').value === 'こだわりスカーフ' && !oppPoke.isMega) oppSpMax = Math.floor(oppSpMax * 1.5);
 
                 
@@ -8009,7 +8053,14 @@ if (document.getElementById('oppSpeedDisplay')) document.getElementById('oppSpee
                                (parseInt(document.getElementById('mySpD').value)||0) +
                                (parseInt(document.getElementById('mySpe').value)||0);
 
+            const oppTotalPts = (parseInt(document.getElementById('oppHP').value)||0) +
+                               (parseInt(document.getElementById('oppAtk').value)||0) +
+                               (parseInt(document.getElementById('oppDef').value)||0) +
+                               (parseInt(document.getElementById('oppSpA').value)||0) +
+                               (parseInt(document.getElementById('oppSpD').value)||0) +
+                               (parseInt(document.getElementById('oppSpe').value)||0);
             const existingAlert = document.getElementById('pointAlert');
+            const existingAlertOpp = document.getElementById('pointAlertOpp');
             if (myTotalPts > 66) {
                 if(!existingAlert) {
                     const alertDiv = document.createElement('div');
@@ -8022,6 +8073,19 @@ if (document.getElementById('oppSpeedDisplay')) document.getElementById('oppSpee
                 }
             } else if(existingAlert) {
                 existingAlert.remove();
+            }
+            if (oppTotalPts > 66) {
+                if(!existingAlertOpp) {
+                    const alertDivOpp = document.createElement('div');
+                    alertDivOpp.id = 'pointAlertOpp';
+                    alertDivOpp.style = "color:#c0392b; font-weight:bold; margin-bottom:10px; background:#fadbd8; padding:8px; border-radius:4px; border:1px solid #c0392b;";
+                    alertDivOpp.innerHTML = `⚠️ 相手の能力ポイント合計が上限(66)を超過しています！(現在: ${oppTotalPts}pt)`;
+                    out.parentNode.insertBefore(alertDivOpp, out);
+                } else {
+                    existingAlertOpp.innerHTML = `⚠️ 相手の能力ポイント合計が上限(66)を超過しています！(現在: ${oppTotalPts}pt)`;
+                }
+            } else if(existingAlertOpp) {
+                existingAlertOpp.remove();
             }
         }
 
@@ -8052,27 +8116,34 @@ if (document.getElementById('oppSpeedDisplay')) document.getElementById('oppSpee
 
         
         function triggerAttack(side, moveSlot) {
-            const moveName = document.getElementById(`${side}Move${moveSlot}`).value;
-            if (!moveName) {
+            const moveName = document.getElementById(`${side}Move${moveSlot}`)?.value;
+            if (!moveName || moveName === '' || moveName === String(moveSlot)) {
                 alert("技が選択されていません");
                 return;
             }
 
-            const attackerRadio = document.querySelector(`input[name="attackerSide"][value="${side === 'my' ? 'me' : 'opp'}"]`);
+            // 攻撃サイドのラジオボタンを正しく切り替える
+            const radioVal = side === 'my' ? 'me' : 'opp';
+            const attackerRadio = document.querySelector(`input[name="attackerSide"][value="${radioVal}"]`);
             if (attackerRadio) {
                 attackerRadio.checked = true;
                 toggleDamageInput();
             }
 
+            // 攻撃・防御側ポケモンの存在チェック
+            const atkPoke = getEffectivePoke(side);
+            if (!atkPoke) { alert("攻撃するポケモンが選択されていません"); return; }
+            const defSide = side === 'my' ? 'opp' : 'my';
+            const defPoke = getEffectivePoke(defSide);
+            if (!defPoke) { alert("相手のポケモンが選択されていません"); return; }
+
+            // 技ドロップダウンを攻撃側に合わせて更新してから技をセット
+            updateMoveDropdown();
+
             const moveSelect = document.getElementById('moveSelect');
             if (moveSelect) {
-                let found = false;
-                for (let i = 0; i < moveSelect.options.length; i++) {
-                    if (moveSelect.options[i].value === moveName) found = true;
-                }
-                if (!found) {
-                    moveSelect.add(new Option(moveName, moveName));
-                }
+                const found = Array.from(moveSelect.options).some(o => o.value === moveName);
+                if (!found) moveSelect.add(new Option(moveName, moveName));
                 moveSelect.value = moveName;
                 applyMoveData();
             }
@@ -8080,7 +8151,7 @@ if (document.getElementById('oppSpeedDisplay')) document.getElementById('oppSpee
             executeCalculation();
 
             const resultBox = document.getElementById('resultOutput');
-            if (resultBox) {
+            if (resultBox && typeof resultBox.scrollIntoView === 'function') {
                 resultBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
         }
@@ -8107,7 +8178,143 @@ if (document.getElementById('oppSpeedDisplay')) document.getElementById('oppSpee
                 hpP, atkP, defP, spaP, spdP, speP, total
             };
         }
-function executeCalculation() {
+
+        const pokeWeights = {
+            "カビゴン": 460.0, "リザードン": 90.5, "カメックス": 85.5, "フシギバナ": 100.0, "ゲンガー": 40.5,
+            "カイリュー": 210.0, "ギャラドス": 235.0, "バンギラス": 202.0, "ルギア": 216.0, "ハッサム": 118.0,
+            "メタグロス": 550.0, "ボーマンダ": 102.6, "サーナイト": 48.4, "ガブリアス": 95.0, "ルカリオ": 54.0,
+            "トゲキッス": 38.0, "ミロカロス": 162.0, "シャンデラ": 34.3, "ウルガモス": 46.0, "ナットレイ": 110.0,
+            "サザンドラ": 160.0, "ランドロス": 68.0, "ゲッコウガ": 40.0, "ギルガルド": 53.0, "ニンフィア": 23.5,
+            "ドラパルト": 50.0, "ミミッキュ": 0.7, "アーマーガア": 75.0, "ドヒドイデ": 14.5, "カプ・レヒレ": 21.2,
+            "ウーラオス": 105.0, "ポリゴン2": 32.5, "サンダー": 52.6, "クレセリア": 85.6, "ヒードラン": 430.0,
+            "ガオガエン": 83.0, "テツノツツミ": 11.0, "ハバタクカミ": 4.0, "パオジアン": 120.0, "イーユイ": 4.9, 
+            "サーフゴー": 30.0, "セグレイブ": 210.0, "キョジオーン": 240.0, "ディンルー": 699.7, "ヘイラッシャ": 220.0,
+            "ラウドボーン": 326.5, "イルカマン": 60.2, "マスカーニャ": 31.2, "オーガポン": 39.8, "ガチグマ": 290.0, "ブリジュラス": 60.0
+        };
+        const getWeightPower = (pName) => {
+            const w = pokeWeights[pName] || 50.0;
+            if (w < 10.0) return 20;
+            if (w < 25.0) return 40;
+            if (w < 50.0) return 60;
+            if (w < 100.0) return 80;
+            if (w < 200.0) return 100;
+            return 120;
+        };
+
+        function getFixedDmgPct(pDex, pAbil, isOpp) {
+            let dmg = 0;
+            let sr = isOpp ? document.getElementById('srOpp')?.checked : document.getElementById('srMy')?.checked;
+            if (sr) {
+                let e = calcTypeEffectiveness('いわ', pDex.types, '', pAbil);
+                if (e > 0) dmg += 12.5 * e;
+            }
+            let spikes = isOpp ? document.getElementById('spikesOpp')?.checked : false; 
+            if (spikes && !pDex.types.includes('ひこう') && pAbil !== 'ふゆう') dmg += 12.5;
+
+            let lo = isOpp ? document.getElementById('loOpp')?.checked : document.getElementById('loMy')?.checked;
+            if (lo) dmg += 10.0;
+
+            return dmg;
+        }
+
+        function updateSpeedTiers() {
+            let list = [];
+            ['my', 'opp'].forEach(side => {
+                for(let i=0; i<6; i++) {
+                    let pName = document.getElementById(`${side}Poke${i}`)?.value;
+                    if(!pName || !pokedex[pName]) continue;
+                    let pDex = pokedex[pName];
+                    let isAct = (document.querySelector(`input[name="${side}Active"]:checked`)?.value == i);
+                    let state = window.teamSlotState[side][i] || {};
+
+                    let pts = isAct ? parseInt(document.getElementById(`${side}Spe`)?.value||0) : (parseInt(state[`${side}Spe`])||0);
+                    let nat = isAct ? parseFloat(document.getElementById(`${side}SpeNature`)?.value||1.0) : (parseFloat(state[`${side}SpeNature`])||1.0);
+                    let rank = isAct ? parseInt(document.getElementById(`${side}RankS`)?.value||0) : (parseInt(state[`${side}RankS`])||0);
+                    let item = isAct ? document.getElementById(`${side}Item`)?.value : (state[`${side}Item`]||'');
+                    let status = isAct ? document.getElementById(`${side}Status`)?.value : (state[`${side}Status`]||'none');
+                    let abil = isAct ? document.getElementById(`${side}Ability`)?.value : (state[`${side}Ability`]||'');
+
+                    let sp = Math.floor(calcStat(pDex.spe, pts, nat, false));
+                    sp = Math.floor(sp * getRankMod(rank));
+                    if(item === 'こだわりスカーフ' && !pDex.isMega) sp = Math.floor(sp * 1.5);
+                    if(status === 'paralysis') sp = Math.floor(sp * 0.5);
+                    if(abil === 'すいすい' && document.getElementById('weather') && document.getElementById('weather').value === 'rain') sp *= 2;
+                    if(abil === 'ようりょくそ' && document.getElementById('weather') && document.getElementById('weather').value === 'sun') sp *= 2;
+                    if(abil === 'すなかき' && document.getElementById('weather') && document.getElementById('weather').value === 'sand') sp *= 2;
+                    if(abil === 'クォークチャージ' && document.getElementById('field') && document.getElementById('field').value === 'electric') sp = Math.floor(sp * 1.5);
+
+                    if(side === 'my' && document.getElementById('tailwindMy')?.checked) sp *= 2;
+                    if(side === 'opp' && document.getElementById('tailwindOpp')?.checked) sp *= 2;
+
+                    list.push({side: side, name: pName, speed: sp, rank: rank, item: item, status: status, abil: abil, idx: i, isAct: isAct});
+                }
+            });
+            list.sort((a,b) => b.speed - a.speed);
+
+            let outHtml = `<table style="width:100%; border-collapse:collapse; text-align:center;">
+                <tr style="background:#eee;"><th style="padding:4px;border-bottom:1px solid #ccc;">S実数</th><th style="padding:4px;border-bottom:1px solid #ccc;">陣営</th><th style="padding:4px;border-bottom:1px solid #ccc;text-align:left;">ポケモン</th><th style="padding:4px;border-bottom:1px solid #ccc;text-align:left;">補正メモ</th></tr>`;
+            list.forEach(item => {
+                let color = item.side === 'my' ? '#2980b9' : '#c0392b';
+                let actMark = item.isAct ? `<span style="background:${color};color:#fff;border-radius:3px;padding:0 4px;font-size:0.7rem;margin-left:4px;">場</span>` : '';
+                let mods = [];
+                if(item.item === 'こだわりスカーフ') mods.push('スカーフ');
+                if(item.rank > 0) mods.push(`+${item.rank}`);
+                if(item.rank < 0) mods.push(`${item.rank}`);
+                if(item.status === 'paralysis') mods.push('まひ');
+                if(item.side === 'my' && document.getElementById('tailwindMy')?.checked) mods.push('おいかぜ');
+                if(item.side === 'opp' && document.getElementById('tailwindOpp')?.checked) mods.push('おいかぜ');
+                if(item.abil === 'すいすい' || item.abil === 'ようりょくそ' || item.abil === 'すなかき') mods.push(item.abil);
+
+                outHtml += `<tr>
+                    <td style="font-weight:bold; color:${color}; border-bottom:1px solid #eee; padding:4px;">${item.speed}</td>
+                    <td style="color:${color}; border-bottom:1px solid #eee; padding:4px;">${item.side==='my'?'自分':'相手'} ${actMark}</td>
+                    <td style="border-bottom:1px solid #eee; padding:4px; text-align:left;">${item.name}</td>
+                    <td style="font-size:0.75rem; color:#666; border-bottom:1px solid #eee; padding:4px; text-align:left;">${mods.join(', ')}</td>
+                </tr>`;
+            });
+            outHtml += '</table>';
+            const container = document.getElementById('speedTierList');
+            if(container) container.innerHTML = outHtml;
+        }
+
+        function exportData() {
+            try {
+                updateActive('my', true); updateActive('opp', true);
+                const data = { my: window.teamSlotState.my, opp: window.teamSlotState.opp };
+                const jsonStr = JSON.stringify(data);
+                document.getElementById('saveLoadText').value = btoa(unescape(encodeURIComponent(jsonStr)));
+                document.getElementById('saveLoadMsg').innerText = "テキストボックスにデータを出力しました！コピーして保存してください。";
+                document.getElementById('saveLoadMsg').style.color = "#27ae60";
+            } catch(e) {
+                console.error(e);
+                document.getElementById('saveLoadMsg').innerText = "出力に失敗しました。";
+                document.getElementById('saveLoadMsg').style.color = "#e74c3c";
+            }
+        }
+        function importData() {
+            const txt = document.getElementById('saveLoadText').value.trim();
+            if(!txt) return;
+            try {
+                const data = JSON.parse(decodeURIComponent(escape(atob(txt))));
+                if(data && data.my && data.opp) {
+                    window.teamSlotState.my = data.my; window.teamSlotState.opp = data.opp;
+                    for(let i=0; i<6; i++) {
+                        if(data.my[i] && data.my[i].name) document.getElementById(`myPoke${i}`).value = data.my[i].name;
+                        if(data.opp[i] && data.opp[i].name) document.getElementById(`oppPoke${i}`).value = data.opp[i].name;
+                    }
+                    updateActive('my'); updateActive('opp');
+                    for(let i=0; i<6; i++) { updateTeamSummary('my'); updateTeamSummary('opp'); }
+                    document.getElementById('saveLoadMsg').innerText = "データを復元しました！";
+                    document.getElementById('saveLoadMsg').style.color = "#27ae60";
+                }
+            } catch(e) {
+                console.error(e);
+                document.getElementById('saveLoadMsg').innerText = "形式が正しくありません。";
+                document.getElementById('saveLoadMsg').style.color = "#e74c3c";
+            }
+        }
+
+        function executeCalculation() {
             const applyUnawareA = (rank, defAbil) => defAbil === 'てんねん' ? 0 : rank;
             const applyUnawareD = (rank, atkAbil) => atkAbil === 'てんねん' ? 0 : rank;
 
@@ -8116,7 +8323,22 @@ function executeCalculation() {
             const attackerSide = document.querySelector(`input[name="attackerSide"]:checked`).value;
             const myPoke = getEffectivePoke('my');
             const oppPoke = getEffectivePoke('opp');
-            let power = parseInt(document.getElementById('movePower').value);
+            let power = parseInt(document.getElementById('movePower').value) || 0;
+            const moveName = document.getElementById('moveSelect').value;
+            
+                        const multiHitMoves = ['つららばり', 'ロックブラスト', 'タネマシンガン', 'ミサイルばり', 'スイープビンタ', 'スケイルショット', 'すいりゅうれんだ', 'トリプルアクセル', 'トリプルダイブ', 'ダブルウィング', 'ダブルパンツァー', 'ドラゴンアロー', 'ギアソーサー', 'ネズミザン'];
+            if (multiHitMoves.includes(moveName) || (power <= 25 && power > 0 && moveName !== 'がむしゃら' && moveName !== 'けたぐり' && moveName !== 'くさむすび' && moveName !== 'いかりのまえば')) {
+                document.getElementById('multiHitContainer').style.display = 'block';
+            } else {
+                document.getElementById('multiHitContainer').style.display = 'none';
+                if (document.getElementById('multiHitCount')) document.getElementById('multiHitCount').value = "1";
+            }
+
+            if (moveName === 'くさむすび' || moveName === 'けたぐり') {
+                const targetName = attackerSide === 'me' ? oppPoke.name : myPoke.name;
+                power = getWeightPower(targetName);
+            }
+
             let moveType = document.getElementById('moveType').value;
             const moveCat = document.getElementById('moveCategory').value;
             const myAbil = document.getElementById('myAbility').value;
@@ -8140,7 +8362,6 @@ function executeCalculation() {
             if (myAbil === 'グラスメイカー' || oppAbil === 'グラスメイカー') terrain = 'grassy';
             if (myAbil === 'サイコメイカー' || oppAbil === 'サイコメイカー') terrain = 'psychic';
             if (myAbil === 'ミストメイカー' || oppAbil === 'ミストメイカー') terrain = 'misty';
-            const moveName = document.getElementById('moveSelect').value;
 
             let weatherMod = 1.0;
             if (weather === 'sun') {
@@ -8680,199 +8901,6 @@ function executeCalculation() {
                 }
             }
         }
-    
-        const pokeWeights = {
-            "カビゴン": 460.0, "リザードン": 90.5, "カメックス": 85.5, "フシギバナ": 100.0, "ゲンガー": 40.5,
-            "カイリュー": 210.0, "ギャラドス": 235.0, "バンギラス": 202.0, "ルギア": 216.0, "ハッサム": 118.0,
-            "メタグロス": 550.0, "ボーマンダ": 102.6, "サーナイト": 48.4, "ガブリアス": 95.0, "ルカリオ": 54.0,
-            "トゲキッス": 38.0, "ミロカロス": 162.0, "シャンデラ": 34.3, "ウルガモス": 46.0, "ナットレイ": 110.0,
-            "サザンドラ": 160.0, "ランドロス": 68.0, "ゲッコウガ": 40.0, "ギルガルド": 53.0, "ニンフィア": 23.5,
-            "ドラパルト": 50.0, "ミミッキュ": 0.7, "アーマーガア": 75.0, "ドヒドイデ": 14.5, "カプ・レヒレ": 21.2,
-            "ウーラオス": 105.0, "ポリゴン2": 32.5, "サンダー": 52.6, "クレセリア": 85.6, "ヒードラン": 430.0,
-            "ガオガエン": 83.0, "テツノツツミ": 11.0, "ハバタクカミ": 4.0, "パオジアン": 120.0, "イーユイ": 4.9, 
-            "サーフゴー": 30.0, "セグレイブ": 210.0, "キョジオーン": 240.0, "ディンルー": 699.7, "ヘイラッシャ": 220.0,
-            "ラウドボーン": 326.5, "イルカマン": 60.2, "マスカーニャ": 31.2, "オーガポン": 39.8, "ガチグマ": 290.0, "ブリジュラス": 60.0
-        };
-        const getWeightPower = (pName) => {
-            const w = pokeWeights[pName] || 50.0;
-            if (w < 10.0) return 20;
-            if (w < 25.0) return 40;
-            if (w < 50.0) return 60;
-            if (w < 100.0) return 80;
-            if (w < 200.0) return 100;
-            return 120;
-        };
-
-        function getFixedDmgPct(pDex, pAbil, isOpp) {
-            let dmg = 0;
-            let sr = isOpp ? document.getElementById('srOpp')?.checked : document.getElementById('srMy')?.checked;
-            if (sr) {
-                let e = calcTypeEffectiveness('いわ', pDex.types, '', pAbil);
-                if (e > 0) dmg += 12.5 * e;
-            }
-            let spikes = isOpp ? document.getElementById('spikesOpp')?.checked : false; 
-            if (spikes && !pDex.types.includes('ひこう') && pAbil !== 'ふゆう') dmg += 12.5;
-
-            let lo = isOpp ? document.getElementById('loOpp')?.checked : document.getElementById('loMy')?.checked;
-            if (lo) dmg += 10.0;
-
-            return dmg;
-        }
-
-        function updateSpeedTiers() {
-            let list = [];
-            ['my', 'opp'].forEach(side => {
-                for(let i=0; i<6; i++) {
-                    let pName = document.getElementById(`${side}Poke${i}`)?.value;
-                    if(!pName || !pokedex[pName]) continue;
-                    let pDex = pokedex[pName];
-                    let isAct = (document.querySelector(`input[name="${side}Active"]:checked`)?.value == i);
-                    let state = window.teamSlotState[side][i] || {};
-
-                    let pts = isAct ? parseInt(document.getElementById(`${side}Spe`)?.value||0) : (parseInt(state[`${side}Spe`])||0);
-                    let nat = isAct ? parseFloat(document.getElementById(`${side}SpeNature`)?.value||1.0) : (parseFloat(state[`${side}SpeNature`])||1.0);
-                    let rank = isAct ? parseInt(document.getElementById(`${side}RankS`)?.value||0) : (parseInt(state[`${side}RankS`])||0);
-                    let item = isAct ? document.getElementById(`${side}Item`)?.value : (state[`${side}Item`]||'');
-                    let status = isAct ? document.getElementById(`${side}Status`)?.value : (state[`${side}Status`]||'none');
-                    let abil = isAct ? document.getElementById(`${side}Ability`)?.value : (state[`${side}Ability`]||'');
-
-                    let sp = Math.floor(calcStat(pDex.spe, pts, nat, false));
-                    sp = Math.floor(sp * getRankMod(rank));
-                    if(item === 'こだわりスカーフ' && !pDex.isMega) sp = Math.floor(sp * 1.5);
-                    if(status === 'paralysis') sp = Math.floor(sp * 0.5);
-                    if(abil === 'すいすい' && document.getElementById('weather') && document.getElementById('weather').value === 'rain') sp *= 2;
-                    if(abil === 'ようりょくそ' && document.getElementById('weather') && document.getElementById('weather').value === 'sun') sp *= 2;
-                    if(abil === 'すなかき' && document.getElementById('weather') && document.getElementById('weather').value === 'sand') sp *= 2;
-                    if(abil === 'クォークチャージ' && document.getElementById('field') && document.getElementById('field').value === 'electric') sp = Math.floor(sp * 1.5);
-
-                    if(side === 'my' && document.getElementById('tailwindMy')?.checked) sp *= 2;
-                    if(side === 'opp' && document.getElementById('tailwindOpp')?.checked) sp *= 2;
-
-                    list.push({side: side, name: pName, speed: sp, rank: rank, item: item, status: status, abil: abil, idx: i, isAct: isAct});
-                }
-            });
-            list.sort((a,b) => b.speed - a.speed);
-
-            let outHtml = `<table style="width:100%; border-collapse:collapse; text-align:center;">
-                <tr style="background:#eee;"><th style="padding:4px;border-bottom:1px solid #ccc;">S実数</th><th style="padding:4px;border-bottom:1px solid #ccc;">陣営</th><th style="padding:4px;border-bottom:1px solid #ccc;text-align:left;">ポケモン</th><th style="padding:4px;border-bottom:1px solid #ccc;text-align:left;">補正メモ</th></tr>`;
-            list.forEach(item => {
-                let color = item.side === 'my' ? '#2980b9' : '#c0392b';
-                let actMark = item.isAct ? `<span style="background:${color};color:#fff;border-radius:3px;padding:0 4px;font-size:0.7rem;margin-left:4px;">場</span>` : '';
-                let mods = [];
-                if(item.item === 'こだわりスカーフ') mods.push('スカーフ');
-                if(item.rank > 0) mods.push(`+${item.rank}`);
-                if(item.rank < 0) mods.push(`${item.rank}`);
-                if(item.status === 'paralysis') mods.push('まひ');
-                if(item.side === 'my' && document.getElementById('tailwindMy')?.checked) mods.push('おいかぜ');
-                if(item.side === 'opp' && document.getElementById('tailwindOpp')?.checked) mods.push('おいかぜ');
-                if(item.abil === 'すいすい' || item.abil === 'ようりょくそ' || item.abil === 'すなかき') mods.push(item.abil);
-
-                outHtml += `<tr>
-                    <td style="font-weight:bold; color:${color}; border-bottom:1px solid #eee; padding:4px;">${item.speed}</td>
-                    <td style="color:${color}; border-bottom:1px solid #eee; padding:4px;">${item.side==='my'?'自分':'相手'} ${actMark}</td>
-                    <td style="border-bottom:1px solid #eee; padding:4px; text-align:left;">${item.name}</td>
-                    <td style="font-size:0.75rem; color:#666; border-bottom:1px solid #eee; padding:4px; text-align:left;">${mods.join(', ')}</td>
-                </tr>`;
-            });
-            outHtml += '</table>';
-            const container = document.getElementById('speedTierList');
-            if(container) container.innerHTML = outHtml;
-        }
-
-        function exportData() {
-            try {
-                updateActive('my', true); updateActive('opp', true);
-                const data = { my: window.teamSlotState.my, opp: window.teamSlotState.opp };
-                const jsonStr = JSON.stringify(data);
-                document.getElementById('saveLoadText').value = btoa(unescape(encodeURIComponent(jsonStr)));
-                document.getElementById('saveLoadMsg').innerText = "テキストボックスにデータを出力しました！コピーして保存してください。";
-                document.getElementById('saveLoadMsg').style.color = "#27ae60";
-            } catch(e) {
-                console.error(e);
-                document.getElementById('saveLoadMsg').innerText = "出力に失敗しました。";
-                document.getElementById('saveLoadMsg').style.color = "#e74c3c";
-            }
-        }
-        function importData() {
-            const txt = document.getElementById('saveLoadText').value.trim();
-            if(!txt) return;
-            try {
-                const data = JSON.parse(decodeURIComponent(escape(atob(txt))));
-                if(data && data.my && data.opp) {
-                    window.teamSlotState.my = data.my; window.teamSlotState.opp = data.opp;
-                    for(let i=0; i<6; i++) {
-                        if(data.my[i] && data.my[i].name) document.getElementById(`myPoke${i}`).value = data.my[i].name;
-                        if(data.opp[i] && data.opp[i].name) document.getElementById(`oppPoke${i}`).value = data.opp[i].name;
-                    }
-                    updateActive('my'); updateActive('opp');
-                    for(let i=0; i<6; i++) { updateTeamSummary('my'); updateTeamSummary('opp'); }
-                    document.getElementById('saveLoadMsg').innerText = "データを復元しました！";
-                    document.getElementById('saveLoadMsg').style.color = "#27ae60";
-                }
-            } catch(e) {
-                console.error(e);
-                document.getElementById('saveLoadMsg').innerText = "形式が正しくありません。";
-                document.getElementById('saveLoadMsg').style.color = "#e74c3c";
-            }
-        }
-
     </script>
-
-    <div class="action-panel" style="border-left: 5px solid #8e44ad; margin-top: 15px; margin-bottom: 30px;">
-        <div class="action-header" style="color: #8e44ad; cursor: pointer; display: flex; justify-content: space-between; align-items: center;" onclick="const el = document.getElementById('saveLoadArea'); el.style.display = el.style.display === 'none' ? 'block' : 'none';">
-            <span>💾 パーティの保存・読み込み</span>
-            <span style="font-size:0.8rem; color:#888; font-weight:normal;">▼ クリックして開く</span>
-        </div>
-        <div id="saveLoadArea" style="display:none; background:#f4ecf7; padding:10px; border-radius:4px; border:1px solid #d2b4de; margin-top: 10px;">
-            <p style="font-size:0.85rem; color:#444; margin-bottom:8px;">現在のパーティ情報を文字データとして出力、または読み込みできます。</p>
-            <textarea id="saveLoadText" style="width:100%; height:80px; font-family:monospace; padding:5px; border-radius:4px; border:1px solid #ccc;"></textarea>
-            <div style="display:flex; gap:10px; margin-top:10px;">
-                <button onclick="exportData()" style="flex:1; background:#8e44ad; color:#fff; border:none; padding:8px; border-radius:4px; font-weight:bold; cursor:pointer;">出力 (コピーする)</button>
-                <button onclick="importData()" style="flex:1; background:#2980b9; color:#fff; border:none; padding:8px; border-radius:4px; font-weight:bold; cursor:pointer;">復元 (読み込む)</button>
-            </div>
-            <p id="saveLoadMsg" style="font-size:0.8rem; color:#e74c3c; margin-top:8px; font-weight:bold;"></p>
-        </div>
-    </div>
-
 </body>
-</html
-        <!-- 💥 定数ダメージ・特殊状態 -->
-        <div class="action-panel" style="border-left: 5px solid #e74c3c; margin-top: 15px;">
-            <div class="action-header" style="color: #c0392b;">💥 定数ダメージ・特殊状態 (ダメージ計算・Sラインに反映)</div>
-            <div style="display:flex; flex-wrap:wrap; gap:15px; font-size:0.85rem; background:#fdedec; padding:10px; border-radius:4px; border:1px solid #e74c3c; margin-top:5px;">
-                <label><input type="checkbox" id="srOpp" onchange="executeCalculation()"> 相手の場にステロ</label>
-                <label><input type="checkbox" id="srMy" onchange="executeCalculation()"> 自分の場にステロ</label>
-                <label><input type="checkbox" id="spikesOpp" onchange="executeCalculation()"> 相手にまきびし</label>
-                <label><input type="checkbox" id="loMy" onchange="executeCalculation()"> 自分が珠ダメ</label>
-                <label><input type="checkbox" id="loOpp" onchange="executeCalculation()"> 相手が珠ダメ</label>
-                <label><input type="checkbox" id="tailwindMy" onchange="executeCalculation()"> 自分においかぜ</label>
-                <label><input type="checkbox" id="tailwindOpp" onchange="executeCalculation()"> 相手においかぜ</label>
-            </div>
-        </div>
-
-        <!-- 🏃 素早さライン (Sライン) -->
-        <div class="action-panel" style="border-left: 5px solid #3498db; margin-top: 15px;">
-            <div class="action-header" style="color: #3498db; cursor: pointer; display: flex; justify-content: space-between; align-items: center;" onclick="const el = document.getElementById('speedTierList'); el.style.display = el.style.display === 'none' ? 'block' : 'none'; if(el.style.display==='block') updateSpeedTiers();">
-                <span>🏃 素早さ関係（Sライン）の一覧表</span>
-                <span style="font-size:0.8rem; color:#888; font-weight:normal;">▼ クリックして開く</span>
-            </div>
-            <div id="speedTierList" style="display:none; background:#f9f9f9; padding:10px; border-radius:4px; max-height:250px; overflow-y:auto; font-size:0.85rem; border:1px solid #ddd; margin-top: 10px;">
-                ※「計算 ＆ 予測を実行」を押すと更新されます
-            </div>
-        </div>
-
-        
-
-                const multiHitMoves = ['つららばり', 'ロックブラスト', 'タネマシンガン', 'ミサイルばり', 'スイープビンタ', 'スケイルショット', 'すいりゅうれんだ', 'トリプルアクセル', 'トリプルダイブ', 'ダブルウィング', 'ダブルパンツァー', 'ドラゴンアロー', 'ギアソーサー', 'ネズミザン'];
-                if (multiHitMoves.includes(moveName) || (power <= 25 && power > 0 && moveName !== 'がむしゃら' && moveName !== 'けたぐり' && moveName !== 'くさむすび' && moveName !== 'いかりのまえば')) {
-                    document.getElementById('multiHitContainer').style.display = 'block';
-                } else {
-                    document.getElementById('multiHitContainer').style.display = 'none';
-                    if (document.getElementById('multiHitCount')) document.getElementById('multiHitCount').value = "1";
-                }
-
-                if (moveName === 'くさむすび' || moveName === 'けたぐり') {
-                    const targetName = attackerSide === 'me' ? oppPoke.name : myPoke.name;
-                    power = getWeightPower(targetName);
-                }
->
+</html>
