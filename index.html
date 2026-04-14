@@ -427,28 +427,13 @@
                 <span style="font-size:0.8rem; color:#888; font-weight:normal;">▼ クリックして開く</span>
             </div>
             <div id="saveLoadArea" style="display:none; background:#f4ecf7; padding:10px; border-radius:4px; border:1px solid #d2b4de; margin-top: 10px;">
-                <p style="font-size:0.85rem; color:#444; margin-botto,
-    "しっぺがえし": { power: 50, type: "あく", category: "物理" },
-    "ベノムショック": { power: 65, type: "どく", category: "特殊" },
-    "ソーラービーム": { power: 120, type: "くさ", category: "特殊" },
-    "ゆきなだれ": { power: 60, type: "こおり", category: "物理" },
-    "まきびし": { power: 0, type: "むし", category: "変化" },
-    "ぼうふう": { power: 110, type: "ひこう", category: "特殊" },
-    "ハリケーン": { power: 110, type: "ひこう", category: "特殊" },
-    "エレキボール": { power: 0, type: "でんき", category: "特殊" },
-    "ヒートスタンプ": { power: 0, type: "ほのお", category: "物理" },
-    "しぜんのいかり": { power: 0, type: "ノーマル", category: "物理" },
-    "がむしゃら": { power: 0, type: "ノーマル", category: "物理" },
-    "たたりめ": { power: 65, type: "ゴースト", category: "特殊" },
-    "はたきおとす": { power: 65, type: "あく", category: "物理" }
-m:8px;">現在のパーティ情報を文字データとして出力、または読み込みできます。</p>
+                <p style="font-size:0.85rem; color:#444; margin-bottom:8px;">現在のパーティ情報を文字データとして出力、または読み込みできます。</p>
                 <textarea id="saveLoadText" style="width:100%; height:80px; font-family:monospace; padding:5px; border-radius:4px; border:1px solid #ccc;"></textarea>
                 <div style="display:flex; gap:10px; margin-top:10px;">
                     <button onclick="exportData()" style="flex:1; background:#8e44ad; color:#fff; border:none; padding:8px; border-radius:4px; font-weight:bold; cursor:pointer;">出力 (コピーする)</button>
                     <button onclick="importData()" style="flex:1; background:#2980b9; color:#fff; border:none; padding:8px; border-radius:4px; font-weight:bold; cursor:pointer;">復元 (読み込む)</button>
                 </div>
-                
-                <p id="saveLoadMsg" style="font-size:0.8rem; color:#e74c3c; margin-top:8px; font-weight:bold;"></p>
+                                <p id="saveLoadMsg" style="font-size:0.8rem; color:#e74c3c; margin-top:8px; font-weight:bold;"></p>
             </div>
         </div>
 
@@ -1132,6 +1117,19 @@ m:8px;">現在のパーティ情報を文字データとして出力、または
     "Gのちから": { power: 90, type: "くさ", category: "物理" },
     "ムーンフォース": { power: 95, type: "フェアリー", category: "特殊" },
     "アイアンヘッド": { power: 80, type: "はがね", category: "物理" },
+    "しっぺがえし": { power: 50, type: "あく", category: "物理" },
+    "ベノムショック": { power: 65, type: "どく", category: "特殊" },
+    "ソーラービーム": { power: 120, type: "くさ", category: "特殊" },
+    "ゆきなだれ": { power: 60, type: "こおり", category: "物理" },
+    "まきびし": { power: 0, type: "むし", category: "変化" },
+    "ぼうふう": { power: 110, type: "ひこう", category: "特殊" },
+    "ハリケーン": { power: 110, type: "ひこう", category: "特殊" },
+    "エレキボール": { power: 0, type: "でんき", category: "特殊" },
+    "ヒートスタンプ": { power: 0, type: "ほのお", category: "物理" },
+    "しぜんのいかり": { power: 0, type: "ノーマル", category: "物理" },
+    "がむしゃら": { power: 0, type: "ノーマル", category: "物理" },
+    "たたりめ": { power: 65, type: "ゴースト", category: "特殊" },
+    "はたきおとす": { power: 65, type: "あく", category: "物理" },
     "しおづけ": { power: 40, type: "いわ", category: "物理" }
 };
 
@@ -11914,8 +11912,14 @@ const allKeys = new Set([...Object.keys(pokedex), ...forceIncludePokeNames]);
             updateTeamSummary(side);
         }
 
-        document.addEventListener('input', recordState);
-        document.addEventListener('change', recordState);
+        document.addEventListener('input', function(e) {
+            if (e.target && (e.target.id === 'moveSelect' || e.target.id === 'movePower' || e.target.id === 'moveType' || e.target.id === 'moveCategory')) return;
+            recordState(e);
+        });
+        document.addEventListener('change', function(e) {
+            if (e.target && (e.target.id === 'moveSelect' || e.target.id === 'movePower' || e.target.id === 'moveType' || e.target.id === 'moveCategory')) return;
+            recordState(e);
+        });
 
         function getEffectivePoke(side) {
             const baseName = getBasePokeName(side);
@@ -12148,11 +12152,17 @@ const allKeys = new Set([...Object.keys(pokedex), ...forceIncludePokeNames]);
             const attackerSide = attackerSideRaw === "me" ? "my" : "opp";
             const effPoke = getEffectivePoke(attackerSide);
             const moveSelect = document.getElementById('moveSelect');
-
+            const current = moveSelect ? moveSelect.value : '';
             moveSelect.innerHTML = '<option value="">-- 技を手動で入力 --</option>';
             if (effPoke && effPoke.moves) {
                 effPoke.moves.forEach(m => { moveSelect.add(new Option(m, m)); });
             }
+            if (current && moveSelect.querySelector(`option[value="${current}"]`)) {
+                moveSelect.value = current;
+            } else if (effPoke && effPoke.moves && effPoke.moves.length) {
+                moveSelect.value = effPoke.moves[0];
+            }
+            setTimeout(applyMoveData, 0);
         }
 
         function applyMoveData() {
@@ -12160,108 +12170,47 @@ const allKeys = new Set([...Object.keys(pokedex), ...forceIncludePokeNames]);
             const attackerSideRaw = document.querySelector(`input[name="attackerSide"]:checked`).value;
             const attackerSide = attackerSideRaw === "me" ? "my" : "opp";
             const defenderSide = attackerSide === "my" ? "opp" : "my";
-            const atkItem = document.getElementById(`${attackerSide}Item`) ? document.getElementById(`${attackerSide}Item`).value : "なし";
-            const defItem = document.getElementById(`${defenderSide}Item`) ? document.getElementById(`${defenderSide}Item`).value : "なし";
-
+            const moveInfo = moveDex[moveName] || { power: 0, type: "", category: "物理" };
+            if (!moveName || !moveInfo) return;
+            const atkItem = document.getElementById(`${attackerSide}Item`)?.value || 'なし';
+            const defItem = document.getElementById(`${defenderSide}Item`)?.value || 'なし';
+            const atkStatus = document.getElementById(`${attackerSide}Status`)?.value || 'none';
+            const defStatus = document.getElementById(`${defenderSide}Status`)?.value || 'none';
+            const weather = document.getElementById('battleWeather')?.value || 'none';
+            let power = (moveName === 'ソーラービーム' || moveName === 'ソーラーブレード') ? (weather === 'sun' ? 120 : 60) : (moveInfo.power || 0);
+            const atkIdx = parseInt(document.querySelector(`input[name="${attackerSide}Active"]:checked`)?.value || '0', 10);
+            const defIdx = parseInt(document.querySelector(`input[name="${defenderSide}Active"]:checked`)?.value || '0', 10);
+            const atkPoke = getEffectivePoke(attackerSide);
+            const defPoke = getEffectivePoke(defenderSide);
+            const atkSpe = getExactStats(attackerSide, atkIdx, atkPoke).spe || 1;
+            const defSpe = getExactStats(defenderSide, defIdx, defPoke).spe || 1;
+            const powerEl = document.getElementById('movePower');
+            const typeEl = document.getElementById('moveType');
+            const catEl = document.getElementById('moveCategory');
             const condContainer = document.getElementById('moveConditionContainer');
+            if (typeEl) typeEl.value = (moveName === 'ソーラービーム' || moveName === 'ソーラーブレード') ? 'くさ' : moveInfo.type;
+            if (catEl) catEl.value = (moveName === 'ソーラービーム' || moveName === 'ソーラーブレード') ? '特殊' : moveInfo.category;
+            let p = moveInfo.power;
+            if (moveName === 'ソーラービーム' || moveName === 'ソーラーブレード') {
+                p = weather === 'sun' ? 120 : 60;
+                if (typeEl) typeEl.value = 'くさ';
+                if (catEl) catEl.value = '特殊';
+            } else {
+                p = getMoveDisplayPower(moveName, weather, atkItem, atkStatus, defStatus, atkSpe, defSpe);
+            }
+            if (powerEl) powerEl.value = p;
+            let htmlCond = '';
+            if (moveName === 'アクロバット') htmlCond = `※持ち物の有無で威力${p}で計算`;
+            else if (moveName === 'テラバースト') htmlCond = `※威力${p}で計算`;
+            else if (moveName === 'ソーラービーム' || moveName === 'ソーラーブレード') htmlCond = `※天候${weather === 'sun' ? '晴れ' : '晴れ以外'}のため威力${p}で計算`;
             if (condContainer) {
-                condContainer.style.display = 'none';
-                condContainer.innerHTML = '';
+                condContainer.style.display = htmlCond ? 'block' : 'none';
+                condContainer.innerHTML = htmlCond;
             }
-
-            if (moveName && moveDex[moveName]) {
-                let p = moveDex[moveName].power;
-                let htmlCond = '';
-
-                if (moveName === "アクロバット") {
-                    if (atkItem === "なし" || atkItem === "") p = 110;
-                    htmlCond = `※持ち物なし判定のため威力${p}で計算`;
-                } else if (moveName === "テラバースト") {
-                    // Quick fix for Tera Blast (always using 80 in this context, assuming no specific tera type)
-                    p = 80; 
-                } else if (moveName === "エラがみ" || moveName === "でんげきくちばし") {
-                    htmlCond = `<label><input type="checkbox" id="condFirst" onchange="updateVariablePower(${p}, 'double')"> 先制する (威力2倍)</label>`;
-                } else if (moveName === "ダメおし") {
-                    htmlCond = `<label><input type="checkbox" id="condFirst" onchange="updateVariablePower(${p}, 'double')"> 相手が既にダメージを受けている (威力2倍)</label>`;
-                } else if (moveName === "はたきおとす") {
-                    if (defItem !== "なし" && defItem !== "メガストーン") {
-                        p = Math.floor(p * 1.5);
-                        htmlCond = `※相手が持ち物を持っているため威力1.5倍(${p})で計算`;
-                    }
-                } else if (moveName === "からげんき") {
-                    htmlCond = `<label><input type="checkbox" id="condStatus" onchange="updateVariablePower(${p}, 'double')"> 状態異常 (威力2倍)</label>`;
-                } else if (moveName === "しおみず" || moveName === "ベノムショック") {
-                    htmlCond = `<label><input type="checkbox" id="condStatus" onchange="updateVariablePower(${p}, 'double')"> 条件を満たしている (威力2倍)</label>`;
-                } else if (moveName === "ふんどのこぶし") {
-                    htmlCond = `受けた攻撃の回数: <input type="number" id="condHits" value="0" min="0" max="6" style="width:40px;" oninput="updateVariablePower(50, 'fist')">`;
-                } else if (moveName === "おはかまいり") {
-                    htmlCond = `ひんしになった味方: <input type="number" id="condFainted" value="0" min="0" max="5" style="width:40px;" oninput="updateVariablePower(50, 'grave')">`;
-                } else if (moveName === "アシストパワー") {
-                    let ranks = 0;
-                    ['A','D','S','C','D'].forEach(stat => {
-                        let r = parseInt(document.getElementById(`${attackerSide}Rank${stat === 'C'?'A':stat === 'D'?'D':'S'}`).value, 10) || 0;
-                        if(r > 0) ranks += r;
-                    });
-                    p = 20 + (ranks * 20);
-                    htmlCond = `※上昇ランク合計(${ranks})により威力${p}で計算`;
-                } else if (moveName === "トリプルアクセル") {
-                    htmlCond = `ヒット数: <select id="condHitsTA" onchange="updateVariablePower(20, 'axel')"><option value="1">1回 (威力20)</option><option value="2">2回 (威力60)</option><option value="3" selected>3回 (威力120)</option></select>`;
-                    p = 120; // default 3 hits
-                } else if (moveName === "みずしゅりけん" || moveName === "つららばり" || moveName === "タネマシンガン" || moveName === "ロックブラスト") {
-                    htmlCond = `ヒット数: <input type="number" id="condHitsMulti" value="3" min="2" max="5" style="width:40px;" oninput="updateVariablePower(moveDex['${moveName}'].power, 'multi')">`;
-                    p = p * 3; // default 3 hits
-                }
-
-                // --- 変更点ノートの表示 ---
-                let notes = "";
-                if (moveName === "ムーンフォース") notes = "特攻ダウンの確率が30%→10%に変更されています。";
-                else if (moveName === "アイアンヘッド") notes = "ひるみの確率が30%→20%に変更されています。";
-                else if (moveName === "しおづけ") notes = "定数ダメージが1/16(水・鋼は1/8)に変更されています。";
-                else if (moveName === "はめつのひかり") notes = "反動ダメージが1/3→1/2に変更されています。";
-                else if (moveName === "シャドーボール") notes = "特防ダウンの確率が20%→10%に変更されています。";
-                else if (moveName === "フリーズドライ") notes = "こおり状態にならなくなりました。";
-                else if (moveName === "どくのいと") notes = "素早さを2段階下げるように強化されました。";
-                else if (moveName === "クラブハンマー") notes = "命中率が95%に強化されました。";
-                else if (moveName === "フェイタルクロー") notes = "状態異常にする確率が50%→30%に弱体化されました。";
-
-                if (notes) {
-                    htmlCond += (htmlCond ? "<br>" : "") + `<span style="color:#2980b9; font-weight:bold;">💡 仕様変更: ${notes}</span>`;
-                }
-
-                if (htmlCond && condContainer) {
-                    condContainer.style.display = 'block';
-                    condContainer.innerHTML = htmlCond;
-                }
-
-                document.getElementById('movePower').value = p;
-                document.getElementById('moveType').value = moveDex[moveName].type;
-                document.getElementById('moveCategory').value = moveDex[moveName].category;
-            }
+            setTimeout(executeCalculation, 0);
         }
 
-        function updateVariablePower(baseP, type) {
-            let p = baseP;
-            if (type === 'double') {
-                if (document.getElementById('condFirst') && document.getElementById('condFirst').checked) p *= 2;
-                if (document.getElementById('condStatus') && document.getElementById('condStatus').checked) p *= 2;
-            } else if (type === 'fist') {
-                let hits = parseInt(document.getElementById('condHits').value, 10) || 0;
-                p = Math.min(350, baseP + (hits * 50));
-            } else if (type === 'grave') {
-                let faints = parseInt(document.getElementById('condFainted').value, 10) || 0;
-                p = Math.min(300, baseP + (faints * 50));
-            } else if (type === 'axel') {
-                let h = parseInt(document.getElementById('condHitsTA').value, 10) || 3;
-                p = h === 1 ? 20 : (h === 2 ? 60 : 120);
-            } else if (type === 'multi') {
-                let h = parseInt(document.getElementById('condHitsMulti').value, 10) || 3;
-                p = baseP * h;
-            }
-            document.getElementById('movePower').value = p;
-            executeCalculation();
-        }
-
-        function toggleDamageInput() {
+function toggleDamageInput() {
             const side = document.querySelector(`input[name="attackerSide"]:checked`).value;
             document.getElementById('actualDamageBox').style.display = (side === 'opp') ? 'block' : 'none';
             updateMoveDropdown();
@@ -12698,7 +12647,18 @@ if (document.getElementById('oppSpeedDisplay')) document.getElementById('oppSpee
 
         
         // === 条件変化技・特性の威力補正 共通関数 ===
-        function getConditionalPower(moveName, basePower, moveType, moveCat, atkPoke, defPoke, atkAbil, defAbil, atkItem, atkStatus, defStatus, weather, terrain, atkSpe, defSpe) {
+        function getMoveDisplayPower(moveName, weather, atkItem, atkStatus, defStatus, atkSpe, defSpe) {
+    const base = moveDex[moveName] ? moveDex[moveName].power : 0;
+    if (moveName === 'ソーラービーム' || moveName === 'ソーラーブレード') return weather === 'sun' ? base : Math.floor(base * 0.5);
+    if (moveName === 'アクロバット') return (atkItem === 'なし' || atkItem === '') ? 110 : 55;
+    if (moveName === 'からげんき') return (atkStatus && atkStatus !== 'none' && atkStatus !== '') ? 140 : 70;
+    if (moveName === 'しおみず' || moveName === 'ベノムショック') return (defStatus === 'poison' || defStatus === 'badpoison') ? base * 2 : base;
+    if (moveName === 'エレキボール') { const r = defSpe > 0 ? atkSpe / defSpe : 1; return r >= 4 ? 150 : r >= 3 ? 120 : r >= 2 ? 80 : 40; }
+    if (moveName === 'ジャイロボール') return atkSpe > 0 ? Math.max(1, Math.min(150, Math.floor(25 * defSpe / atkSpe))) : 1;
+    return base;
+}
+
+function getConditionalPower(moveName, basePower, moveType, moveCat, atkPoke, defPoke, atkAbil, defAbil, atkItem, atkStatus, defStatus, weather, terrain, atkSpe, defSpe) {
             let p = basePower;
             let note = "";
 
@@ -12728,8 +12688,8 @@ if (document.getElementById('oppSpeedDisplay')) document.getElementById('oppSpee
 
             // ソーラービーム / ソーラーブレード: 晴れ以外は威力半減
             if (moveName === "ソーラービーム" || moveName === "ソーラーブレード") {
-                if (weather !== "sun") { p = Math.floor(p * 0.5); note = "晴れ以外→威力" + p; }
-                else { note = "晴れ→威力" + p; }
+                p = (weather === "sun") ? basePower : Math.floor(basePower * 0.5);
+                note = "晴れ→威力" + p;
             }
 
             // ゆきなだれ: 先にダメージを受けた場合に威力2倍（UIチェックボックス）
@@ -12813,8 +12773,9 @@ if (document.getElementById('oppSpeedDisplay')) document.getElementById('oppSpee
                 return;
             }
 
-            let power = parseInt(document.getElementById('movePower').value, 10) || 0;
             const moveName = document.getElementById('moveSelect').value;
+            const moveInfo = moveDex[moveName] || { power: 0, type: '', category: '物理' };
+            let power = getMoveDisplayPower(moveName, document.getElementById('battleWeather') ? document.getElementById('battleWeather').value : 'none', document.getElementById('myItem') ? document.getElementById('myItem').value : 'なし', document.getElementById('myStatus') ? document.getElementById('myStatus').value : 'none', document.getElementById('oppStatus') ? document.getElementById('oppStatus').value : 'none', getExactStats('my', parseInt(document.querySelector('input[name="myActive"]:checked')?.value || '0', 10), myPoke).spe || 1, getExactStats('opp', parseInt(document.querySelector('input[name="oppActive"]:checked')?.value || '0', 10), oppPoke).spe || 1);
             
                         const multiHitMoves = ['つららばり', 'ロックブラスト', 'タネマシンガン', 'ミサイルばり', 'スイープビンタ', 'スケイルショット', 'すいりゅうれんだ', 'トリプルアクセル', 'トリプルダイブ', 'ダブルウィング', 'ダブルパンツァー', 'ドラゴンアロー', 'ギアソーサー', 'ネズミザン'];
             if (multiHitMoves.includes(moveName) || (power <= 25 && power > 0 && moveName !== 'がむしゃら' && moveName !== 'けたぐり' && moveName !== 'くさむすび' && moveName !== 'いかりのまえば')) {
@@ -12829,10 +12790,14 @@ if (document.getElementById('oppSpeedDisplay')) document.getElementById('oppSpee
                 power = getWeightPower(targetName);
             }
 
-            let moveType = document.getElementById('moveType').value;
-            const moveCat = document.getElementById('moveCategory').value || '物理';
+            let moveType = moveInfo.type || document.getElementById('moveType').value;
+            const moveCat = moveInfo.category || document.getElementById('moveCategory').value || '物理';
+            if (moveName === 'ソーラービーム' || moveName === 'ソーラーブレード') {
+                moveType = 'くさ';
+            }
             const myAbil = document.getElementById('myAbility').value;
             const oppAbil = document.getElementById('oppAbility').value;
+            let weather = document.getElementById('battleWeather') ? document.getElementById('battleWeather').value : 'none';
             const out = document.getElementById('resultOutput');
             out.style.display = 'block';
             updateSpeedTiers();
@@ -12841,7 +12806,6 @@ if (document.getElementById('oppSpeedDisplay')) document.getElementById('oppSpee
             
             
 
-            let weather = document.getElementById('battleWeather') ? document.getElementById('battleWeather').value : 'none';
             if (myAbil === 'ひでり' || oppAbil === 'ひでり') weather = 'sun';
             if (myAbil === 'あめふらし' || oppAbil === 'あめふらし') weather = 'rain';
             if (myAbil === 'すなおこし' || oppAbil === 'すなおこし') weather = 'sand';
@@ -13919,6 +13883,8 @@ function addDamageLog(entry) {
             const atkSide = document.querySelector('input[name="attackerSide"]:checked')?.value;
             const moveName = document.getElementById('moveSelect')?.value || '';
             const movePow  = document.getElementById('movePower')?.value || '';
+const pEl = document.getElementById('movePower');
+            if ((moveName === 'ソーラービーム' || moveName === 'ソーラーブレード') && pEl && pEl.value === '60') { pEl.value = '120'; }
             const moveType = document.getElementById('moveType')?.value || '';
             const lines = out.innerText.split('\n').filter(l=>l.trim()).slice(0,2).join(' / ');
             addDamageLog(`<b>[計算]</b> ${atkSide==='me'?'自分':'相手'}が<b>${moveName||'技'}</b>(威力${movePow} ${moveType}) → ${lines}`);
