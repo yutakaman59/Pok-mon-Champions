@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>ポケチャン 総合バトルダッシュボード v54 (メガシンカ対応)</title>
+    <title>ポケチャン バトルダッシュボード</title>
     <style>
         body { font-family: 'Helvetica Neue', Arial, sans-serif; background-color: #eef2f5; color: #333; margin: 0; padding: 10px; font-size: 14px; }
         .header { text-align: center; background: #2c3e50; color: white; padding: 10px; border-radius: 8px; margin-bottom: 15px; }
@@ -69,8 +69,8 @@
 </head>
 <body>
     <div class="header">
-        <h1>ポケチャン バトルダッシュボード v54</h1>
-        <div style="font-size:0.8rem; margin-top:5px;">メガシンカ対応（チェックボックス / 分岐選択）＆ 特性連動</div>
+        <h1>ポケチャン バトルダッシュボード</h1>
+        <div style="font-size:0.8rem; margin-top:5px;">メガシンカ対応</div>
     </div>
 
     <div class="dashboard">
@@ -11732,8 +11732,8 @@ const allKeys = new Set([...Object.keys(pokedex), ...forceIncludePokeNames]);
 
 
         window.onload = function() {
-            let safeTeamMy = ['リザードン','マリルリ','カイリュー','ヤドラン','イルカマン','ケンタロス(ウォーター種)'].filter(p => sortedPokeNames.includes(p));
-            let safeTeamOpp = ['ブリジュラス','ルカリオ','ドドゲザン','ゲンガー','ニャオニクス(オス)','イダイトウ(メス)'].filter(p => sortedPokeNames.includes(p));
+            let safeTeamMy = ['ハッサム','サザンドラ','ギルガルド','ミミッキュ','ゲンガー','ドドゲザン'].filter(p => sortedPokeNames.includes(p));
+            let safeTeamOpp = ['ガブリアス','アシレーヌ','リザードン','アーマーガア','カバルドン','ブリジュラス'].filter(p => sortedPokeNames.includes(p));
             while(safeTeamMy.length < 6) safeTeamMy.push(sortedPokeNames[safeTeamMy.length] || sortedPokeNames[0]);
             while(safeTeamOpp.length < 6) safeTeamOpp.push(sortedPokeNames[safeTeamOpp.length] || sortedPokeNames[0]);
 
