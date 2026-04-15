@@ -65,6 +65,8 @@
         body.dark-mode #speedCalcBox { background:#1a2a3a !important; }
         #moveExtraInfo { font-size:0.78rem; color:#555; margin-top:2px; padding:2px 6px; background:#f0f8ff; border-radius:4px; }
         body.dark-mode #moveExtraInfo { background:#1a2535 !important; color:#aaa !important; }
+        .ko-2hit   { color: #2980b9; font-weight: bold; background: #d6eaf8; padding: 2px 6px; border-radius: 4px; }
+        .ko-2maybe { color: #8e44ad; font-weight: bold; background: #f5eef8; padding: 2px 6px; border-radius: 4px; }
     </style>
 </head>
 <body>
@@ -111,7 +113,7 @@
                     <div class="stat-item">
                         <label style="color:#2980b9; font-size:0.9rem;">現在の残りHP</label>
                         <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
-                            <input type="range" id="myCurrentHpSlider" value="100" min="1" max="100" style="flex:1;" oninput="syncHpFromPercent('my')">
+                            <input type="range" id="myCurrentHpSlider" value="100" min="1" max="100" style="flex:1; background:linear-gradient(to right,#2ecc71 100%,#ddd 100%);" oninput="syncHpFromPercent('my')">
                             <input type="number" id="myCurrentHpPct" value="100" min="1" max="100" style="width:64px; font-weight:bold; font-size:1rem;" oninput="syncHpFromPercent('my')">
                             <span style="font-weight:bold;">%</span>
                         </div>
@@ -221,7 +223,7 @@
                     <div class="stat-item">
                         <label style="color:#c0392b; font-size:0.9rem;">現在の残りHP</label>
                         <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
-                            <input type="range" id="oppCurrentHpSlider" value="100" min="1" max="100" style="flex:1;" oninput="syncHpFromPercent('opp')">
+                            <input type="range" id="oppCurrentHpSlider" value="100" min="1" max="100" style="flex:1; background:linear-gradient(to right,#2ecc71 100%,#ddd 100%);" oninput="syncHpFromPercent('opp')">
                             <input type="number" id="oppCurrentHpPct" value="100" min="1" max="100" style="width:64px; font-weight:bold; font-size:1rem;" oninput="syncHpFromPercent('opp')">
                             <span style="font-weight:bold;">%</span>
                         </div>
@@ -12309,8 +12311,9 @@ function toggleDamageInput() {
 
             const real = Math.max(1, Math.round(maxHp * pct / 100));
             if (realInput !== document.activeElement) realInput.value = real;
-
-            
+            var pctForColor = Math.min(100, Math.max(0, pct));
+            var sliderColor = pctForColor > 50 ? '#2ecc71' : pctForColor > 25 ? '#f39c12' : '#e74c3c';
+            slider.style.background = 'linear-gradient(to right, ' + sliderColor + ' ' + pctForColor + '%, #ddd ' + pctForColor + '%)';
         }
 
         function syncHpFromReal(side) {
@@ -12332,8 +12335,9 @@ function toggleDamageInput() {
 
             slider.value = Math.round(pct);
             pctInput.value = pct;
-
-            
+            var pctForColor = Math.min(100, Math.max(0, pct));
+            var sliderColor = pctForColor > 50 ? '#2ecc71' : pctForColor > 25 ? '#f39c12' : '#e74c3c';
+            slider.style.background = 'linear-gradient(to right, ' + sliderColor + ' ' + pctForColor + '%, #ddd ' + pctForColor + '%)';
         }
 
         function updateSpeed() {
@@ -12434,6 +12438,8 @@ if (document.getElementById('oppSpeedDisplay')) document.getElementById('oppSpee
         function getKOStatus(minPct, maxPct, currentHpPct) {
             if (minPct >= currentHpPct) return "<span class='ko-yes'>確定1発で倒せる！</span>";
             if (maxPct >= currentHpPct) return "<span class='ko-maybe'>乱数1発 (運次第で倒せる)</span>";
+            if (minPct * 2 >= currentHpPct) return "<span class='ko-2hit'>確定2発で倒せる！</span>";
+            if (maxPct * 2 >= currentHpPct) return "<span class='ko-2maybe'>乱数2発 (運次第で2発KO)</span>";
             return "<span class='ko-no'>耐えられる</span>";
         }
 
@@ -12539,7 +12545,7 @@ if (document.getElementById('oppSpeedDisplay')) document.getElementById('oppSpee
                 let e = calcTypeEffectiveness('いわ', pDex.types, '', pAbil);
                 if (e > 0) dmg += 12.5 * e;
             }
-            let spikes = isOpp ? document.getElementById('spikesOpp')?.checked : false; 
+            let spikes = isOpp ? document.getElementById('spikesOpp')?.checked : document.getElementById('spikesmy')?.checked; 
             if (spikes && !pDex.types.includes('ひこう') && pAbil !== 'ふゆう') dmg += 12.5;
 
             let lo = isOpp ? document.getElementById('loOpp')?.checked : document.getElementById('loMy')?.checked;
@@ -13563,7 +13569,8 @@ function getConditionalPower(moveName, basePower, moveType, moveCat, atkPoke, de
                     }
                     multiRows = hitRows;
                 }
-                html += `<tr><td><b>${mv}</b>${mhData ? ' <span style="font-size:0.75rem;color:#8e44ad;">×'+mhData.min+(mhData.max>mhData.min?'〜'+mhData.max:'')+'hit</span>' : ''}</td><td>${moveType}${effMark}</td><td>${power}</td><td><b>${dmg.min}〜${dmg.max}</b></td><td>${minPct}〜${maxPct}%</td><td>${koStat}</td></tr>` + multiRows;
+                const multiLabel = (mhData && mhData.max > 1) ? ' <span style="font-size:0.75rem;color:#8e44ad;">×'+mhData.min+(mhData.max>mhData.min?'〜'+mhData.max:'')+'hit</span>' : '';
+                html += `<tr><td><b>${mv}</b>${multiLabel}</td><td>${moveType}${effMark}</td><td>${power}</td><td><b>${dmg.min}〜${dmg.max}</b></td><td>${minPct}〜${maxPct}%</td><td>${koStat}</td></tr>` + multiRows;
             });
             html += '</table>';
             out.innerHTML = html;
@@ -13847,8 +13854,7 @@ function getConditionalPower(moveName, basePower, moveType, moveCat, atkPoke, de
             'たまなげ': {min:2, max:5},
             'ふんどのこぶし': {min:2, max:5},
             'ギアソーサー': {min:2, max:5},
-            'バレットパンチ': {min:1, max:1},
-            'トリプルキック': {min:3, max:3},
+                        'トリプルキック': {min:3, max:3},
             'トリプルアクセル': {min:3, max:3},
             'レイジングブル': {min:1, max:1},
             'ドラゴンアロー': {min:2, max:2},
@@ -13983,70 +13989,107 @@ function predictTotalSurvival(side, attackDmgMin, attackDmgMax) {
 // 3. 先制技圏内判定
 // ============================================================
 const PRIORITY_MOVES = [
-    {name:'バレットパンチ', power:40, type:'鋼', cat:'物理', prio:1},
-    {name:'マッハパンチ',   power:40, type:'闘', cat:'物理', prio:1},
-    {name:'アクアジェット', power:40, type:'水', cat:'物理', prio:1},
-    {name:'シャドースニーク',power:40,type:'霊', cat:'物理', prio:1},
-    {name:'ふいうち',       power:70, type:'悪', cat:'物理', prio:1},
-    {name:'でんこうせっか', power:40, type:'ノ',  cat:'物理', prio:2},
-    {name:'ほっぺすりすり', power:20, type:'電', cat:'物理', prio:1},
-    {name:'みずしゅりけん', power:15, type:'水', cat:'物理', prio:1},
-    {name:'こおりのつぶて', power:40, type:'氷', cat:'物理', prio:1},
+  {name:'アクアジェット',power:40,type:'水',prio:1},
+  {name:'かげうち',power:40,type:'ゴースト',prio:1},
+  {name:'こおりのつぶて',power:40,type:'氷',prio:1},
+  {name:'しんそく',power:80,type:'ノーマル',prio:2},
+  {name:'でんこうせっか',power:40,type:'ノーマル',prio:2},
+  {name:'ねこだまし',power:40,type:'ノーマル',prio:3},
+  {name:'バレットパンチ',power:40,type:'鋼',prio:1},
+  {name:'ふいうち',power:70,type:'悪',prio:1},
+  {name:'マッハパンチ',power:40,type:'闘',prio:1},
+  {name:'みずしゅりけん',power:15,type:'水',prio:1,hits:2},
+  {name:'ほっぺすりすり',power:20,type:'でんき',prio:1}
 ];
 
-function updatePriorityKO() {
-    const el = document.getElementById('priorityMoveResult');
-    if (!el) return;
-    const atkPoke = getEffectivePoke('my');
-    const defPoke = getEffectivePoke('opp');
-    if (!atkPoke || !defPoke) {
-        el.innerHTML = '<span style="color:#888">ポケモンを選択してください</span>';
-        return;
-    }
-    const atkAbil = document.getElementById('myAbility')?.value || '';
-    const atkNat  = parseFloat(document.getElementById('myNature')?.value) || 1.0;
-    const atkPts  = parseInt(document.getElementById('myAtk')?.value, 10) || 0;
-    const atkRank = parseInt(document.getElementById('myRankA')?.value, 10) || 0;
-    let atkReal = Math.floor(calcStat(atkPoke.atk, atkPts, atkNat, false) * getRankMod(atkRank));
-    if (document.getElementById('myStatus')?.value === 'burn' && atkAbil !== 'こんじょう') {
-        atkReal = Math.floor(atkReal * 0.5);
-    }
-    if (document.getElementById('myItem')?.value === 'こだわりハチマキ' && !atkPoke.isMega) {
-        atkReal = Math.floor(atkReal * 1.5);
-    }
-    const defNat  = parseFloat(document.getElementById('oppDefNature')?.value) || 1.0;
-    const defPts  = parseInt(document.getElementById('oppDef')?.value, 10) || 0;
-    const defRank = parseInt(document.getElementById('oppRankD')?.value, 10) || 0;
-    const defReal = Math.floor(calcStat(defPoke.def, defPts, defNat, false) * getRankMod(defRank));
-    const defHpPts = parseInt(document.getElementById('oppHP')?.value, 10) || 0;
-    const defMaxHp = calcStat(defPoke.hp, defHpPts, 1.0, true);
-    const defHpPct = parseFloat(document.getElementById('oppCurrentHpPct')?.value) || 100;
 
-    let rows = '';
-    for (const mv of PRIORITY_MOVES) {
-        const stab = atkPoke.types && atkPoke.types.includes(mv.type)
-            ? (atkAbil === 'てきおうりょく' ? 2.0 : 1.5) : 1.0;
-        const eff = typeof calcTypeEffectiveness === 'function'
-            ? calcTypeEffectiveness(mv.type, defPoke.types || [], '', defPoke.name || '')
-            : 1.0;
-        if (eff === 0) continue;
-        const dmg = getDamageRange(atkReal, defReal, mv.power, stab, eff, 1.0, false, false, 1);
-        const minPct = (dmg.min / defMaxHp * 100).toFixed(1);
-        const maxPct = (dmg.max / defMaxHp * 100).toFixed(1);
-        const ko = getKOStatus(parseFloat(minPct), parseFloat(maxPct), defHpPct);
-        const effMark = eff >= 2 ? '<span style="color:#e74c3c">◎</span>' : eff <= 0.5 ? '<span style="color:#888">△</span>' : '';
-        rows += `<tr>
-            <td style="padding:2px 8px;font-weight:bold">${mv.name}${effMark}</td>
-            <td style="padding:2px 8px;color:#888">+${mv.prio}</td>
-            <td style="padding:2px 8px">${dmg.min}〜${dmg.max}<span style="color:#888;font-size:0.75rem"> (${minPct}〜${maxPct}%)</span></td>
-            <td style="padding:2px 8px">${ko}</td>
-        </tr>`;
-    }
-    if (!rows) { el.innerHTML = '<span style="color:#888">該当する先制技がありません</span>'; return; }
-    el.innerHTML = `<table style="font-size:0.82rem;border-collapse:collapse;width:100%">
-        <tr style="background:#f2f2f2"><th style="padding:2px 8px">技</th><th>優先度</th><th>ダメージ</th><th>圏内</th></tr>
-        ${rows}</table>`;
+function formatHitNote(name, hits) {
+    if (!hits || hits <= 1) return '';
+    return ' (' + hits + 'hit)';
 }
+function updatePriorityKO() {
+  const el = document.getElementById('priorityMoveResult');
+  if (!el) return;
+  const atkPoke = getEffectivePoke('my');
+  const defPoke = getEffectivePoke('opp');
+  if (!atkPoke || !defPoke) {
+    el.innerHTML = '<span style="color:#888">ポケモンを選択してください</span>';
+    return;
+  }
+  const atkAbilEl = document.getElementById('myAbility');
+  const atkAbil = atkAbilEl ? atkAbilEl.value : '';
+  const atkNatEl = document.getElementById('myNature');
+  const atkNat = atkNatEl ? parseFloat(atkNatEl.value) : 1.0;
+  const atkPtsEl = document.getElementById('myAtk');
+  const atkPts = atkPtsEl ? parseInt(atkPtsEl.value, 10) : 0;
+  const atkRankEl = document.getElementById('myRankA');
+  const atkRank = atkRankEl ? parseInt(atkRankEl.value, 10) : 0;
+  let atkReal = Math.floor(calcStat(atkPoke.atk, atkPts, atkNat, false) * getRankMod(atkRank));
+  const myStatusEl = document.getElementById('myStatus');
+  if (myStatusEl && myStatusEl.value === 'burn' && atkAbil !== 'こんじょう') atkReal = Math.floor(atkReal * 0.5);
+  const myItemEl = document.getElementById('myItem');
+  if (myItemEl && myItemEl.value === 'こだわりハチマキ' && !atkPoke.isMega) atkReal = Math.floor(atkReal * 1.5);
+  const weatherEl = document.getElementById('battleWeather');
+  const weather = weatherEl ? weatherEl.value : 'none';
+  const fieldEl = document.getElementById('battleField');
+  const field = fieldEl ? fieldEl.value : 'none';
+
+  const defNatEl = document.getElementById('oppDefNature');
+  const defNat = defNatEl ? parseFloat(defNatEl.value) : 1.0;
+  const defPtsEl = document.getElementById('oppDef');
+  const defPts = defPtsEl ? parseInt(defPtsEl.value, 10) : 0;
+  const defRankEl = document.getElementById('oppRankD');
+  const defRank = defRankEl ? parseInt(defRankEl.value, 10) : 0;
+  const defReal = Math.floor(calcStat(defPoke.def, defPts, defNat, false) * getRankMod(defRank));
+  const defHpPtsEl = document.getElementById('oppHP');
+  const defHpPts = defHpPtsEl ? parseInt(defHpPtsEl.value, 10) : 0;
+  const defMaxHp = calcStat(defPoke.hp, defHpPts, 1.0, true);
+  const oppSubstituteEl = document.getElementById('oppSubstitute');
+  const oppSubstitute = oppSubstituteEl ? oppSubstituteEl.checked : false;
+  const targetHp = oppSubstitute ? 50 : defMaxHp;
+
+  const results = [];
+  for (const mv of PRIORITY_MOVES) {
+    const stab = atkPoke.types && atkPoke.types.includes(mv.type) ? (atkAbil === 'てきおうりょく' ? 2.0 : 1.5) : 1.0;
+    const eff = calcTypeEffectiveness(mv.type, defPoke.types || [], '', defPoke.name || '') || 1.0;
+    if (eff === 0) continue;
+    let fieldMod = 1.0;
+    if (weather === 'rain' && mv.type === '水') fieldMod *= 1.5;
+    if (weather === 'sun' && mv.type === '炎') fieldMod *= 1.5;
+    if (field === 'エレキフィールド' && mv.type === '電') fieldMod *= 1.3;
+    if (field === 'ミストフィールド' && mv.type === 'ドラ') fieldMod *= 1.3;
+
+    const hits = mv.hits || 1;
+    let totalMin = 0, totalMax = 0;
+    for (let h = 0; h < hits; h++) {
+      const dmg = getDamageRange(atkReal, defReal, mv.power, stab, eff * fieldMod, 1.0, false, false, 1);
+      totalMin += dmg.min;
+      totalMax += dmg.max;
+    }
+
+    const minPct = (totalMin / targetHp * 100).toFixed(1);
+    const maxPct = (totalMax / targetHp * 100).toFixed(1);
+    const ko = getKOStatus(parseFloat(minPct), parseFloat(maxPct), 100);
+    const effMark = eff >= 2 ? '<span style="color:#e74c3c">◎</span>' : eff <= 0.5 ? '<span style="color:#888">△</span>' : '';
+    const stabMark = stab > 1 ? '<span style="color:#9b59b6">S</span>' : '<span style="color:#bbb">-</span>';
+    const fieldMark = fieldMod > 1 ? '<span style="color:#27ae60">F</span>' : '<span style="color:#bbb">-</span>';
+    const hitNote = mv.hits > 1 ? ' (' + mv.hits + 'hit)' : '';
+    results.push({name:mv.name, prio:mv.prio, min:totalMin, max:totalMax, minPct:minPct, maxPct:maxPct, ko:ko, effMark:effMark, stabMark:stabMark, fieldMark:fieldMark, hitNote:hitNote});
+  }
+  if (!results.length) {
+    el.innerHTML = '<span style="color:#888">該当する先制技がありません</span>';
+    return;
+  }
+  results.sort(function(a,b){ return a.name.localeCompare(b.name, 'ja'); });
+  let rows = '';
+  results.forEach(function(mv){
+    rows += '<tr><td style="padding:2px 8px;font-weight:bold">' + mv.name + mv.hitNote + mv.effMark + mv.stabMark + mv.fieldMark + '</td><td style="padding:2px 8px;color:#888">+' + mv.prio + '</td><td style="padding:2px 8px">' + mv.min + '〜' + mv.max + '<span style="color:#888;font-size:0.75rem"> (' + mv.minPct + '〜' + mv.maxPct + '%)</span></td><td style="padding:2px 8px">' + mv.ko + '</td></tr>';
+  });
+  const subNote = oppSubstitute ? '<div style="color:#e67e22;font-size:0.78rem;margin-top:4px;">🛡️ 相手身代わりHP: 50 想定</div>' : '';
+  el.innerHTML = '<table style="font-size:0.82rem;border-collapse:collapse;width:100%"><tr style="background:#f2f2f2"><th>技</th><th>優先度</th><th>ダメージ</th><th>圏内</th></tr>' + rows + '</table>' + subNote;
+}
+
+
 
 // ============================================================
 // 5. URLシェア機能
