@@ -4,102 +4,529 @@
     <meta charset="UTF-8">
     <title>ポケチャン バトルダッシュボード</title>
     <style>
-        body { font-family: 'Helvetica Neue', Arial, sans-serif; background-color: #eef2f5; color: #333; margin: 0; padding: 10px; font-size: 14px; }
-        .header { text-align: center; background: #2c3e50; color: white; padding: 10px; border-radius: 8px; margin-bottom: 15px; }
-        h1 { margin: 0; font-size: 1.4rem; }
-        .dashboard { display: flex; flex-wrap: wrap; gap: 15px; }
-        .field-col { flex: 1; min-width: 340px; background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); padding: 15px; }
+        /* =============================================
+           ポケチャン バトルダッシュボード - UIリニューアル
+           スマホ対応・モダンデザイン
+           ============================================= */
 
-        .team-box { border: 1px solid #ddd; padding: 10px; border-radius: 6px; margin-bottom: 15px; background: #fafafa; }
-        .team-title { font-weight: bold; margin-bottom: 5px; color: #2980b9; border-bottom: 2px solid #3498db; display: inline-block; padding-bottom: 2px; }
-        .opp-title { color: #c0392b; border-bottom: 2px solid #e74c3c; }
-        .poke-row { display: flex; align-items: center; gap: 5px; margin-bottom: 8px; flex-wrap: wrap; border-bottom: 1px dashed #ccc; padding-bottom: 4px; }
-        .poke-row select { flex: 1; padding: 4px; }
-        .poke-row input[type="checkbox"], .poke-row input[type="radio"] { cursor: pointer; transform: scale(1.2); }
-        .badge { font-size: 0.7rem; padding: 2px 4px; border-radius: 4px; background: #ccc; color: white; }
+        /* --- CSS変数 --- */
+        :root {
+            --bg:        #f0f4f8;
+            --surface:   #ffffff;
+            --surface2:  #f8f9fa;
+            --border:    #e2e8f0;
+            --text:      #2d3748;
+            --text-sub:  #718096;
+            --my-color:  #2b6cb0;
+            --my-light:  #ebf8ff;
+            --my-border: #90cdf4;
+            --opp-color: #c53030;
+            --opp-light: #fff5f5;
+            --opp-border:#feb2b2;
+            --accent:    #6b46c1;
+            --accent-light:#faf5ff;
+            --success:   #276749;
+            --warning:   #c05621;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.05);
+            --radius-sm: 6px;
+            --radius:    10px;
+            --radius-lg: 14px;
+        }
 
-        .active-stats { border: 2px solid #3498db; border-radius: 6px; padding: 10px; background: #ebf5fb; }
-        .opp-stats { border-color: #e74c3c; background: #fdedec; }
+        /* --- ダークモード変数 --- */
+        body.dark-mode {
+            --bg:        #0d1117 !important;
+            --surface:   #161b22 !important;
+            --surface2:  #1c2128 !important;
+            --border:    #30363d !important;
+            --text:      #e6edf3 !important;
+            --text-sub:  #8b949e !important;
+            --my-color:  #58a6ff !important;
+            --my-light:  #0d2137 !important;
+            --my-border: #1f4f7a !important;
+            --opp-color: #f85149 !important;
+            --opp-light: #200d0d !important;
+            --opp-border:#5c1717 !important;
+            --accent:    #a371f7 !important;
+            --accent-light:#1a0d2e !important;
+        }
 
-        .speed-badge { display: inline-block; margin-left: auto; font-weight: bold; color: #d35400; background: #fdebd0; padding: 4px 8px; border-radius: 4px; font-size: 0.9rem; border: 1px solid #f39c12; }
-        .mega-container { margin-left: 10px; }
-        .mega-label { background:#e8daef; padding:2px 6px; border-radius:4px; font-size:0.85rem; font-weight:bold; color:#8e44ad; cursor:pointer; display:flex; align-items:center; border:1px solid #8e44ad; }
-        .mega-select { background:#e8daef; border:1px solid #8e44ad; border-radius:4px; font-size:0.85rem; font-weight:bold; color:#8e44ad; padding:2px; cursor:pointer; }
+        /* --- ベース --- */
+        *, *::before, *::after { box-sizing: border-box; }
+        html { -webkit-text-size-adjust: 100%; }
+        body {
+            font-family: 'Helvetica Neue', 'Hiragino Sans', 'Meiryo', Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 8px;
+            font-size: 14px;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
 
-        .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 10px; }
-        .stat-item { display: flex; flex-direction: column; }
-        .stat-item label { font-size: 0.75rem; font-weight: bold; color: #555; }
-        .stat-item select, .stat-item input { padding: 4px; border: 1px solid #bdc3c7; border-radius: 4px; }
+        /* --- ヘッダー --- */
+        .header {
+            text-align: center;
+            background: linear-gradient(135deg, #1a365d 0%, #2d3748 50%, #553c9a 100%);
+            color: white;
+            padding: 14px 16px;
+            border-radius: var(--radius-lg);
+            margin-bottom: 12px;
+            box-shadow: var(--shadow-md);
+        }
+        h1 { margin: 0; font-size: 1.3rem; letter-spacing: 0.03em; }
 
-        .action-panel { width: 100%; background: white; border-radius: 8px; padding: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-top: 10px; border-left: 5px solid #8e44ad; }
-        .action-header { font-weight: bold; font-size: 1.1rem; color: #8e44ad; margin-bottom: 10px; }
-        .flex-row { display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 10px; align-items: flex-end; }
-        .btn-calc { background: #8e44ad; color: white; padding: 10px 20px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 1rem; width: 100%; transition: 0.2s; }
-        .btn-calc:hover { background: #732d91; }
+        /* --- ダッシュボードグリッド --- */
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        @media (max-width: 768px) {
+            .dashboard { grid-template-columns: 1fr; }
+        }
 
-        .result-box { margin-top: 15px; padding: 15px; background: #fef9e7; border: 1px solid #f1c40f; border-radius: 6px; display: none; }
-        .result-title { font-weight: bold; color: #d35400; margin-bottom: 10px; font-size: 1.1rem; }
-        .predict-table { width: 100%; border-collapse: collapse; background: white; }
-        .predict-table th, .predict-table td { border: 1px solid #ddd; padding: 6px; text-align: center; font-size: 0.9rem; }
-        .predict-table th { background: #f2f2f2; }
-        .ko-yes { color: #e74c3c; font-weight: bold; }
-        .ko-maybe { color: #f39c12; font-weight: bold; }
-        .ko-no { color: #7f8c8d; }
+        /* --- カード共通 --- */
+        .field-col {
+            background: var(--surface);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-sm);
+            padding: 12px;
+            border: 1px solid var(--border);
+        }
 
-        /* ===== 追加機能CSS ===== */
-        #damageLog { max-height: 220px; overflow-y: auto; background:#1a1a2e; color:#eee; border-radius:6px; padding:8px; font-size:0.78rem; font-family:monospace; }
-        #damageLog .log-entry { border-bottom:1px solid #333; padding:3px 0; }
-        #damageLog .log-entry:last-child { border-bottom:none; }
-        #logClearBtn { font-size:0.75rem; padding:2px 8px; background:#c0392b; color:#fff; border:none; border-radius:4px; cursor:pointer; float:right; margin-bottom:4px; }
-        body.dark-mode { background:#0f0f0f !important; color:#c8c8c8 !important; }
-        body.dark-mode .card { background:#161616 !important; border-color:#2a2a2a !important; }
-        body.dark-mode .header { background:#111 !important; border-bottom:1px solid #222 !important; }
-        body.dark-mode input, body.dark-mode select { background:#1c1c1c !important; color:#d0d0d0 !important; border-color:#333 !important; }
-        body.dark-mode input:focus, body.dark-mode select:focus { border-color:#4a7fa5 !important; outline:none !important; }
-        body.dark-mode label { color:#aaa !important; }
-        body.dark-mode .result-box { background:#111 !important; color:#ccc !important; border:1px solid #222 !important; }
-        body.dark-mode .predict-table th { background:#1e1e1e !important; color:#bbb !important; }
-        body.dark-mode .predict-table td { background:#141414 !important; color:#bbb !important; }
-        body.dark-mode .action-header { color:#5fa3d0 !important; }
-        body.dark-mode table { border-color:#2a2a2a !important; }
-        body.dark-mode table th { background:#1a1a1a !important; color:#c0c0c0 !important; border-color:#2a2a2a !important; }
-        body.dark-mode table td { color:#bbb !important; background:#141414 !important; border-color:#222 !important; }
-        body.dark-mode .field-col { background:#131313 !important; border-color:#222 !important; }
-        body.dark-mode .team-box { background:#111 !important; border-color:#222 !important; }
-        body.dark-mode .team-row { background:#141414 !important; border-color:#1e1e1e !important; }
-        body.dark-mode .team-row:hover { background:#1a1a1a !important; }
-        body.dark-mode .active-field { background:#101820 !important; border-color:#1a3a52 !important; }
-        body.dark-mode .stat-item { background:#181818 !important; border-color:#252525 !important; }
-        body.dark-mode .stat-item label { color:#888 !important; }
-        body.dark-mode .btn-calc { background:#1a3a52 !important; color:#8ec8f0 !important; border-color:#1e4a6a !important; }
-        body.dark-mode .btn-calc:hover { background:#1e4a6a !important; }
-        body.dark-mode .result-title { color:#8ec8f0 !important; }
-        body.dark-mode .ko-1hit { background:#3a0000 !important; color:#ff6b6b !important; }
-        body.dark-mode .ko-maybe { background:#2a1500 !important; color:#ffaa44 !important; }
-        body.dark-mode .ko-2hit { background:#0a1a2a !important; color:#5ab0e0 !important; }
-        body.dark-mode .ko-2maybe { background:#1a0a2a !important; color:#c080e0 !important; }
-        body.dark-mode .ko-no { background:#0a1a0a !important; color:#5acc5a !important; }
-        body.dark-mode hr { border-color:#222 !important; }
-        body.dark-mode h3, body.dark-mode h4 { color:#a0c0d8 !important; }
-        body.dark-mode .section-title { color:#7ab0cc !important; background:#111 !important; }
-        body.dark-mode [style*="background:#f"] { background:#141414 !important; }
-        body.dark-mode [style*="background: #f"] { background:#141414 !important; }
-        body.dark-mode [style*="background:#e"] { background:#161616 !important; }
-        body.dark-mode [style*="color:#333"], body.dark-mode [style*="color: #333"] { color:#bbb !important; }
-        body.dark-mode [style*="color:#444"], body.dark-mode [style*="color: #444"] { color:#aaa !important; }
-        body.dark-mode [style*="color:#555"], body.dark-mode [style*="color: #555"] { color:#999 !important; }
-        body.dark-mode [style*="color:#888"], body.dark-mode [style*="color: #888"] { color:#777 !important; }
-        #darkModeToggle { position:fixed; bottom:16px; right:16px; z-index:9999; background:#1a2a3a; color:#8ec8f0; border:1px solid #2a4a5a; border-radius:50%; width:44px; height:44px; font-size:1.3rem; cursor:pointer; box-shadow:0 2px 12px rgba(0,0,0,0.7); }
-        .rank-badge { display:inline-block; border-radius:3px; padding:1px 5px; font-size:0.72rem; margin-left:4px; color:#fff; font-weight:bold; }
-        #speedCalcBox { background:#eaf4fb; border-radius:6px; padding:8px; margin-top:8px; font-size:0.82rem; }
-        body.dark-mode #speedCalcBox { background:#0e1e2e !important; color:#aac8e0 !important; border:1px solid #1a3a4a !important; }
-        #moveExtraInfo { font-size:0.78rem; color:#555; margin-top:2px; padding:2px 6px; background:#f0f8ff; border-radius:4px; }
-        body.dark-mode #moveExtraInfo { background:#0e1825 !important; color:#8aaccb !important; border:1px solid #1a2a35 !important; }
-        body.dark-mode #resultOutput { background:#0f0f0f !important; border:1px solid #1e1e1e !important; }
-        body.dark-mode #resultOutput * { border-color:#222 !important; }
-        .ko-2hit   { color: #2980b9; font-weight: bold; background: #d6eaf8; padding: 2px 6px; border-radius: 4px; }
-        .ko-2maybe { color: #8e44ad; font-weight: bold; background: #f5eef8; padding: 2px 6px; border-radius: 4px; }
-    </style>
+        /* --- チームボックス --- */
+        .team-box {
+            border: 1px solid var(--border);
+            padding: 10px;
+            border-radius: var(--radius-sm);
+            margin-bottom: 12px;
+            background: var(--surface2);
+        }
+        .team-title {
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: var(--my-color);
+            border-bottom: 2px solid var(--my-color);
+            display: inline-block;
+            padding-bottom: 2px;
+            margin-bottom: 8px;
+        }
+        .opp-title { color: var(--opp-color) !important; border-bottom-color: var(--opp-color) !important; }
+
+        /* --- ポケモン行 --- */
+        .poke-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 6px;
+            flex-wrap: wrap;
+            border-bottom: 1px dashed var(--border);
+            padding-bottom: 6px;
+        }
+        .poke-row select { flex: 1; min-width: 0; }
+        .badge {
+            font-size: 0.65rem;
+            padding: 2px 5px;
+            border-radius: 4px;
+            background: #718096;
+            color: white;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        /* --- アクティブ統計ボックス --- */
+        .active-stats {
+            border: 2px solid var(--my-border);
+            border-radius: var(--radius-sm);
+            padding: 10px;
+            background: var(--my-light);
+        }
+        .opp-stats {
+            border-color: var(--opp-border);
+            background: var(--opp-light);
+        }
+
+        /* --- 素早さバッジ --- */
+        .speed-badge {
+            display: inline-block;
+            margin-left: auto;
+            font-weight: bold;
+            color: #c05621;
+            background: #fffaf0;
+            padding: 3px 8px;
+            border-radius: var(--radius-sm);
+            font-size: 0.85rem;
+            border: 1px solid #f6ad55;
+        }
+        body.dark-mode .speed-badge { color:#f6ad55; background:#1a0f00; border-color:#7a4500; }
+
+        /* --- メガシンカ --- */
+        .mega-container { margin-left: 6px; }
+        .mega-label {
+            background: #f3e8ff;
+            padding: 3px 7px;
+            border-radius: var(--radius-sm);
+            font-size: 0.82rem;
+            font-weight: bold;
+            color: #6b46c1;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            border: 1px solid #9f7aea;
+            white-space: nowrap;
+        }
+        .mega-select {
+            background: #f3e8ff;
+            border: 1px solid #9f7aea;
+            border-radius: var(--radius-sm);
+            font-size: 0.82rem;
+            font-weight: bold;
+            color: #6b46c1;
+            padding: 3px;
+            cursor: pointer;
+        }
+        body.dark-mode .mega-label, body.dark-mode .mega-select {
+            background:#1a0d2e; color:#a371f7; border-color:#553c9a;
+        }
+
+        /* --- 能力値グリッド --- */
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
+            margin-top: 8px;
+        }
+        @media (max-width: 480px) {
+            .stat-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        .stat-item { display: flex; flex-direction: column; gap: 2px; }
+        .stat-item label {
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--text-sub);
+            letter-spacing: 0.02em;
+        }
+        .stat-item select, .stat-item input[type=number], .stat-item input[type=text] {
+            padding: 5px 6px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            background: var(--surface);
+            color: var(--text);
+            font-size: 0.82rem;
+            min-height: 32px;
+            width: 100%;
+        }
+        .stat-item select:focus, .stat-item input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px rgba(107,70,193,0.15);
+        }
+
+        /* --- フォームコントロール全般 --- */
+        input[type=number], input[type=text], select, textarea {
+            background: var(--surface);
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 0.9rem;
+            padding: 5px 7px;
+            min-height: 36px;
+            transition: border-color 0.15s, box-shadow 0.15s;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px rgba(107,70,193,0.15);
+        }
+
+        /* --- チェックボックス・ラジオ --- */
+        input[type=checkbox], input[type=radio] {
+            width: 16px; height: 16px;
+            cursor: pointer;
+            accent-color: var(--accent);
+            min-height: unset;
+        }
+        label { cursor: pointer; }
+
+        /* --- アクションパネル --- */
+        .action-panel {
+            width: 100%;
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 14px;
+            box-shadow: var(--shadow-sm);
+            margin-top: 10px;
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--accent);
+        }
+        .action-header {
+            font-weight: 700;
+            font-size: 1rem;
+            color: var(--accent);
+            margin-bottom: 10px;
+        }
+        .flex-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+            align-items: flex-end;
+        }
+
+        /* --- ボタン類 --- */
+        .btn-calc {
+            background: linear-gradient(135deg, var(--accent) 0%, #553c9a 100%);
+            color: white;
+            padding: 11px 18px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 0.95rem;
+            width: 100%;
+            transition: opacity 0.15s, transform 0.1s;
+            min-height: 44px;
+            letter-spacing: 0.02em;
+        }
+        .btn-calc:hover { opacity: 0.88; }
+        .btn-calc:active { transform: scale(0.98); }
+
+        /* 攻撃ボタン */
+        button[onclick*="triggerAttack"] {
+            background: linear-gradient(135deg, #e53e3e, #c53030);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 4px 9px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            min-height: 32px;
+            transition: opacity 0.15s;
+            white-space: nowrap;
+        }
+        button[onclick*="triggerAttack"]:hover { opacity: 0.85; }
+
+        /* ターン管理ボタン */
+        button[onclick*="advanceTurn"], button[onclick*="resetTurnMgr"] {
+            padding: 8px 14px;
+            border-radius: var(--radius-sm);
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.88rem;
+            min-height: 40px;
+            transition: opacity 0.15s;
+        }
+        button[onclick*="advanceTurn"] { background: #2b6cb0; color: white; }
+        button[onclick*="resetTurnMgr"] { background: #718096; color: white; }
+        button[onclick*="advanceTurn"]:hover, button[onclick*="resetTurnMgr"]:hover { opacity: 0.85; }
+
+        /* --- 結果ボックス --- */
+        .result-box {
+            margin-top: 12px;
+            padding: 12px;
+            background: var(--accent-light);
+            border: 1px solid #d6bcfa;
+            border-radius: var(--radius-sm);
+            display: none;
+        }
+        .result-title { font-weight: 700; color: var(--accent); margin-bottom: 8px; font-size: 1rem; }
+
+        /* --- 予測テーブル --- */
+        .predict-table { width: 100%; border-collapse: collapse; background: var(--surface); border-radius: var(--radius-sm); overflow: hidden; }
+        .predict-table th, .predict-table td {
+            border: 1px solid var(--border);
+            padding: 6px 8px;
+            text-align: center;
+            font-size: 0.82rem;
+        }
+        .predict-table th { background: var(--surface2); font-weight: 600; color: var(--text-sub); }
+
+        /* --- KOバッジ --- */
+        .ko-yes    { color: #c53030; font-weight: 700; background: #fff5f5; padding: 2px 6px; border-radius: 4px; }
+        .ko-maybe  { color: #c05621; font-weight: 700; background: #fffaf0; padding: 2px 6px; border-radius: 4px; }
+        .ko-2hit   { color: #2b6cb0; font-weight: 700; background: #ebf8ff; padding: 2px 6px; border-radius: 4px; }
+        .ko-2maybe { color: #6b46c1; font-weight: 700; background: #faf5ff; padding: 2px 6px; border-radius: 4px; }
+        .ko-no     { color: #276749; background: #f0fff4; padding: 2px 6px; border-radius: 4px; }
+
+        /* --- ダメージログ --- */
+        #damageLog {
+            max-height: 200px;
+            overflow-y: auto;
+            background: #1a202c;
+            color: #e2e8f0;
+            border-radius: var(--radius-sm);
+            padding: 8px 10px;
+            font-size: 0.78rem;
+            font-family: 'Courier New', monospace;
+        }
+        #damageLog .log-entry { border-bottom: 1px solid #2d3748; padding: 3px 0; }
+        #damageLog .log-entry:last-child { border-bottom: none; }
+        #logClearBtn {
+            font-size: 0.75rem;
+            padding: 3px 9px;
+            background: #c53030;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            float: right;
+            margin-bottom: 6px;
+            min-height: 28px;
+        }
+
+        /* --- セクション見出し --- */
+        h3, h4 { color: var(--text); margin: 8px 0 4px; }
+        .section-title {
+            font-weight: 700;
+            font-size: 0.88rem;
+            color: var(--text-sub);
+            background: var(--surface2);
+            border-radius: 4px;
+            padding: 3px 7px;
+            display: inline-block;
+            margin-bottom: 4px;
+        }
+
+        /* --- アコーディオン(detailsタグ) --- */
+        details { margin-bottom: 8px; }
+        details summary {
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.88rem;
+            padding: 8px 10px;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            list-style: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            user-select: none;
+            transition: background 0.15s;
+        }
+        details summary:hover { background: var(--border); }
+        details summary::-webkit-details-marker { display: none; }
+        details[open] summary { border-radius: var(--radius-sm) var(--radius-sm) 0 0; }
+        details > *:not(summary) {
+            border: 1px solid var(--border);
+            border-top: none;
+            border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+            padding: 10px;
+            background: var(--surface);
+        }
+
+        /* --- 速度計算ボックス --- */
+        #speedCalcBox {
+            background: var(--my-light);
+            border: 1px solid var(--my-border);
+            border-radius: var(--radius-sm);
+            padding: 8px 10px;
+            margin-top: 8px;
+            font-size: 0.82rem;
+        }
+
+        /* --- 技追加情報 --- */
+        #moveExtraInfo {
+            font-size: 0.78rem;
+            color: var(--text-sub);
+            margin-top: 3px;
+            padding: 3px 8px;
+            background: var(--my-light);
+            border-radius: 4px;
+            border: 1px solid var(--my-border);
+        }
+
+        /* --- ランクバッジ --- */
+        .rank-badge {
+            display: inline-block;
+            border-radius: 3px;
+            padding: 1px 5px;
+            font-size: 0.7rem;
+            color: white;
+            font-weight: bold;
+        }
+
+        /* --- ダークモードボタン --- */
+        #darkModeToggle {
+            position: fixed;
+            bottom: 16px;
+            right: 16px;
+            z-index: 9999;
+            background: #1a2a3a;
+            color: #8ec8f0;
+            border: 1px solid #2a4a5a;
+            border-radius: 50%;
+            width: 46px;
+            height: 46px;
+            font-size: 1.3rem;
+            cursor: pointer;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s;
+        }
+        #darkModeToggle:hover { transform: scale(1.1); }
+
+        /* --- ダークモード上書き --- */
+        body.dark-mode { background: var(--bg) !important; color: var(--text) !important; }
+        body.dark-mode .field-col { background: var(--surface) !important; border-color: var(--border) !important; }
+        body.dark-mode .team-box { background: var(--surface2) !important; border-color: var(--border) !important; }
+        body.dark-mode .active-stats { background: var(--my-light) !important; border-color: var(--my-border) !important; }
+        body.dark-mode .opp-stats { background: var(--opp-light) !important; border-color: var(--opp-border) !important; }
+        body.dark-mode input, body.dark-mode select, body.dark-mode textarea {
+            background: var(--surface2) !important;
+            color: var(--text) !important;
+            border-color: var(--border) !important;
+        }
+        body.dark-mode .action-panel { background: var(--surface) !important; border-color: var(--border) !important; }
+        body.dark-mode .result-box { background: var(--accent-light) !important; border-color: #553c9a !important; }
+        body.dark-mode .predict-table th { background: var(--surface2) !important; color: var(--text-sub) !important; }
+        body.dark-mode .predict-table td { background: var(--surface) !important; color: var(--text) !important; }
+        body.dark-mode details summary { background: var(--surface2) !important; border-color: var(--border) !important; color: var(--text) !important; }
+        body.dark-mode details summary:hover { background: var(--border) !important; }
+        body.dark-mode details > *:not(summary) { background: var(--surface) !important; border-color: var(--border) !important; }
+        body.dark-mode #speedCalcBox { background: var(--my-light) !important; border-color: var(--my-border) !important; color: var(--text) !important; }
+        body.dark-mode #moveExtraInfo { background: var(--my-light) !important; border-color: var(--my-border) !important; color: var(--text-sub) !important; }
+        body.dark-mode .header { background: linear-gradient(135deg, #0d1b2e 0%, #0d1117 50%, #1a0d2e 100%) !important; }
+        body.dark-mode h3, body.dark-mode h4 { color: var(--text) !important; }
+        body.dark-mode .section-title { background: var(--surface2) !important; color: var(--text-sub) !important; }
+        body.dark-mode hr { border-color: var(--border) !important; }
+        body.dark-mode .ko-yes    { background: var(--opp-light) !important; }
+        body.dark-mode .ko-maybe  { background: #1a0f00 !important; }
+        body.dark-mode .ko-2hit   { background: var(--my-light) !important; }
+        body.dark-mode .ko-2maybe { background: var(--accent-light) !important; }
+        body.dark-mode .ko-no     { background: #0a1f0a !important; color: #68d391 !important; }
+        body.dark-mode #resultOutput { background: var(--surface) !important; }
+
+        /* --- スマホ向け追加調整 --- */
+        @media (max-width: 480px) {
+            body { padding: 6px; font-size: 13px; }
+            h1 { font-size: 1.1rem; }
+            .field-col { padding: 10px 8px; }
+            .btn-calc { font-size: 0.9rem; padding: 10px; }
+            .predict-table th, .predict-table td { padding: 4px 5px; font-size: 0.75rem; }
+            .poke-row { gap: 4px; }
+            input[type=number], input[type=text], select { min-height: 40px; font-size: 16px; }
+            /* iOS zoom防止: font-size 16px以上 */
+        }
+
+        /* --- タブレット --- */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .stat-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+
+        /* viewport meta対応のため追記 */
+        @media (max-width: 768px) {
+            .flex-row { gap: 8px; }
+            .action-panel { padding: 10px; }
+        }
+</style>
 </head>
 <body>
     <div class="header">
@@ -164,28 +591,6 @@
                     <div class="stat-item"><label>特攻 能力P</label><input type="number" id="mySpA" value="0" min="0" max="32" oninput="checkPoints(); updateRealStats('my')"><span class="real-stat" id="mySpAReal" style="margin-left:8px; font-weight:bold; color:#2980b9;">-</span></div>
                     <div class="stat-item"><label>特防 能力P</label><input type="number" id="mySpD" value="0" min="0" max="32" oninput="checkPoints(); updateRealStats('my')"><span class="real-stat" id="mySpDReal" style="margin-left:8px; font-weight:bold; color:#2980b9;">-</span></div>
                     <div class="stat-item"><label>素早 能力P</label><input type="number" id="mySpe" value="0" min="0" max="32" oninput="updateSpeed(); checkPoints(); updateRealStats('my')"><span class="real-stat" id="mySpeReal" style="margin-left:8px; font-weight:bold; color:#2980b9;">-</span></div>
-                </div>
-                <div class="stat-grid" style="margin-top:5px;">
-                    <div class="stat-item">
-                        <label>性格(攻/特攻)</label>
-                        <select id="myNature" onchange="updateRealStats('my'); updateSpeed();">
-                            <option value="1.1">上昇(1.1)</option><option value="1.0" selected>無補正(1.0)</option><option value="0.9">下降(0.9)</option>
-                        </select>
-                    </div>
-                    <div class="stat-item">
-                        <label>性格(防/特防)</label>
-                        <select id="myDefNature" onchange="updateRealStats('my'); updateSpeed();">
-                            <option value="1.1">上昇(1.1)</option><option value="1.0" selected>無補正(1.0)</option><option value="0.9">下降(0.9)</option>
-                        </select>
-                    </div>
-                    <div class="stat-item">
-                        <label>性格(素早さ)</label>
-                        <select id="mySpeNature" onchange="updateRealStats('my'); updateSpeed();">
-                            <option value="1.1">上昇(1.1)</option><option value="1.0" selected>無補正(1.0)</option><option value="0.9">下降(0.9)</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="stat-grid">
                     <div class="stat-item"><label>特性</label><select id="myAbility" onchange="updateSpeed()"></select></div>
                     <div class="stat-item"><label>持ち物</label>
                         <select id="myItem" onchange="updateSpeed()">
@@ -206,13 +611,48 @@
                             <option value="freeze">こおり (3Tで回復)</option>
                         </select>
                     </div>
-                </div>
-                <div class="stat-grid" style="background:#f1f1f1; padding:5px; border-radius:4px; margin-top:5px;">
+                    <div class="stat-item">
+                        <label>性格</label>
+                        <select id="myNatureAll" onchange="applyNature('my'); updateRealStats('my'); updateSpeed();" style="width:100%;">
+                            <option value="1.0,1.0,1.0,1.0,1.0" selected>がんばりや（無補正）</option>
+                            <option value="1.1,1.0,0.9,1.0,1.0">さみしがり（攻撃↑/防御↓）</option>
+                            <option value="1.1,0.9,1.0,1.0,1.0">いじっぱり（攻撃↑/特攻↓）</option>
+                            <option value="1.1,1.0,1.0,0.9,1.0">やんちゃ（攻撃↑/特防↓）</option>
+                            <option value="1.1,1.0,1.0,1.0,0.9">ゆうかん（攻撃↑/素早さ↓）</option>
+                            <option value="0.9,1.0,1.1,1.0,1.0">ずぶとい（防御↑/攻撃↓）</option>
+                            <option value="1.0,1.0,1.1,0.9,1.0">わんぱく（防御↑/特防↓）</option>
+                            <option value="1.0,0.9,1.1,1.0,1.0">のうてんき（防御↑/特攻↓）</option>
+                            <option value="1.0,1.0,1.1,1.0,0.9">のんき（防御↑/素早さ↓）</option>
+                            <option value="0.9,1.1,1.0,1.0,1.0">ひかえめ（特攻↑/攻撃↓）</option>
+                            <option value="1.0,1.1,0.9,1.0,1.0">おっとり（特攻↑/防御↓）</option>
+                            <option value="1.0,1.1,1.0,0.9,1.0">うっかりや（特攻↑/特防↓）</option>
+                            <option value="1.0,1.1,1.0,1.0,0.9">れいせい（特攻↑/素早さ↓）</option>
+                            <option value="0.9,1.0,1.0,1.1,1.0">おだやか（特防↑/攻撃↓）</option>
+                            <option value="1.0,1.0,0.9,1.1,1.0">おとなしい（特防↑/防御↓）</option>
+                            <option value="1.0,0.9,1.0,1.1,1.0">しんちょう（特防↑/特攻↓）</option>
+                            <option value="1.0,1.0,1.0,1.1,0.9">なまいき（特防↑/素早さ↓）</option>
+                            <option value="0.9,1.0,1.0,1.0,1.1">おくびょう（素早さ↑/攻撃↓）</option>
+                            <option value="1.0,1.0,0.9,1.0,1.1">せっかち（素早さ↑/防御↓）</option>
+                            <option value="1.0,0.9,1.0,1.0,1.1">ようき（素早さ↑/特攻↓）</option>
+                            <option value="1.0,1.0,1.0,0.9,1.1">むじゃき（素早さ↑/特防↓）</option>
+                            <option value="1.0,1.0,1.0,1.0,1.0">てれや（無補正）</option>
+                            <option value="1.0,1.0,1.0,1.0,1.0">すなお（無補正）</option>
+                            <option value="1.0,1.0,1.0,1.0,1.0">きまぐれ（無補正）</option>
+                            <option value="1.0,1.0,1.0,1.0,1.0">まじめ（無補正）</option>
+                        </select>
+                        <!-- 計算ロジック用 hidden inputs -->
+                        <input type="hidden" id="myNature"    value="1.0">
+                        <input type="hidden" id="mySpaNature" value="1.0">
+                        <input type="hidden" id="myDefNature" value="1.0">
+                        <input type="hidden" id="mySpdNature" value="1.0">
+                        <input type="hidden" id="mySpeNature" value="1.0">
+                    </div>
                     <div class="stat-item"><label>攻撃ランク</label><select id="myRankA" onchange=""><option value="6">+6</option><option value="5">+5</option><option value="4">+4</option><option value="3">+3</option><option value="2">+2</option><option value="1">+1</option><option value="0" selected>0</option><option value="-1">-1</option><option value="-2">-2</option><option value="-3">-3</option><option value="-4">-4</option><option value="-5">-5</option><option value="-6">-6</option></select></div>
-                    <div class="stat-item"><label>特攻ランク</label><select id="myRankC" onchange=""><option value="6">+6</option><option value="5">+5</option><option value="4">+4</option><option value="3">+3</option><option value="2">+2</option><option value="1">+1</option><option value="0" selected>0</option><option value="-1">-1</option><option value="-2">-2</option><option value="-3">-3</option><option value="-4">-4</option><option value="-5">-5</option><option value="-6">-6</option></select></div>
                     <div class="stat-item"><label>防御ランク</label><select id="myRankD" onchange=""><option value="6">+6</option><option value="5">+5</option><option value="4">+4</option><option value="3">+3</option><option value="2">+2</option><option value="1">+1</option><option value="0" selected>0</option><option value="-1">-1</option><option value="-2">-2</option><option value="-3">-3</option><option value="-4">-4</option><option value="-5">-5</option><option value="-6">-6</option></select></div>
+                    <div class="stat-item"><label>特攻ランク</label><select id="myRankC" onchange=""><option value="6">+6</option><option value="5">+5</option><option value="4">+4</option><option value="3">+3</option><option value="2">+2</option><option value="1">+1</option><option value="0" selected>0</option><option value="-1">-1</option><option value="-2">-2</option><option value="-3">-3</option><option value="-4">-4</option><option value="-5">-5</option><option value="-6">-6</option></select></div>
                     <div class="stat-item"><label>特防ランク</label><select id="myRankD2" onchange=""><option value="6">+6</option><option value="5">+5</option><option value="4">+4</option><option value="3">+3</option><option value="2">+2</option><option value="1">+1</option><option value="0" selected>0</option><option value="-1">-1</option><option value="-2">-2</option><option value="-3">-3</option><option value="-4">-4</option><option value="-5">-5</option><option value="-6">-6</option></select></div>
                     <div class="stat-item"><label>素早ランク</label><select id="myRankS" onchange="updateSpeed()"><option value="6">+6</option><option value="5">+5</option><option value="4">+4</option><option value="3">+3</option><option value="2">+2</option><option value="1">+1</option><option value="0" selected>0</option><option value="-1">-1</option><option value="-2">-2</option><option value="-3">-3</option><option value="-4">-4</option><option value="-5">-5</option><option value="-6">-6</option></select></div>
+                </div>
                 </div>
             </div>
         </div>
@@ -274,28 +714,6 @@
                     <div class="stat-item"><label>特攻 能力P</label><input type="number" id="oppSpA" value="0" min="0" max="32" oninput="updateRealStats('opp')"><span class="real-stat" id="oppSpAReal" style="margin-left:8px; font-weight:bold; color:#c0392b;">-</span></div>
                     <div class="stat-item"><label>特防 能力P</label><input type="number" id="oppSpD" value="0" min="0" max="32" oninput="updateRealStats('opp')"><span class="real-stat" id="oppSpDReal" style="margin-left:8px; font-weight:bold; color:#c0392b;">-</span></div>
                     <div class="stat-item"><label>素早 能力P</label><input type="number" id="oppSpe" value="0" min="0" max="32" oninput="updateSpeed(); updateRealStats('opp')"><span class="real-stat" id="oppSpeReal" style="margin-left:8px; font-weight:bold; color:#c0392b;">-</span></div>
-                </div>
-                <div class="stat-grid" style="margin-top:5px;">
-                    <div class="stat-item">
-                        <label>性格(攻/特攻)</label>
-                        <select id="oppNature" onchange="updateRealStats('opp'); updateSpeed();">
-                            <option value="1.1">上昇(1.1)</option><option value="1.0" selected>無補正(1.0)</option><option value="0.9">下降(0.9)</option>
-                        </select>
-                    </div>
-                    <div class="stat-item">
-                        <label>性格(防/特防)</label>
-                        <select id="oppDefNature" onchange="updateRealStats('opp'); updateSpeed();">
-                            <option value="1.1">上昇(1.1)</option><option value="1.0" selected>無補正(1.0)</option><option value="0.9">下降(0.9)</option>
-                        </select>
-                    </div>
-                    <div class="stat-item">
-                        <label>性格(素早さ)</label>
-                        <select id="oppSpeNature" onchange="updateRealStats('opp'); updateSpeed();">
-                            <option value="1.1">上昇(1.1)</option><option value="1.0" selected>無補正(1.0)</option><option value="0.9">下降(0.9)</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="stat-grid">
                     <div class="stat-item"><label>特性</label><select id="oppAbility" onchange="updateSpeed()"></select></div>
                     <div class="stat-item"><label>持ち物</label>
                         <select id="oppItem" onchange="updateSpeed()">
@@ -316,13 +734,48 @@
                             <option value="freeze">こおり (3Tで回復)</option>
                         </select>
                     </div>
-                </div>
-                <div class="stat-grid" style="background:#f1f1f1; padding:5px; border-radius:4px; margin-top:5px;">
+                    <div class="stat-item">
+                        <label>性格</label>
+                        <select id="oppNatureAll" onchange="applyNature('opp'); updateRealStats('opp'); updateSpeed();" style="width:100%;">
+                            <option value="1.0,1.0,1.0,1.0,1.0" selected>がんばりや（無補正）</option>
+                            <option value="1.1,1.0,0.9,1.0,1.0">さみしがり（攻撃↑/防御↓）</option>
+                            <option value="1.1,0.9,1.0,1.0,1.0">いじっぱり（攻撃↑/特攻↓）</option>
+                            <option value="1.1,1.0,1.0,0.9,1.0">やんちゃ（攻撃↑/特防↓）</option>
+                            <option value="1.1,1.0,1.0,1.0,0.9">ゆうかん（攻撃↑/素早さ↓）</option>
+                            <option value="0.9,1.0,1.1,1.0,1.0">ずぶとい（防御↑/攻撃↓）</option>
+                            <option value="1.0,1.0,1.1,0.9,1.0">わんぱく（防御↑/特防↓）</option>
+                            <option value="1.0,0.9,1.1,1.0,1.0">のうてんき（防御↑/特攻↓）</option>
+                            <option value="1.0,1.0,1.1,1.0,0.9">のんき（防御↑/素早さ↓）</option>
+                            <option value="0.9,1.1,1.0,1.0,1.0">ひかえめ（特攻↑/攻撃↓）</option>
+                            <option value="1.0,1.1,0.9,1.0,1.0">おっとり（特攻↑/防御↓）</option>
+                            <option value="1.0,1.1,1.0,0.9,1.0">うっかりや（特攻↑/特防↓）</option>
+                            <option value="1.0,1.1,1.0,1.0,0.9">れいせい（特攻↑/素早さ↓）</option>
+                            <option value="0.9,1.0,1.0,1.1,1.0">おだやか（特防↑/攻撃↓）</option>
+                            <option value="1.0,1.0,0.9,1.1,1.0">おとなしい（特防↑/防御↓）</option>
+                            <option value="1.0,0.9,1.0,1.1,1.0">しんちょう（特防↑/特攻↓）</option>
+                            <option value="1.0,1.0,1.0,1.1,0.9">なまいき（特防↑/素早さ↓）</option>
+                            <option value="0.9,1.0,1.0,1.0,1.1">おくびょう（素早さ↑/攻撃↓）</option>
+                            <option value="1.0,1.0,0.9,1.0,1.1">せっかち（素早さ↑/防御↓）</option>
+                            <option value="1.0,0.9,1.0,1.0,1.1">ようき（素早さ↑/特攻↓）</option>
+                            <option value="1.0,1.0,1.0,0.9,1.1">むじゃき（素早さ↑/特防↓）</option>
+                            <option value="1.0,1.0,1.0,1.0,1.0">てれや（無補正）</option>
+                            <option value="1.0,1.0,1.0,1.0,1.0">すなお（無補正）</option>
+                            <option value="1.0,1.0,1.0,1.0,1.0">きまぐれ（無補正）</option>
+                            <option value="1.0,1.0,1.0,1.0,1.0">まじめ（無補正）</option>
+                        </select>
+                        <!-- 計算ロジック用 hidden inputs -->
+                        <input type="hidden" id="oppNature"    value="1.0">
+                        <input type="hidden" id="oppSpaNature" value="1.0">
+                        <input type="hidden" id="oppDefNature" value="1.0">
+                        <input type="hidden" id="oppSpdNature" value="1.0">
+                        <input type="hidden" id="oppSpeNature" value="1.0">
+                    </div>
                     <div class="stat-item"><label>攻撃ランク</label><select id="oppRankA" onchange=""><option value="6">+6</option><option value="5">+5</option><option value="4">+4</option><option value="3">+3</option><option value="2">+2</option><option value="1">+1</option><option value="0" selected>0</option><option value="-1">-1</option><option value="-2">-2</option><option value="-3">-3</option><option value="-4">-4</option><option value="-5">-5</option><option value="-6">-6</option></select></div>
-                    <div class="stat-item"><label>特攻ランク</label><select id="oppRankC" onchange=""><option value="6">+6</option><option value="5">+5</option><option value="4">+4</option><option value="3">+3</option><option value="2">+2</option><option value="1">+1</option><option value="0" selected>0</option><option value="-1">-1</option><option value="-2">-2</option><option value="-3">-3</option><option value="-4">-4</option><option value="-5">-5</option><option value="-6">-6</option></select></div>
                     <div class="stat-item"><label>防御ランク</label><select id="oppRankD" onchange=""><option value="6">+6</option><option value="5">+5</option><option value="4">+4</option><option value="3">+3</option><option value="2">+2</option><option value="1">+1</option><option value="0" selected>0</option><option value="-1">-1</option><option value="-2">-2</option><option value="-3">-3</option><option value="-4">-4</option><option value="-5">-5</option><option value="-6">-6</option></select></div>
+                    <div class="stat-item"><label>特攻ランク</label><select id="oppRankC" onchange=""><option value="6">+6</option><option value="5">+5</option><option value="4">+4</option><option value="3">+3</option><option value="2">+2</option><option value="1">+1</option><option value="0" selected>0</option><option value="-1">-1</option><option value="-2">-2</option><option value="-3">-3</option><option value="-4">-4</option><option value="-5">-5</option><option value="-6">-6</option></select></div>
                     <div class="stat-item"><label>特防ランク</label><select id="oppRankD2" onchange=""><option value="6">+6</option><option value="5">+5</option><option value="4">+4</option><option value="3">+3</option><option value="2">+2</option><option value="1">+1</option><option value="0" selected>0</option><option value="-1">-1</option><option value="-2">-2</option><option value="-3">-3</option><option value="-4">-4</option><option value="-5">-5</option><option value="-6">-6</option></select></div>
                     <div class="stat-item"><label>素早ランク</label><select id="oppRankS" onchange="updateSpeed()"><option value="6">+6</option><option value="5">+5</option><option value="4">+4</option><option value="3">+3</option><option value="2">+2</option><option value="1">+1</option><option value="0" selected>0</option><option value="-1">-1</option><option value="-2">-2</option><option value="-3">-3</option><option value="-4">-4</option><option value="-5">-5</option><option value="-6">-6</option></select></div>
+                </div>
                 </div>
             </div>
         </div>
@@ -422,7 +875,9 @@
                 <label><input type="checkbox" id="srOpp" onchange=""> 相手の場にステロ</label>
                 <label><input type="checkbox" id="srMy" onchange=""> 自分の場にステロ</label>
                 <label><input type="checkbox" id="spikesOpp" onchange=""> 相手にまきびし</label>
+                <select id="spikesOppCount" style="margin-left:4px;font-size:0.85em;"><option value="1">1枚(12.5%)</option><option value="2">2枚(16.7%)</option><option value="3">3枚(25%)</option></select>
                 <label><input type="checkbox" id="spikesMy" onchange=""> 自分にまきびし</label>
+                <select id="spikesMyCount" style="margin-left:4px;font-size:0.85em;"><option value="1">1枚(12.5%)</option><option value="2">2枚(16.7%)</option><option value="3">3枚(25%)</option></select>
                 <label><input type="checkbox" id="loMy" onchange=""> 自分が珠ダメ</label>
                 <label><input type="checkbox" id="loOpp" onchange=""> 相手が珠ダメ</label>
                 <label><input type="checkbox" id="tailwindMy" onchange=""> 自分においかぜ</label>
@@ -587,7 +1042,6 @@
     "アシストギア": { power: 0, type: "はがね", category: "変化" },
     "アシストパワー": { power: 20, type: "エスパー", category: "特殊" },
     "アシッドポイズンデリート": { power: 0, type: "どく", category: "物理" },
-    "アシッドポイズンデリート": { power: 0, type: "どく", category: "特殊" },
     "アシッドボム": { power: 40, type: "どく", category: "特殊" },
     "アストラルビット": { power: 120, type: "ゴースト", category: "特殊" },
     "あてみなげ": { power: 70, type: "かくとう", category: "物理" },
@@ -4794,22 +5248,76 @@
             .sort((a, b) => a.localeCompare(b, 'ja'));
 
 
-        window.onload = function() {
-            let safeTeamMy = ['フシギバナ', 'リザードン', 'カメックス', 'スピアー', 'ピジョット', 'アーボック'].filter(p => sortedPokeNames.includes(p));
-            let safeTeamOpp = ['ピカチュウ', 'ライチュウ(アローラ)', 'ピクシー', 'キュウコン', 'キュウコン(アローラ)', 'ウインディ'].filter(p => sortedPokeNames.includes(p));
+        
+        function seedTeamDefaults(side, teamData) {
+            for (let i = 0; i < teamData.length; i++) {
+                const [name, ev, nature, ability, item, moves] = teamData[i];
+                const poke = document.getElementById(`${side}Poke${i}`);
+                const evs = ev.split('-');
+                if (poke) poke.value = name;
+                const ids = ['HP','Atk','Def','SpA','SpD','Spe'];
+                ids.forEach((st, idx) => {
+                    const el = document.getElementById(`${side}${st}`);
+                    if (el && evs[idx] !== undefined) el.value = evs[idx];
+                });
+                const nat = document.getElementById(`${side}NatureAll`);
+                const natMap = {
+                    'わんぱく':'1.0,1.0,1.1,0.9,1.0', 'いじっぱり':'1.1,0.9,1.0,1.0,1.0', 'ようき':'1.0,0.9,1.0,1.0,1.1', 'ひかえめ':'0.9,1.1,1.0,1.0,1.0', 'おくびょう':'0.9,1.0,1.0,1.0,1.1'
+                };
+                if (nat && natMap[nature]) nat.value = natMap[nature];
+                applyNature(side);
+                const ab = document.getElementById(`${side}Ability`);
+                if (ab) { ab.value = ability; }
+                const it = document.getElementById(`${side}Item`);
+                if (it) {
+                    const found = Array.from(it.options).some(o => o.value === item);
+                    it.value = found ? item : '';
+                }
+                for (let m = 1; m <= 4; m++) {
+                    const mv = document.getElementById(`${side}Move${m}`);
+                    if (mv) mv.value = moves[m-1] || '';
+                }
+                const idx = i;
+                window.teamSlotState[side][idx] = window.teamSlotState[side][idx] || {};
+                window.teamSlotState[side][idx].name = name;
+                window.teamSlotState[side][idx][`${side}CurrentHpPct`] = 100;
+                for (let m = 1; m <= 4; m++) window.teamSlotState[side][idx][`${side}Move${m}`] = moves[m-1] || '';
+                window.teamSlotState[side][idx][`${side}Ability`] = ability;
+                window.teamSlotState[side][idx][`${side}Item`] = item;
+            }
+        }
+window.onload = function() {
+            let safeTeamMy = ['カバルドン', 'ハッサム', 'ギルガルド', 'マスカーニャ', 'カイリュー', 'ドドゲザン'].filter(p => sortedPokeNames.includes(p));
+            let safeTeamOpp = ['ガブリアス', 'アシレーヌ', 'リザードン', 'アーマーガア', 'ブリジュラス', 'ゲンガー'].filter(p => sortedPokeNames.includes(p));
             while(safeTeamMy.length < 6) safeTeamMy.push(sortedPokeNames[safeTeamMy.length] || sortedPokeNames[0]);
             while(safeTeamOpp.length < 6) safeTeamOpp.push(sortedPokeNames[safeTeamOpp.length] || sortedPokeNames[0]);
 
             renderTeam('my', safeTeamMy);
             renderTeam('opp', safeTeamOpp);
-            updateActive('my');
-            updateActive('opp');
-            updateRealStats('my');
-            updateRealStats('opp');
-            updateTeamSummary('my');
-            updateTeamSummary('opp');
-            updateRealStats('my');
-            updateRealStats('opp');
+            seedTeamDefaults('my', [
+                ['カバルドン','32-0-2-0-32-0','わんぱく','すなおこし','オボンのみ',['じしん','ステルスロック','あくび','なまける']],
+                ['ハッサム','32-32-2-0-0-0','いじっぱり','テクニシャン','メガストーン',['バレットパンチ','つるぎのまい','インファイト','はたきおとす']],
+                ['ギルガルド','32-32-1-0-1-0','いじっぱり','バトルスイッチ','たべのこし',['かげうち','キングシールド','ポルターガイスト','せいなるつるぎ']],
+                ['マスカーニャ','2-32-0-0-0-32','ようき','へんげんじざい','こだわりスカーフ',['トリックフラワー','トリプルアクセル','はたきおとす','とんぼがえり']],
+                ['カイリュー','2-0-0-32-0-32','ひかえめ','マルチスケイル','メガストーン',['しんそく','りゅうせいぐん','10まんボルト','かえんほうしゃ']],
+                ['ドドゲザン','2-32-0-0-0-32','いじっぱり','そうだいしょう','くろいメガネ',['ふいうち','ドゲザン','つるぎのまい','アイアンヘッド']],
+            ]);
+            seedTeamDefaults('opp', [
+                ['ガブリアス','2-32-0-0-0-32','ようき','さめはだ','きあいのタスキ',['じしん','げきりん','ステルスロック','がんせきふうじ']],
+                ['アシレーヌ','32-0-0-32-0-2','ひかえめ','げきりゅう','オボンのみ',['ムーンフォース','うたかたのアリア','アクアジェット','クイックターン']],
+                ['リザードン','2-0-0-32-0-32','おくびょう','もうか','メガストーン',['ソーラービーム','ニトロチャージ','オーバーヒート','エアスラッシュ']],
+                ['アーマーガア','32-0-32-0-2-0','わんぱく','プレッシャー','たべのこし',['はねやすめ','ボディプレス','てっぺき','とんぼがえり']],
+                ['ブリジュラス','2-0-0-32-0-32','おくびょう','じきゅうりょく','たべのこし',['ラスターカノン','りゅうせいぐん','ステルスロック','10まんボルト']],
+                ['ゲンガー','2-0-0-32-0-32','おくびょう','のろわれボディ','メガストーン',['シャドーボール','ヘドロウェーブ','みちづれ','きあいだま']],
+            ]);
+            // DOM生成完了後に初期化処理を実行
+            setTimeout(() => {
+                updateActive('my');
+                updateActive('opp');
+                window.__initializingDashboard = false;
+                updateTeamSummary('my');
+                updateTeamSummary('opp');
+            }, 50);
         };
 
         function updateTeamSummary(side) {
@@ -4817,35 +5325,31 @@
                 const sumEl = document.getElementById(`${side}Summary${i}`);
                 if (!sumEl) continue;
 
-                let pokeName = document.getElementById(`${side}Poke${i}`).value;
-                if (!pokeName) {
-                    sumEl.innerHTML = '';
-                    continue;
-                }
+                const pokeName = document.getElementById(`${side}Poke${i}`)?.value;
+                if (!pokeName) continue;
 
                 let hp = 100;
                 let moves = ['未設定', '未設定', '未設定', '未設定'];
-                let state = window.teamSlotState[side][i];
-
+                const state = window.teamSlotState[side][i] || {};
                 const activeRadio = document.querySelector(`input[name="${side}Active"]:checked`);
                 const isActive = activeRadio && parseInt(activeRadio.value, 10) === i;
 
                 if (isActive) {
                     const hpEl = document.getElementById(`${side}CurrentHpPct`);
                     if (hpEl) hp = parseFloat(hpEl.value) || 0;
-                    for(let m=1; m<=4; m++) {
-                        let mVal = document.getElementById(`${side}Move${m}`);
-                        if (mVal && mVal.value) { moves[m-1] = mVal.value; }
+                    for (let m=1; m<=4; m++) {
+                        const mVal = document.getElementById(`${side}Move${m}`);
+                        if (mVal && mVal.value && mVal.value !== '未設定' && mVal.value !== 'なし') moves[m-1] = mVal.value;
                     }
-                } else if (state && state.name === pokeName) {
+                } else if (state.name === pokeName) {
                     hp = state[`${side}CurrentHpPct`] !== undefined ? parseFloat(state[`${side}CurrentHpPct`]) : 100;
-                    for(let m=1; m<=4; m++) {
-                        if (state[`${side}Move${m}`]) { moves[m-1] = state[`${side}Move${m}`]; }
+                    for (let m=1; m<=4; m++) {
+                        if (state[`${side}Move${m}`] && state[`${side}Move${m}`] !== '未設定' && state[`${side}Move${m}`] !== 'なし') moves[m-1] = state[`${side}Move${m}`];
                     }
                 }
 
-                let hpColor = hp > 50 ? '#27ae60' : (hp > 20 ? '#f39c12' : '#c0392b');
-                let moveStr = moves.join(' / ');
+                const hpColor = hp > 50 ? '#27ae60' : (hp > 20 ? '#f39c12' : '#c0392b');
+                const moveStr = moves.join(' / ');
                 sumEl.innerHTML = `<span style="color:${hpColor}; font-weight:bold;">HP: ${hp}%</span> <span style="color:#ccc;">|</span> <span style="color:#666;">技: ${moveStr}</span>`;
             }
         }
@@ -4856,8 +5360,8 @@
                 html += `<div class="poke-row">
                     <div style="display:flex; align-items:center; gap:5px; width:100%;">
                         <span class="badge">出</span><input type="checkbox" title="選出" id="${side}Selected${i}">
-                        <span class="badge">場</span><input type="radio" name="${side}Active" value="${i}" ${i==0?'checked':''} onchange="updateActive('${side}')">
-                        <select id="${side}Poke${i}" onchange="if(document.querySelector('input[name=\'${side}Active\']:checked').value=='${i}') updateActive('${side}'); setTimeout(()=>updateTeamSummary('${side}'), 50);" style="flex:1; padding:4px;">`;
+                        <span class="badge">場</span><input type="radio" name="${side}Active" value="${i}" ${i===0?'checked':''} onchange="updateActive('${side}')">
+                        <select id="${side}Poke${i}" onchange="if(document.querySelector('input[name=\'${side}Active\']:checked').value==='${i}') updateActive('${side}'); setTimeout(()=>updateTeamSummary('${side}'), 50);" style="flex:1; padding:4px;">`;
                 sortedPokeNames.forEach(p => { html += `<option value="${p}" ${p===defaultTeam[i]?'selected':''}>${p}</option>`; });
                 html += `</select>
                     </div>
@@ -4943,6 +5447,8 @@
 
         
         window.teamSlotState = { my: {}, opp: {} };
+        window.__initializingDashboard = true;
+
 
         function recordState(e) {
             const el = e.target;
@@ -4959,7 +5465,7 @@
             const active = document.querySelector(`input[name="${side}Active"]:checked`);
             if (!active) return;
             const idx = active.value;
-            const baseName = document.getElementById(`${side}Poke${idx}`).value;
+            const baseName = document.getElementById(`${side}Poke${idx}`)?.value;
 
             if (!window.teamSlotState[side][idx]) window.teamSlotState[side][idx] = { name: baseName };
             const state = window.teamSlotState[side][idx];
@@ -5114,6 +5620,7 @@
             }
 
             if (typeof updateSpeed === 'function') updateSpeed();
+            applyNature(side);
             if (typeof updateMoveDropdown === 'function') updateMoveDropdown();
             updateTeamSummary(side);
             if (side === "my" && typeof checkPoints === 'function') checkPoints();
@@ -5166,7 +5673,7 @@
             if (side === 'my') {
                 const defMy = {
                     myHP: 0, myAtk: 0, myDef: 0, mySpA: 0, mySpD: 0, mySpe: 0,
-                    myNature: '1.0', myDefNature: '1.0', mySpeNature: '1.0',
+                    myNatureAll: '1.0,1.0,1.0,1.0,1.0', myNature: '1.0', mySpaNature: '1.0', myDefNature: '1.0', mySpdNature: '1.0', mySpeNature: '1.0',
                     myItem: 'なし', myRankA: 0, myRankD: 0, myRankS: 0, myRankC: 0, myRankD2: 0,
                     myCurrentHpSlider: 100, myCurrentHpPct: 100
                 };
@@ -5177,7 +5684,7 @@
             } else if (side === 'opp') {
                 const defOpp = {
                     oppHP: 0, oppAtk: 0, oppDef: 0, oppSpA: 0, oppSpD: 0, oppSpe: 0,
-                    oppNature: '1.0', oppDefNature: '1.0', oppSpeNature: '1.0',
+                    oppNatureAll: '1.0,1.0,1.0,1.0,1.0', oppNature: '1.0', oppSpaNature: '1.0', oppDefNature: '1.0', oppSpdNature: '1.0', oppSpeNature: '1.0',
                     oppItem: 'なし', oppRankA: 0, oppRankD: 0, oppRankS: 0, oppRankC: 0, oppRankD2: 0,
                     oppCurrentHpSlider: 100, oppCurrentHpPct: 100
                 };
@@ -5220,17 +5727,9 @@
             // ポケモン切り替え時に計算結果・サマリーをクリア（ランク倍率等の表示引き継ぎ防止）
             const _out = document.getElementById('resultOutput');
             if (_out) _out.innerHTML = '';
-            for (let _i = 0; _i < 6; _i++) {
-                const _mySumEl  = document.getElementById(`mySummary${_i}`);
-                const _oppSumEl = document.getElementById(`oppSummary${_i}`);
-                if (_mySumEl)  _mySumEl.innerHTML  = '';
-                if (_oppSumEl) _oppSumEl.innerHTML = '';
-            }
             if (typeof updateRankBadges === 'function') updateRankBadges();
-            const _pa = document.getElementById('pointAlert');
-            const _paO = document.getElementById('pointAlertOpp');
-            if (side === 'my' && _pa) _pa.remove();
-            if (side === 'opp' && _paO) _paO.remove();
+            const _pa = document.getElementById(side === 'my' ? 'pointAlert' : 'pointAlertOpp');
+            if (_pa) _pa.remove();
             // 再計算
             if (side === 'my' && typeof checkPoints === 'function') checkPoints();
             if (side === 'opp' && typeof checkOppSpeed === 'function') checkOppSpeed();
@@ -5239,11 +5738,14 @@
         }
 
         function updateMoveDropdown() {
-            const attackerSideRaw = document.querySelector(`input[name="attackerSide"]:checked`).value;
+            const checkedAtk = document.querySelector(`input[name="attackerSide"]:checked`);
+            if (!checkedAtk) return;
+            const attackerSideRaw = checkedAtk.value;
             const attackerSide = attackerSideRaw === "me" ? "my" : "opp";
             const effPoke = getEffectivePoke(attackerSide);
             const moveSelect = document.getElementById('moveSelect');
-            const current = moveSelect ? moveSelect.value : '';
+            if (!moveSelect) return;
+            const current = moveSelect.value;
             moveSelect.innerHTML = '<option value="">-- 技を手動で入力 --</option>';
             if (effPoke && effPoke.moves) {
                 effPoke.moves.forEach(m => { moveSelect.add(new Option(m, m)); });
@@ -5253,7 +5755,11 @@
             } else if (effPoke && effPoke.moves && effPoke.moves.length) {
                 moveSelect.value = effPoke.moves[0];
             }
-            setTimeout(applyMoveData, 0);
+            // 技が実際に選択されている場合のみ applyMoveData を実行
+            if (window.__initializingDashboard) return;
+            if (moveSelect.value && moveSelect.value !== '' && moveSelect.value !== '未選択' && moveSelect.value !== 'なし' && moveSelect.value !== '（未設定）') {
+                setTimeout(applyMoveData, 0);
+            }
         }
 
         
@@ -5301,11 +5807,16 @@ function getSpecialMoveAdjustments(moveName, basePower, ctx) {
 
 function applyMoveData() {
             const moveName = document.getElementById('moveSelect').value;
+            // 技未設定・未選択の場合は計算を実行しない
+            if (!moveName || moveName === '' || moveName === '-- 技を手動で入力 --') return;
             const attackerSideRaw = document.querySelector(`input[name="attackerSide"]:checked`).value;
             const attackerSide = attackerSideRaw === "me" ? "my" : "opp";
             const defenderSide = attackerSide === "my" ? "opp" : "my";
+            const atkPoke = getEffectivePoke(attackerSide);
+            // 攻撃側のポケモンが未選択なら計算しない
+            if (!atkPoke) return;
             const moveInfo = moveDex[moveName] || { power: 0, type: "", category: "物理" };
-            if (!moveName || !moveInfo) return;
+            if (!moveInfo) return;
             const atkItem = document.getElementById(`${attackerSide}Item`)?.value || 'なし';
             const defItem = document.getElementById(`${defenderSide}Item`)?.value || 'なし';
             const atkStatus = document.getElementById(`${attackerSide}Status`)?.value || 'none';
@@ -5314,7 +5825,6 @@ function applyMoveData() {
             let power = (moveName === 'ソーラービーム' || moveName === 'ソーラーブレード') ? (weather === 'sun' ? 120 : 60) : (moveInfo.power || 0);
             const atkIdx = parseInt(document.querySelector(`input[name="${attackerSide}Active"]:checked`)?.value || '0', 10);
             const defIdx = parseInt(document.querySelector(`input[name="${defenderSide}Active"]:checked`)?.value || '0', 10);
-            const atkPoke = getEffectivePoke(attackerSide);
             const defPoke = getEffectivePoke(defenderSide);
             const atkSpe = getExactStats(attackerSide, atkIdx, atkPoke).spe || 1;
             const defSpe = getExactStats(defenderSide, defIdx, defPoke).spe || 1;
@@ -5350,6 +5860,19 @@ function toggleDamageInput() {
             updateMoveDropdown();
         }
 
+        
+        // ===== 性格セレクト統合: 選択値を各hidden inputに反映 =====
+        function applyNature(side) {
+            const val = document.getElementById(`${side}NatureAll`)?.value || '1.0,1.0,1.0,1.0,1.0';
+            const parts = val.split(',');
+            const [atk, spa, df, spd, spe] = parts;
+            const set = (id, v) => { const el = document.getElementById(id); if (el) el.value = v; };
+            set(`${side}Nature`,    atk);
+            set(`${side}SpaNature`, spa);
+            set(`${side}DefNature`, df);
+            set(`${side}SpdNature`, spd);
+            set(`${side}SpeNature`, spe);
+        }
         function calcStat(base, points, nature, isHP) {
             const p = Math.min(32, Math.max(0, parseInt(points, 10) || 0));
             if (isHP) return Math.floor((base * 2 + 31) * 0.5) + 60 + p;
@@ -5367,7 +5890,7 @@ function getRankMod(rank) {
         function getCurrentHpMax(side) {
             const poke = getEffectivePoke(side);
             if (!poke) return 1;
-            const hpPts = parseInt(document.getElementById(`${side}HP`).value, 10) || 0;
+            const hpPts = parseInt(document.getElementById(`${side}HP`)?.value, 10) || 0;
             return calcStat(poke.hp, hpPts, 1.0, true);
         }
 
@@ -5377,7 +5900,7 @@ function getRankMod(rank) {
             if (!poke) return;
 
             // HP
-            const maxHp = calcStat(poke.hp, parseInt(document.getElementById(`${side}HP`).value, 10) || 0, 1.0, true);
+            const maxHp = calcStat(poke.hp, parseInt(document.getElementById(`${side}HP`)?.value || 0, 10) || 0, 1.0, true);
             const hpSpan = document.getElementById(`${side}HPReal`);
             if (hpSpan) hpSpan.textContent = maxHp;
 
@@ -5385,32 +5908,34 @@ function getRankMod(rank) {
             syncHpFromPercent(side, null, true);
 
             // Natures
-            const atkSpANature = parseFloat(document.getElementById(`${side}Nature`).value) || 1.0;
-            const defSpDNature = parseFloat(document.getElementById(`${side}DefNature`).value) || 1.0;
-            const speNature = parseFloat(document.getElementById(`${side}SpeNature`).value) || 1.0;
+            const atkNature  = parseFloat(document.getElementById(`${side}Nature`)?.value)    || 1.0;
+            const spaNature  = parseFloat(document.getElementById(`${side}SpaNature`)?.value) || 1.0;
+            const defNature  = parseFloat(document.getElementById(`${side}DefNature`)?.value) || 1.0;
+            const spdNature  = parseFloat(document.getElementById(`${side}SpdNature`)?.value) || 1.0;
+            const speNature  = parseFloat(document.getElementById(`${side}SpeNature`)?.value) || 1.0;
 
             // Atk
-            let atk = calcStat(poke.atk, parseInt(document.getElementById(`${side}Atk`).value, 10) || 0, atkSpANature, false);
+            let atk = calcStat(poke.atk, parseInt(document.getElementById(`${side}Atk`)?.value, 10) || 0, atkNature, false);
             let atkSpan = document.getElementById(`${side}AtkReal`);
             if (atkSpan) atkSpan.textContent = atk;
 
             // Def
-            let def = calcStat(poke.def, parseInt(document.getElementById(`${side}Def`).value, 10) || 0, defSpDNature, false);
+            let def = calcStat(poke.def, parseInt(document.getElementById(`${side}Def`)?.value, 10) || 0, defNature, false);
             let defSpan = document.getElementById(`${side}DefReal`);
             if (defSpan) defSpan.textContent = def;
 
             // SpA
-            let spa = calcStat(poke.spa, parseInt(document.getElementById(`${side}SpA`).value, 10) || 0, atkSpANature, false);
+            let spa = calcStat(poke.spa, parseInt(document.getElementById(`${side}SpA`)?.value, 10) || 0, spaNature, false); // 特攻専用性格を適用（修正）
             let spaSpan = document.getElementById(`${side}SpAReal`);
             if (spaSpan) spaSpan.textContent = spa;
 
             // SpD
-            let spd = calcStat(poke.spd, parseInt(document.getElementById(`${side}SpD`).value, 10) || 0, defSpDNature, false);
+            let spd = calcStat(poke.spd, parseInt(document.getElementById(`${side}SpD`)?.value, 10) || 0, spdNature, false); // 特防専用性格を適用（修正）
             let spdSpan = document.getElementById(`${side}SpDReal`);
             if (spdSpan) spdSpan.textContent = spd;
 
             // Spe
-            let spe = calcStat(poke.spe, parseInt(document.getElementById(`${side}Spe`).value, 10) || 0, speNature, false);
+            let spe = calcStat(poke.spe, parseInt(document.getElementById(`${side}Spe`)?.value, 10) || 0, speNature, false);
             let speSpan = document.getElementById(`${side}SpeReal`);
             if (speSpan) speSpan.textContent = spe;
         }
@@ -5582,17 +6107,21 @@ if (document.getElementById('oppSpeedDisplay')) document.getElementById('oppSpee
 
         
         function triggerAttack(side, moveSlot) {
-            const moveName = document.getElementById(`${side}Move${moveSlot}`)?.value;
-            if (!moveName || moveName === '') {
-                alert("技が選択されていません");
-                return;
-            }
+            const moveName = document.getElementById(`${side}Move${moveSlot}`)?.value || '';
 
-            // 攻撃・防御側ポケモンの存在チェック
-            const atkPoke = getEffectivePoke(side);
+            // 攻撃・防御側ポケモンの存在チェック（active未設定時は選択中ポケモンにフォールバック）
+            let atkPoke = getEffectivePoke(side);
+            if (!atkPoke) {
+                const altName = document.getElementById(`${side}Poke${document.querySelector(`input[name="${side}Active"]:checked`)?.value || '0'}`)?.value;
+                if (altName && pokedex[altName]) atkPoke = pokedex[altName];
+            }
             if (!atkPoke) { alert("攻撃するポケモンが選択されていません"); return; }
             const defSide = side === 'my' ? 'opp' : 'my';
-            const defPoke = getEffectivePoke(defSide);
+            let defPoke = getEffectivePoke(defSide);
+            if (!defPoke) {
+                const altName = document.getElementById(`${defSide}Poke${document.querySelector(`input[name="${defSide}Active"]:checked`)?.value || '0'}`)?.value;
+                if (altName && pokedex[altName]) defPoke = pokedex[altName];
+            }
             if (!defPoke) { alert("相手のポケモンが選択されていません"); return; }
 
             // 攻撃サイドのラジオボタンを切り替え（updateMoveDropdownを呼ばずに直接処理）
@@ -5605,21 +6134,8 @@ if (document.getElementById('oppSpeedDisplay')) document.getElementById('oppSpee
             // 技ドロップダウンを攻撃側に合わせて更新
             updateMoveDropdown();
 
-            // updateMoveDropdown後に技をセット（リセット後に上書き）
-            const moveSelect = document.getElementById('moveSelect');
-            if (moveSelect) {
-                const found = Array.from(moveSelect.options).some(o => o.value === moveName);
-                if (!found) moveSelect.add(new Option(moveName, moveName));
-                moveSelect.value = moveName;
-            }
-
-            // applyMoveData内でmoveSelectの値が変わらないよう、呼び出し後に再セット保険
-            applyMoveData();
-            // applyMoveData後にmoveSelectの値を確実に維持
-            if (moveSelect && moveSelect.value !== moveName) {
-                moveSelect.value = moveName;
-            }
-
+            // 技が未設定でも攻撃ボタンは押せるようにする
+            // 未設定時は moveSelect を変更せず、そのまま計算ルーチンへ
             executeCalculation();
 
             const resultBox = document.getElementById('resultOutput');
@@ -5634,11 +6150,25 @@ if (document.getElementById('oppSpeedDisplay')) document.getElementById('oppSpee
             const isActive = activeEl && parseInt(activeEl.value, 10) === idx;
             if (!window.teamSlotState || !window.teamSlotState[side]) return { isConf:false, hp:calcStat(pDex.hp||45,0,1,true), atk:calcStat(pDex.atk||45,0,1,false), def:calcStat(pDex.def||45,0,1,false), spa:calcStat(pDex.spa||45,0,1,false), spd:calcStat(pDex.spd||45,0,1,false), spe:calcStat(pDex.spe||45,0,1,false) };
             const state = (window.teamSlotState[side] && window.teamSlotState[side][idx]) ? window.teamSlotState[side][idx] : {};
-            const getV = (st) => isActive ? (parseInt(document.getElementById(`${side}${st}`).value, 10) || 0) : (parseInt(state[`${side}${st}`], 10) || 0);
-            const getN = (st) => isActive ? (parseFloat(document.getElementById(`${side}${st}`).value) || 1.0) : (parseFloat(state[`${side}${st}`]) || 1.0);
+            const getV = (st) => isActive ? (parseInt(document.getElementById(`${side}${st}`)?.value, 10) || 0) : (parseInt(state[`${side}${st}`], 10) || 0);
+            // 非アクティブ時: NatureAll が保存されていれば分解して使用
+            const _getNatureFromState = (st) => {
+                const allVal = state[`${side}NatureAll`];
+                if (!allVal) return parseFloat(state[`${side}${st}`]) || 1.0;
+                const [atk,spa,df,spd,spe] = allVal.split(',').map(parseFloat);
+                const map = { Nature:atk, SpaNature:spa, DefNature:df, SpdNature:spd, SpeNature:spe };
+                return map[st] ?? 1.0;
+            };
+            const getN = (st) => isActive
+                ? (parseFloat(document.getElementById(`${side}${st}`)?.value) || 1.0)
+                : _getNatureFromState(st);
 
             let hpP = getV('HP'), atkP = getV('Atk'), defP = getV('Def'), spaP = getV('SpA'), spdP = getV('SpD'), speP = getV('Spe');
-            let natA = getN('Nature'), natD = getN('DefNature'), natS = getN('SpeNature');
+            let natA   = getN('Nature'),
+                natSpa = getN('SpaNature'),  // 特攻専用（修正）
+                natD   = getN('DefNature'),
+                natSpd = getN('SpdNature'),  // 特防専用（修正）
+                natS   = getN('SpeNature');
 
             let total = hpP + atkP + defP + spaP + spdP + speP;
             return {
@@ -5646,8 +6176,8 @@ if (document.getElementById('oppSpeedDisplay')) document.getElementById('oppSpee
                 hp: calcStat(pDex.hp, hpP, 1.0, true),
                 atk: calcStat(pDex.atk, atkP, natA, false),
                 def: calcStat(pDex.def, defP, natD, false),
-                spa: calcStat(pDex.spa, spaP, natA, false),
-                spd: calcStat(pDex.spd, spdP, natD, false),
+                spa: calcStat(pDex.spa, spaP, natSpa, false), // 特攻専用性格を適用（修正）
+                spd: calcStat(pDex.spd, spdP, natSpd, false), // 特防専用性格を適用（修正）
                 spe: calcStat(pDex.spe, speP, natS, false),
                 hpP, atkP, defP, spaP, spdP, speP, total
             };
@@ -5888,8 +6418,13 @@ if (document.getElementById('oppSpeedDisplay')) document.getElementById('oppSpee
                 let e = calcTypeEffectiveness('いわ', pDex.types, '', pAbil);
                 if (e > 0) dmg += 12.5 * e;
             }
-            let spikes = isOpp ? document.getElementById('spikesOpp')?.checked : document.getElementById('spikesMy')?.checked; 
-            if (spikes && !pDex.types.includes('ひこう') && pAbil !== 'ふゆう') dmg += 12.5;
+            let spikes = isOpp ? document.getElementById('spikesOpp')?.checked : document.getElementById('spikesMy')?.checked;
+            if (spikes && !pDex.types.includes('ひこう') && pAbil !== 'ふゆう') {
+                const countId = isOpp ? 'spikesOppCount' : 'spikesMyCount';
+                const cnt = parseInt(document.getElementById(countId)?.value, 10) || 1;
+                const spikeDmgTable = { 1: 12.5, 2: 100/6, 3: 25.0 }; // 1枚=12.5%, 2枚=16.7%, 3枚=25%
+                dmg += spikeDmgTable[cnt] ?? 12.5;
+            }
 
             let lo = isOpp ? document.getElementById('loOpp')?.checked : document.getElementById('loMy')?.checked;
             if (lo) dmg += 10.0;
@@ -5898,63 +6433,106 @@ if (document.getElementById('oppSpeedDisplay')) document.getElementById('oppSpee
         }
 
         function updateSpeedTiers() {
+            // 素早さ補正特性マップ: 特性名 → { 倍率, 条件チェック関数, 条件ラベル }
+            const SpeAbilMap = {
+                'すいすい':         { mult: 2,   cond: () => document.getElementById('weather')?.value === 'rain',     label: 'あまごい時×2' },
+                'ようりょくそ':     { mult: 2,   cond: () => document.getElementById('weather')?.value === 'sun',      label: 'にほんばれ時×2' },
+                'すなかき':         { mult: 2,   cond: () => document.getElementById('weather')?.value === 'sand',     label: 'すなあらし時×2' },
+                'ゆきかき':         { mult: 2,   cond: () => document.getElementById('weather')?.value === 'snow',     label: 'ゆき時×2' },
+                'クォークチャージ': { mult: 1.5, cond: () => document.getElementById('field')?.value === 'electric',  label: 'エレキフィールド時×1.5' },
+                'こだいかっせい':   { mult: 1.5, cond: () => document.getElementById('weather')?.value === 'sun',      label: 'にほんばれ時×1.5' },
+                'はやあし':         { mult: 1.5, cond: () => { const s = document.getElementById('myStatus')?.value; return s && s !== 'none' && s !== 'paralysis'; }, label: '状態異常時×1.5' },
+                'かるわざ':         { mult: 2,   cond: () => false, label: 'アイテム消費後×2' },
+                'かるわざ':         { mult: 2,   cond: () => false, label: 'アイテム消費後×2' },
+                'スロースタート':   { mult: 0.5, cond: () => true,  label: '5T経過まで×0.5' },
+            };
+
             let list = [];
             ['my', 'opp'].forEach(side => {
-                for(let i=0; i<6; i++) {
+                for (let i = 0; i < 6; i++) {
                     let pName = document.getElementById(`${side}Poke${i}`)?.value;
-                    if(!pName || !pokedex[pName]) continue;
+                    if (!pName || !pokedex[pName]) continue;
                     let pDex = pokedex[pName];
-                    let isAct = (document.querySelector(`input[name="${side}Active"]:checked`)?.value == i);
+                    let isAct = (document.querySelector(`input[name="${side}Active"]:checked`)?.value === String(i));
                     let state = window.teamSlotState[side][i] || {};
 
-                    let pts = isAct ? parseInt(document.getElementById(`${side}Spe`)?.value||0, 10) : (parseInt(state[`${side}Spe`], 10)||0);
-                    let nat = isAct ? parseFloat(document.getElementById(`${side}SpeNature`)?.value||1.0) : (parseFloat(state[`${side}SpeNature`])||1.0);
-                    let rank = isAct ? parseInt(document.getElementById(`${side}RankS`)?.value||0, 10) : (parseInt(state[`${side}RankS`], 10)||0);
-                    let item = isAct ? document.getElementById(`${side}Item`)?.value : (state[`${side}Item`]||'');
-                    let status = isAct ? document.getElementById(`${side}Status`)?.value : (state[`${side}Status`]||'none');
-                    let abil = isAct ? document.getElementById(`${side}Ability`)?.value : (state[`${side}Ability`]||'');
+                    let pts    = isAct ? parseInt(document.getElementById(`${side}Spe`)?.value  || 0, 10) : (parseInt(state[`${side}Spe`],    10) || 0);
+                    let nat    = isAct ? parseFloat(document.getElementById(`${side}SpeNature`)?.value || 1.0) : (parseFloat(state[`${side}SpeNature`]) || 1.0);
+                    let rank   = isAct ? parseInt(document.getElementById(`${side}RankS`)?.value || 0, 10) : (parseInt(state[`${side}RankS`], 10) || 0);
+                    let item   = isAct ? document.getElementById(`${side}Item`)?.value     : (state[`${side}Item`]    || '');
+                    let status = isAct ? document.getElementById(`${side}Status`)?.value   : (state[`${side}Status`]  || 'none');
+                    let abil   = isAct ? document.getElementById(`${side}Ability`)?.value  : (state[`${side}Ability`] || '');
+                    let tailwind = side === 'my'
+                        ? document.getElementById('tailwindMy')?.checked
+                        : document.getElementById('tailwindOpp')?.checked;
 
                     let sp = Math.floor(calcStat(pDex.spe, pts, nat, false));
                     sp = Math.floor(sp * getRankMod(rank));
-                    if(item === 'こだわりスカーフ' && !pDex.isMega) sp = Math.floor(sp * 1.5);
-                    if(status === 'paralysis') sp = Math.floor(sp * 0.5);
-                    if(abil === 'すいすい' && document.getElementById('weather') && document.getElementById('weather').value === 'rain') sp *= 2;
-                    if(abil === 'ようりょくそ' && document.getElementById('weather') && document.getElementById('weather').value === 'sun') sp *= 2;
-                    if(abil === 'すなかき' && document.getElementById('weather') && document.getElementById('weather').value === 'sand') sp *= 2;
-                    if(abil === 'クォークチャージ' && document.getElementById('field') && document.getElementById('field').value === 'electric') sp = Math.floor(sp * 1.5);
 
-                    if(side === 'my' && document.getElementById('tailwindMy')?.checked) sp *= 2;
-                    if(side === 'opp' && document.getElementById('tailwindOpp')?.checked) sp *= 2;
+                    let mods = [];
+                    if (rank > 0) mods.push(`ランク+${rank}`);
+                    if (rank < 0) mods.push(`ランク${rank}`);
 
-                    list.push({side: side, name: pName, speed: sp, rank: rank, item: item, status: status, abil: abil, idx: i, isAct: isAct});
+                    // こだわりスカーフ
+                    if (item === 'こだわりスカーフ' && !pDex.isMega) {
+                        sp = Math.floor(sp * 1.5);
+                        mods.push('スカーフ×1.5');
+                    }
+                    // まひ
+                    if (status === 'paralysis') {
+                        sp = Math.floor(sp * 0.5);
+                        mods.push('まひ×0.5');
+                    }
+                    // 特性補正（条件付き）
+                    if (abil && SpeAbilMap[abil]) {
+                        const abilInfo = SpeAbilMap[abil];
+                        // はやあし は両陣営のstatus参照のため側ごとに調整
+                        let condResult = false;
+                        if (abil === 'はやあし') {
+                            const st = isAct ? document.getElementById(`${side}Status`)?.value : (state[`${side}Status`] || 'none');
+                            condResult = st && st !== 'none' && st !== 'paralysis';
+                        } else {
+                            condResult = abilInfo.cond();
+                        }
+                        if (condResult) {
+                            sp = Math.floor(sp * abilInfo.mult);
+                        }
+                        mods.push(`${abil}(${abilInfo.label})`);
+                    }
+                    // 追い風
+                    if (tailwind) {
+                        sp *= 2;
+                        mods.push('おいかぜ×2');
+                    }
+
+                    list.push({ side, name: pName, speed: sp, rank, item, status, abil, idx: i, isAct, mods });
                 }
             });
-            list.sort((a,b) => b.speed - a.speed);
+            list.sort((a, b) => b.speed - a.speed);
 
-            let outHtml = `<table style="width:100%; border-collapse:collapse; text-align:center;">
-                <tr style="background:#eee;"><th style="padding:4px;border-bottom:1px solid #ccc;">S実数</th><th style="padding:4px;border-bottom:1px solid #ccc;">陣営</th><th style="padding:4px;border-bottom:1px solid #ccc;text-align:left;">ポケモン</th><th style="padding:4px;border-bottom:1px solid #ccc;text-align:left;">補正メモ</th></tr>`;
-            list.forEach(item => {
-                let color = item.side === 'my' ? '#2980b9' : '#c0392b';
-                let actMark = item.isAct ? `<span style="background:${color};color:#fff;border-radius:3px;padding:0 4px;font-size:0.7rem;margin-left:4px;">場</span>` : '';
-                let mods = [];
-                if(item.item === 'こだわりスカーフ') mods.push('スカーフ');
-                if(item.rank > 0) mods.push(`+${item.rank}`);
-                if(item.rank < 0) mods.push(`${item.rank}`);
-                if(item.status === 'paralysis') mods.push('まひ');
-                if(item.side === 'my' && document.getElementById('tailwindMy')?.checked) mods.push('おいかぜ');
-                if(item.side === 'opp' && document.getElementById('tailwindOpp')?.checked) mods.push('おいかぜ');
-                if(item.abil === 'すいすい' || item.abil === 'ようりょくそ' || item.abil === 'すなかき') mods.push(item.abil);
-
+            let outHtml = `<table style="width:100%;border-collapse:collapse;text-align:center;">
+                <tr style="background:var(--surface2,#f8f9fa);">
+                    <th style="padding:5px 6px;border-bottom:2px solid var(--border,#e2e8f0);font-size:0.82rem;">S実数</th>
+                    <th style="padding:5px 6px;border-bottom:2px solid var(--border,#e2e8f0);font-size:0.82rem;">陣営</th>
+                    <th style="padding:5px 6px;border-bottom:2px solid var(--border,#e2e8f0);font-size:0.82rem;text-align:left;">ポケモン</th>
+                    <th style="padding:5px 6px;border-bottom:2px solid var(--border,#e2e8f0);font-size:0.82rem;text-align:left;">補正メモ</th>
+                </tr>`;
+            list.forEach(entry => {
+                let color = entry.side === 'my' ? 'var(--my-color,#2b6cb0)' : 'var(--opp-color,#c53030)';
+                let actMark = entry.isAct
+                    ? `<span style="background:${color};color:#fff;border-radius:3px;padding:1px 5px;font-size:0.68rem;margin-left:4px;">場</span>`
+                    : '';
+                let modsText = entry.mods.length ? entry.mods.join(' / ') : '-';
                 outHtml += `<tr>
-                    <td style="font-weight:bold; color:${color}; border-bottom:1px solid #eee; padding:4px;">${item.speed}</td>
-                    <td style="color:${color}; border-bottom:1px solid #eee; padding:4px;">${item.side==='my'?'自分':'相手'} ${actMark}</td>
-                    <td style="border-bottom:1px solid #eee; padding:4px; text-align:left;">${item.name}</td>
-                    <td style="font-size:0.75rem; color:#666; border-bottom:1px solid #eee; padding:4px; text-align:left;">${mods.join(', ')}</td>
+                    <td style="font-weight:bold;color:${color};border-bottom:1px solid var(--border,#eee);padding:5px 6px;">${entry.speed}</td>
+                    <td style="color:${color};border-bottom:1px solid var(--border,#eee);padding:5px 6px;">${entry.side==='my'?'自分':'相手'}${actMark}</td>
+                    <td style="border-bottom:1px solid var(--border,#eee);padding:5px 6px;text-align:left;">${entry.name}</td>
+                    <td style="font-size:0.74rem;color:var(--text-sub,#666);border-bottom:1px solid var(--border,#eee);padding:5px 6px;text-align:left;">${modsText}</td>
                 </tr>`;
             });
             outHtml += '</table>';
             const container = document.getElementById('speedTierList');
-            if(container) container.innerHTML = outHtml;
+            if (container) container.innerHTML = outHtml;
         }
 
         function exportData() {
@@ -6212,15 +6790,12 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
             }
 
             const moveName = document.getElementById('moveSelect').value;
-            // 技未選択の場合はチームサマリーをクリアして終了
-            if (!moveName || moveName === '' || moveName === '未選択' || moveName === 'なし') {
-                // サマリーをクリア
-                for (let _i = 0; _i < 6; _i++) {
-                    const _os = document.getElementById(`oppSummary${_i}`);
-                    const _ms = document.getElementById(`mySummary${_i}`);
-                    if (_os) _os.innerHTML = _os.innerHTML.split('<div style="margin-top:2px;')[0];
-                    if (_ms) _ms.innerHTML = _ms.innerHTML.split('<div style="margin-top:2px;')[0];
-                }
+            const moveSlotsFilled = [1,2,3,4].some(s => {
+                const el = document.getElementById(`${attackerSide==='my'?'my':'opp'}Move${s}`);
+                return el && el.value && el.value !== '未設定' && el.value !== 'なし';
+            });
+            // 技未選択、または攻撃側の技スロットが未設定ならチームサマリーをクリアして終了
+            if (!moveName || moveName === '' || moveName === '未選択' || moveName === 'なし' || !moveSlotsFilled) {
                 return;
             }
             const moveInfo = moveDex[moveName] || { power: 0, type: '', category: '物理' };
@@ -7361,7 +7936,7 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
             const status = document.getElementById(side + 'Status')?.value || 'none';
             const weather = document.getElementById('weather')?.value || 'none';
             const isBadPoison = status === 'badpoison';
-            if (status === 'burn')   dmgPerTurn += Math.floor(maxHpReal / 8);
+            if (status === 'burn')   dmgPerTurn += Math.floor(maxHpReal / 16); // 第6世代以降やけどは1/16
             if (status === 'poison') dmgPerTurn += Math.floor(maxHpReal / 8);
             if (weather === 'sand' && poke && poke.types && !poke.types.some(t => ['いわ','はがね','じめん'].includes(t)) && abil !== 'すなかき' && abil !== 'すながくれ' && abil !== 'すなのちから')
                 dmgPerTurn += Math.floor(maxHpReal / 16);
@@ -7939,20 +8514,28 @@ function updateSpeedAdj() {
     if (!el) return;
     const myPoke  = getEffectivePoke('my');
     const oppPoke = getEffectivePoke('opp');
-    if (!myPoke || !oppPoke) { el.innerHTML = '<span style="color:#888">ポケモンを選択してください</span>'; return; }
-    const myNat   = parseFloat(document.getElementById('mySpeNature')?.value) || 1.0;
-    const myRank  = parseInt(document.getElementById('myRankS')?.value, 10) || 0;
-    const oppRank = parseInt(document.getElementById('oppRankS')?.value, 10) || 0;
+    if (!myPoke || !oppPoke) {
+        el.innerHTML = '<span style="color:var(--text-sub,#888)">ポケモンを選択してください</span>';
+        return;
+    }
+    // 自分の現在のP振り・性格・ランクを参照
+    const myNat  = parseFloat(document.getElementById('mySpeNature')?.value) || 1.0;
+    const myPts  = parseInt(document.getElementById('mySpe')?.value, 10)     || 0;
+    const myRank = parseInt(document.getElementById('myRankS')?.value, 10)   || 0;
+    const oppRank= parseInt(document.getElementById('oppRankS')?.value, 10)  || 0;
 
-    // 相手の3パターン実数値
-    const oppSpeMax  = Math.floor(calcStat(oppPoke.spe, 32,  1.1, false) * getRankMod(oppRank)); // 最速(+補正+32P)
-    const oppSpeMid  = Math.floor(calcStat(oppPoke.spe, 32,  1.0, false) * getRankMod(oppRank)); // 準速(補正なし+32P)
-    const oppSpeMin  = Math.floor(calcStat(oppPoke.spe,  0,  1.0, false) * getRankMod(oppRank)); // 無振り(補正なし+0P)
-    // 現在入力されている相手の実数値
-    const oppNatCur  = parseFloat(document.getElementById('oppSpeNature')?.value) || 1.0;
-    const oppPtsCur  = parseInt(document.getElementById('oppSpe')?.value, 10) || 0;
-    const oppSpeCur  = Math.floor(calcStat(oppPoke.spe, oppPtsCur, oppNatCur, false) * getRankMod(oppRank));
+    // --- 相手の4パターン ---
+    const oppSpeMax  = Math.floor(calcStat(oppPoke.spe, 32,  1.1, false) * getRankMod(oppRank));
+    const oppSpeMid  = Math.floor(calcStat(oppPoke.spe, 32,  1.0, false) * getRankMod(oppRank));
+    const oppSpeMin  = Math.floor(calcStat(oppPoke.spe,  0,  1.0, false) * getRankMod(oppRank));
+    const oppSpeSlow = Math.floor(calcStat(oppPoke.spe,  0,  0.9, false) * getRankMod(oppRank));
 
+    // 現在入力の相手実数値
+    const oppNatCur = parseFloat(document.getElementById('oppSpeNature')?.value) || 1.0;
+    const oppPtsCur = parseInt(document.getElementById('oppSpe')?.value, 10) || 0;
+    const oppSpeCur = Math.floor(calcStat(oppPoke.spe, oppPtsCur, oppNatCur, false) * getRankMod(oppRank));
+
+    // --- 自分の必要Pを求める（現在の性格・ランクを使用）---
     function calcNeededP(targetSpe) {
         for (let p = 0; p <= 32; p++) {
             const mySpe = Math.floor(calcStat(myPoke.spe, p, myNat, false) * getRankMod(myRank));
@@ -7964,33 +8547,76 @@ function updateSpeedAdj() {
 
     function rowHTML(label, oppSpe, bgColor) {
         const r = calcNeededP(oppSpe);
-        const statusIcon = r.ok ? '✅' : '❌';
+        const icon  = r.ok ? '✅' : '❌';
         const pText = r.ok
             ? `<b>${r.p}P</b> → 自分 <b>${r.mySpe}</b> &gt; 相手 <b>${oppSpe}</b>`
             : `32P全振りでも届かない（自分${r.mySpe} vs 相手${oppSpe}）`;
         const color = r.ok ? '#27ae60' : '#e74c3c';
         return `<tr style="background:${bgColor}">
-            <td style="padding:3px 8px;font-weight:bold;white-space:nowrap">${label}<br><span style="font-size:0.72rem;color:#666">(${oppSpe})</span></td>
-            <td style="padding:3px 8px;color:${color}">${statusIcon} ${pText}</td>
+            <td style="padding:4px 8px;font-weight:bold;white-space:nowrap;font-size:0.8rem;">${label}<br><span style="font-size:0.7rem;color:var(--text-sub,#666)">(${oppSpe})</span></td>
+            <td style="padding:4px 8px;color:${color};font-size:0.8rem;">${icon} ${pText}</td>
         </tr>`;
     }
 
-    const mySpeSc = Math.floor(calcStat(myPoke.spe, 32, myNat, false) * getRankMod(myRank) * 1.5);
-    const mySpeTw = Math.floor(calcStat(myPoke.spe, 32, myNat, false) * getRankMod(myRank) * 2);
-    const mySpeCur32 = Math.floor(calcStat(myPoke.spe, 32, myNat, false) * getRankMod(myRank));
+    // --- 自分の参考値（現在のP振り・性格・ランク反映）---
+    const myBaseCur  = Math.floor(calcStat(myPoke.spe, myPts, myNat, false) * getRankMod(myRank));
+    const myScarf    = Math.floor(myBaseCur * 1.5);
+    const myTailwind = Math.floor(myBaseCur * 2);
+
+    // 素早さ補正特性チェック
+    const myAbil   = document.getElementById('myAbility')?.value || '';
+    const weather  = document.getElementById('weather')?.value   || 'none';
+    const field    = document.getElementById('field')?.value     || 'none';
+    const myStatus = document.getElementById('myStatus')?.value  || 'none';
+    const myItem   = document.getElementById('myItem')?.value    || '';
+
+    const SpeAbilRef = {
+        'すいすい':         { mult: 2,   active: weather === 'rain',                                           label: 'あまごい時×2' },
+        'ようりょくそ':     { mult: 2,   active: weather === 'sun',                                            label: 'にほんばれ時×2' },
+        'すなかき':         { mult: 2,   active: weather === 'sand',                                           label: 'すなあらし時×2' },
+        'ゆきかき':         { mult: 2,   active: weather === 'snow',                                           label: 'ゆき時×2' },
+        'クォークチャージ': { mult: 1.5, active: field === 'electric',                                         label: 'エレキフィールド時×1.5' },
+        'こだいかっせい':   { mult: 1.5, active: weather === 'sun',                                            label: 'にほんばれ時×1.5' },
+        'はやあし':         { mult: 1.5, active: myStatus !== 'none' && myStatus !== 'paralysis',              label: '状態異常時×1.5' },
+        'かるわざ':         { mult: 2,   active: myItem === 'なし',                                            label: 'アイテム消費後×2' },
+        'スロースタート':   { mult: 0.5, active: true,                                                         label: '5T経過まで×0.5' },
+    };
+
+    let abilRef = '';
+    if (myAbil && SpeAbilRef[myAbil]) {
+        const info = SpeAbilRef[myAbil];
+        const abilSpe = Math.floor(myBaseCur * info.mult);
+        const activeNote = info.active ? '（現在条件成立中）' : '（条件未成立）';
+        abilRef = `<span style="margin-left:8px;">特性補正(${myAbil} ${info.label}) = <b>${abilSpe}</b> <span style="font-size:0.72rem;color:var(--text-sub,#888)">${activeNote}</span></span>`;
+    }
+
+    // 現在入力値が4パターン外ならば追加行
+    const standards = [oppSpeMax, oppSpeMid, oppSpeMin, oppSpeSlow];
+    const extraRow = !standards.includes(oppSpeCur)
+        ? rowHTML('現在入力値', oppSpeCur, '#fffbe6')
+        : '';
+
+    // P振り・性格の表示ラベル
+    const natLabel = myNat === 1.1 ? '+補正' : myNat === 0.9 ? '-補正' : '無補正';
 
     el.innerHTML = `
-        <table style="font-size:0.82rem;border-collapse:collapse;width:100%;margin-bottom:6px;">
-            <tr style="background:#dce8f5"><th style="padding:3px 8px;text-align:left">相手の想定</th><th style="padding:3px 8px;text-align:left">必要な能力P</th></tr>
-            ${rowHTML('最速 (+補正+32P)', oppSpeMax, '#fff')}
-            ${rowHTML('準速 (補正なし+32P)', oppSpeMid, '#f9f9f9')}
-            ${rowHTML('無振り (補正なし+0P)', oppSpeMin, '#fff')}
-            ${oppSpeCur !== oppSpeMax && oppSpeCur !== oppSpeMid && oppSpeCur !== oppSpeMin
-                ? rowHTML('現在入力値', oppSpeCur, '#fffbe6')
-                : ''}
+        <table style="font-size:0.82rem;border-collapse:collapse;width:100%;margin-bottom:8px;border:1px solid var(--border,#e2e8f0);border-radius:6px;overflow:hidden;">
+            <tr style="background:var(--my-light,#ebf8ff);">
+                <th style="padding:5px 8px;text-align:left;color:var(--my-color,#2b6cb0);font-size:0.8rem;">相手の想定</th>
+                <th style="padding:5px 8px;text-align:left;color:var(--my-color,#2b6cb0);font-size:0.8rem;">必要な能力P</th>
+            </tr>
+            ${rowHTML('最速 (+補正+32P)',    oppSpeMax,  '#fff')}
+            ${rowHTML('準速 (補正なし+32P)', oppSpeMid,  'var(--surface2,#f9f9f9)')}
+            ${rowHTML('無振り (補正なし+0P)',oppSpeMin,  '#fff')}
+            ${rowHTML('最遅 (-補正+0P)',     oppSpeSlow, 'var(--surface2,#f9f9f9)')}
+            ${extraRow}
         </table>
-        <div style="color:#555;font-size:0.78rem;">
-            参考 (自分32P): スカーフ = <b>${mySpeSc}</b> ／ 追い風 = <b>${mySpeTw}</b> ／ 通常 = <b>${mySpeCur32}</b>
+        <div style="font-size:0.78rem;color:var(--text-sub,#555);padding:4px 2px;line-height:2;">
+            📊 <b>参考</b>（現在: ${natLabel} ${myPts}P・ランク${myRank >= 0 ? '+' : ''}${myRank}）：
+            通常 = <b>${myBaseCur}</b>
+            <span style="margin-left:8px;">スカーフ = <b>${myScarf}</b></span>
+            <span style="margin-left:8px;">追い風 = <b>${myTailwind}</b></span>
+            ${abilRef}
         </div>`;
 }
 
@@ -8003,7 +8629,7 @@ function updateRankBadges() {
         const sel = document.getElementById(side+'Rank'+stat);
         if (!sel) return;
         const rank = parseInt(sel.value, 10) || 0;
-        const mod = getRankMod(rank);
+        const mod = window.getRankMod ? window.getRankMod(rank) : 1.0;
         const badgeId = side+'Rank'+stat+'Badge';
         let badge = document.getElementById(badgeId);
         if (!badge) {
