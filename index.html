@@ -880,8 +880,27 @@
                 <select id="spikesMyCount" style="margin-left:4px;font-size:0.85em;"><option value="1">1枚(12.5%)</option><option value="2">2枚(16.7%)</option><option value="3">3枚(25%)</option></select>
                 <label><input type="checkbox" id="loMy" onchange=""> 自分が珠ダメ</label>
                 <label><input type="checkbox" id="loOpp" onchange=""> 相手が珠ダメ</label>
+                <label><input type="checkbox" id="shioMy" onchange=""> 自分がしおづけ</label>
+                <label><input type="checkbox" id="shioOpp" onchange=""> 相手がしおづけ</label>
+                <label><input type="checkbox" id="yadorigi_dmgMy" onchange=""> 自分にやどりぎのタネ</label>
+                <label><input type="checkbox" id="yadorigi_dmgOpp" onchange=""> 相手にやどりぎのタネ</label>
+                <label><input type="checkbox" id="noroiMy" onchange=""> 自分がのろい(ゴースト)</label>
+                <label><input type="checkbox" id="noroiOpp" onchange=""> 相手がのろい(ゴースト)</label>
+                <label><input type="checkbox" id="leftoMy" onchange=""> 自分がたべのこし</label>
+                <label><input type="checkbox" id="leftoOpp" onchange=""> 相手がたべのこし</label>
+                <label><input type="checkbox" id="neroMy" onchange=""> 自分がねをはる</label>
+                <label><input type="checkbox" id="neroOpp" onchange=""> 相手がねをはる</label>
+                <label><input type="checkbox" id="yadorigi_healOpp" onchange=""> 相手がやどりぎ回復</label>
+                <label><input type="checkbox" id="yadorigi_healMy" onchange=""> 自分がやどりぎ回復</label>
                 <label><input type="checkbox" id="tailwindMy" onchange=""> 自分においかぜ</label>
                 <label><input type="checkbox" id="tailwindOpp" onchange=""> 相手においかぜ</label>
+                <hr style="width:100%;border:none;border-top:1px dashed #e0a0a0;margin:4px 0;">
+                <label style="color:#2980b9;font-weight:bold;"><input type="checkbox" id="helpingHandMy" onchange=""> 🤝 自分がてだすけ受け（攻撃×1.5）</label>
+                <label style="color:#2980b9;font-weight:bold;"><input type="checkbox" id="helpingHandOpp" onchange=""> 🤝 相手がてだすけ受け（攻撃×1.5）</label>
+                <label style="color:#8e44ad;font-weight:bold;"><input type="checkbox" id="chargedMy" onchange=""> ⚡ 自分がじゅうでん（電気技×2）</label>
+                <label style="color:#8e44ad;font-weight:bold;"><input type="checkbox" id="chargedOpp" onchange=""> ⚡ 相手がじゅうでん（電気技×2）</label>
+                <label style="color:#27ae60;font-weight:bold;"><input type="checkbox" id="gravityField" onchange=""> 🌐 じゅうりょく中（浮遊無効・地面技命中）</label>
+                <label style="color:#7f8c8d;font-weight:bold;"><input type="checkbox" id="doubleBattle" onchange=""> 👥 ダブルバトル（壁0.5→0.67倍）</label>
             </div>
         </div>
 
@@ -5873,6 +5892,27 @@ function toggleDamageInput() {
             set(`${side}SpdNature`, spd);
             set(`${side}SpeNature`, spe);
         }
+        /*
+         * =============================================
+         * 【能力ポイント・ステータス計算 仕様メモ】
+         * =============================================
+         * ■ 能力ポイント（能力P）
+         *   - 1ステータスあたりの上限: 32
+         *   - 全ステータス合計の上限: 66
+         *   - 能力Pを1上げると実数値が基本+1（稀に+2）上昇
+         *     ※ 旧システムの努力値4振りと同等の挙動
+         *
+         * ■ 個体値
+         *   - 全ステータス固定で 31（最大値）
+         *
+         * ■ レベル
+         *   - 固定で 50
+         *
+         * ■ 実数値計算式（レベル50・個体値31固定）
+         *   HP以外: Math.floor((Math.floor((種族値×2 + 31) × 0.5) + 5 + 能力P) × 性格補正)
+         *   HP    : Math.floor((種族値×2 + 31) × 0.5) + 60 + 能力P
+         * =============================================
+         */
         function calcStat(base, points, nature, isHP) {
             const p = Math.min(32, Math.max(0, parseInt(points, 10) || 0));
             if (isHP) return Math.floor((base * 2 + 31) * 0.5) + 60 + p;
@@ -6042,7 +6082,7 @@ if (document.getElementById('oppSpeedDisplay')) document.getElementById('oppSpee
 
         function checkPoints() {
             const out = document.getElementById('resultOutput');
-            const safeInt = (id) => Math.min(32, Math.max(0, parseInt(document.getElementById(id)?.value, 10) || 0));
+            const safeInt = (id) => Math.min(32, Math.max(0, parseInt(document.getElementById(id)?.value, 10) || 0)); /* 1ステータスあたり最大32、合計上限66 */
             const myTotalPts = safeInt('myHP') + safeInt('myAtk') + safeInt('myDef') +
                                safeInt('mySpA') + safeInt('mySpD') + safeInt('mySpe');
             const oppTotalPts = safeInt('oppHP') + safeInt('oppAtk') + safeInt('oppDef') +
@@ -6068,7 +6108,9 @@ if (document.getElementById('oppSpeedDisplay')) document.getElementById('oppSpee
                     alertDivOpp.id = 'pointAlertOpp';
                     alertDivOpp.style = "color:#c0392b; font-weight:bold; margin-bottom:10px; background:#fadbd8; padding:8px; border-radius:4px; border:1px solid #c0392b;";
                     alertDivOpp.innerHTML = `⚠️ 相手の能力ポイント合計が上限(66)を超過しています！(現在: ${oppTotalPts}pt)`;
-                    out.parentNode.insertBefore(alertDivOpp, out);
+                    /* BUG FIX: 相手の警告を相手側UIへ挿入（旧: 自分側resultOutput付近に挿入されていた） */
+                    const oppAlertAnchor = document.getElementById('oppActiveBox') || out.parentNode;
+                    oppAlertAnchor.insertBefore(alertDivOpp, oppAlertAnchor.firstChild);
                 } else {
                     existingAlertOpp.innerHTML = `⚠️ 相手の能力ポイント合計が上限(66)を超過しています！(現在: ${oppTotalPts}pt)`;
                 }
@@ -6124,18 +6166,34 @@ if (document.getElementById('oppSpeedDisplay')) document.getElementById('oppSpee
             }
             if (!defPoke) { alert("相手のポケモンが選択されていません"); return; }
 
-            // 攻撃サイドのラジオボタンを切り替え（updateMoveDropdownを呼ばずに直接処理）
+            // 攻撃サイドのラジオボタンを切り替え
             const radioVal = side === 'my' ? 'me' : 'opp';
             const attackerRadio = document.querySelector(`input[name="attackerSide"][value="${radioVal}"]`);
             if (attackerRadio) attackerRadio.checked = true;
-            // actualDamageBoxの表示切り替え（toggleDamageInputを使わず直接行う）
+            // actualDamageBoxの表示切り替え
             document.getElementById('actualDamageBox').style.display = (side === 'opp') ? 'block' : 'none';
 
             // 技ドロップダウンを攻撃側に合わせて更新
             updateMoveDropdown();
 
-            // 技が未設定でも攻撃ボタンは押せるようにする
-            // 未設定時は moveSelect を変更せず、そのまま計算ルーチンへ
+            // FIX: 攻撃ボタンで押した技名を moveSelect に反映する
+            // （旧コードは moveName を取得するだけで moveSelect に設定していなかった）
+            if (moveName) {
+                const moveSelect = document.getElementById('moveSelect');
+                if (moveSelect) {
+                    // すでに同名のoption があれば選択、なければ追加してから選択
+                    let opt = moveSelect.querySelector(`option[value="${CSS.escape ? moveName : moveName}"]`);
+                    if (!opt) {
+                        // optionが存在しない場合（updateMoveDropdownで生成されていないケース）は追加
+                        opt = new Option(moveName, moveName);
+                        moveSelect.appendChild(opt);
+                    }
+                    moveSelect.value = moveName;
+                    // 技情報（威力・タイプ・分類）をUIに反映
+                    applyMoveData();
+                }
+            }
+
             executeCalculation();
 
             const resultBox = document.getElementById('resultOutput');
@@ -6148,7 +6206,8 @@ if (document.getElementById('oppSpeedDisplay')) document.getElementById('oppSpee
             if (!pDex) return { isConf:false, hp:1, atk:1, def:1, spa:1, spd:1, spe:1 };
             const activeEl = document.querySelector(`input[name="${side}Active"]:checked`);
             const isActive = activeEl && parseInt(activeEl.value, 10) === idx;
-            if (!window.teamSlotState || !window.teamSlotState[side]) return { isConf:false, hp:calcStat(pDex.hp||45,0,1,true), atk:calcStat(pDex.atk||45,0,1,false), def:calcStat(pDex.def||45,0,1,false), spa:calcStat(pDex.spa||45,0,1,false), spd:calcStat(pDex.spd||45,0,1,false), spe:calcStat(pDex.spe||45,0,1,false) };
+            /* BUG FIX: 旧IVの名残「45」を除去。能力Pのデフォルト値は0 */
+            if (!window.teamSlotState || !window.teamSlotState[side]) return { isConf:false, hp:calcStat(pDex.hp,0,1.0,true), atk:calcStat(pDex.atk,0,1.0,false), def:calcStat(pDex.def,0,1.0,false), spa:calcStat(pDex.spa,0,1.0,false), spd:calcStat(pDex.spd,0,1.0,false), spe:calcStat(pDex.spe,0,1.0,false) };
             const state = (window.teamSlotState[side] && window.teamSlotState[side][idx]) ? window.teamSlotState[side][idx] : {};
             const getV = (st) => isActive ? (parseInt(document.getElementById(`${side}${st}`)?.value, 10) || 0) : (parseInt(state[`${side}${st}`], 10) || 0);
             // 非アクティブ時: NatureAll が保存されていれば分解して使用
@@ -6172,7 +6231,7 @@ if (document.getElementById('oppSpeedDisplay')) document.getElementById('oppSpee
 
             let total = hpP + atkP + defP + spaP + spdP + speP;
             return {
-                isConf: total >= 64,
+                isConf: total >= 1, /* BUG FIX: 64→1。能力P合計1以上で設定済みとみなす（合計上限66） */
                 hp: calcStat(pDex.hp, hpP, 1.0, true),
                 atk: calcStat(pDex.atk, atkP, natA, false),
                 def: calcStat(pDex.def, defP, natD, false),
@@ -6428,6 +6487,21 @@ if (document.getElementById('oppSpeedDisplay')) document.getElementById('oppSpee
 
             let lo = isOpp ? document.getElementById('loOpp')?.checked : document.getElementById('loMy')?.checked;
             if (lo) dmg += 10.0;
+
+            // しおづけ: 岩・鋼は1/8、それ以外1/4（%表示なので maxHP=100で計算）
+            const shioId2 = isOpp ? 'shioOpp' : 'shioMy';
+            if (document.getElementById(shioId2)?.checked) {
+                const isRockSteel = pDex.types && pDex.types.some(t => ['いわ','はがね'].includes(t));
+                dmg += isRockSteel ? 12.5 : 25.0;
+            }
+
+            // やどりぎのタネ: 1/8 = 12.5%
+            const yadDmgId2 = isOpp ? 'yadorigi_dmgOpp' : 'yadorigi_dmgMy';
+            if (document.getElementById(yadDmgId2)?.checked) dmg += 12.5;
+
+            // のろい: 1/4 = 25%
+            const noroiId2 = isOpp ? 'noroiOpp' : 'noroiMy';
+            if (document.getElementById(noroiId2)?.checked) dmg += 25.0;
 
             return dmg;
         }
@@ -7025,6 +7099,19 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
                 if (oppAbil === 'オーラブレイク' && (myAbil === 'ダークオーラ' || myAbil === 'フェアリーオーラ')) dmgMod *= (1/1.3333);
                 if (oppAbil === 'てんねん') { /* ランク補正無視: atkRankは別途0扱いにする必要 */ }
 
+                // ===== てだすけ・じゅうでん・壁（自分→相手攻撃） =====
+                if (document.getElementById('helpingHandMy')?.checked) dmgMod *= 1.5;
+                if (document.getElementById('chargedMy')?.checked && moveType === 'でんき') dmgMod *= 2.0;
+                if (moveCat === '物理') {
+                    const rfT = parseInt(document.getElementById('reflectTurnOpp')?.value || '0', 10);
+                    if (rfT > 0) dmgMod *= document.getElementById('doubleBattle')?.checked ? (2/3) : 0.5;
+                }
+                if (moveCat === '特殊') {
+                    const lwT = parseInt(document.getElementById('lightWallTurnOpp')?.value || '0', 10);
+                    if (lwT > 0) dmgMod *= document.getElementById('doubleBattle')?.checked ? (2/3) : 0.5;
+                }
+                // =====================================================
+
                 const baseD = moveCat === "物理" ? oppPoke.def : oppPoke.spd;
                 // 【修正1】相手の防御EV・性格を実際の入力値から取得
                 const oppDefP   = parseInt(document.getElementById(moveCat === '物理' ? 'oppDef' : 'oppSpD').value, 10) || 0;
@@ -7352,6 +7439,19 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
                 if (myAbil === 'かんそうはだ' && moveType === 'ほのお') dmgMod *= 1.25;
                 if (myAbil === 'ファーコート' && moveCat === '物理') dmgMod *= 0.5;
                 if (myAbil === 'ファントムガード' && myCurrentHpPct >= 100) dmgMod *= 0.5;
+
+                // ===== てだすけ・じゅうでん・壁（相手→自分攻撃） =====
+                if (document.getElementById('helpingHandOpp')?.checked) dmgMod *= 1.5;
+                if (document.getElementById('chargedOpp')?.checked && moveType === 'でんき') dmgMod *= 2.0;
+                if (moveCat === '物理') {
+                    const rfTm = parseInt(document.getElementById('reflectTurnMy')?.value || '0', 10);
+                    if (rfTm > 0) dmgMod *= document.getElementById('doubleBattle')?.checked ? (2/3) : 0.5;
+                }
+                if (moveCat === '特殊') {
+                    const lwTm = parseInt(document.getElementById('lightWallTurnMy')?.value || '0', 10);
+                    if (lwTm > 0) dmgMod *= document.getElementById('doubleBattle')?.checked ? (2/3) : 0.5;
+                }
+                // =====================================================
 
                 let myCurrentHpPct = parseInt(document.getElementById('myCurrentHpPct').value, 10) || 100;
                 let isMS = myAbil === 'マルチスケイル' && myCurrentHpPct === 100;
@@ -7932,11 +8032,12 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
 
         // ============ 蓄積ダメ残ターン計算 ============
         function calcSurvivalTurns(side, poke, abil, currentHpPct, maxHpReal) {
+            // BUG FIX: bad_poison統一 / やけど1/8 / battleWeather
             let dmgPerTurn = 0;
             const status = document.getElementById(side + 'Status')?.value || 'none';
-            const weather = document.getElementById('weather')?.value || 'none';
-            const isBadPoison = status === 'badpoison';
-            if (status === 'burn')   dmgPerTurn += Math.floor(maxHpReal / 16); // 第6世代以降やけどは1/16
+            const weather = document.getElementById('battleWeather')?.value || 'none';
+            const isBadPoison = status === 'bad_poison';
+            if (status === 'burn')   dmgPerTurn += Math.floor(maxHpReal / 8);  // 第6世代以降やけどは1/8
             if (status === 'poison') dmgPerTurn += Math.floor(maxHpReal / 8);
             if (weather === 'sand' && poke && poke.types && !poke.types.some(t => ['いわ','はがね','じめん'].includes(t)) && abil !== 'すなかき' && abil !== 'すながくれ' && abil !== 'すなのちから')
                 dmgPerTurn += Math.floor(maxHpReal / 16);
@@ -8153,7 +8254,7 @@ const pEl = document.getElementById('movePower');
 })();
 
 // ============================================================
-// 2. 2ターン先の定数+攻撃ダメージ複合予測
+// 2. 複合ダメージ予測（攻撃 + 定数ダメ + 回復）
 // ============================================================
 function predictTotalSurvival(side, attackDmgMin, attackDmgMax) {
     const poke = getEffectivePoke(side);
@@ -8166,65 +8267,145 @@ function predictTotalSurvival(side, attackDmgMin, attackDmgMax) {
     const status = document.getElementById(side+'Status')?.value || 'none';
     const weather = document.getElementById('battleWeather')?.value || 'none';
 
-    // 定数ダメ計算（毎ターン）
+    // ---- 定数ダメ（毎ターン固定） ----
     let dotPerTurn = 0;
+    const dotSources = [];
 
-    // やけど: 1/8
-    if (status === 'burn') dotPerTurn += Math.floor(maxHp / 8);
-    // どく: 1/8
-    if (status === 'poison') dotPerTurn += Math.floor(maxHp / 8);
-    // もうどく: 初ターン1/16（毎ターン増加）→ ループ内で計算
+    if (status === 'burn')   { const d = Math.floor(maxHp / 8);  dotPerTurn += d; dotSources.push(`やけど(-${d})`); }  // 第6世代以降1/8
+    if (status === 'poison') { const d = Math.floor(maxHp / 8);  dotPerTurn += d; dotSources.push(`どく(-${d})`); }
+    // もうどく(bad_poison)はループ内でターン毎に増加計算
+    if (status === 'bad_poison') dotSources.push('もうどく(毎T増加)');
 
-    // 砂嵐ダメ（いわ・はがね・じめん以外）
     if (weather === 'sand' && poke.types &&
         !poke.types.some(t => ['いわ','はがね','じめん'].includes(t)) &&
-        !['すなかき','すなのちから','すながくれ','すなはき','マジックガード'].includes(abil))
-        dotPerTurn += Math.floor(maxHp / 16);
-
-    // あられダメ（こおり以外）
+        !['すなかき','すなのちから','すながくれ','すなはき','マジックガード'].includes(abil)) {
+        const d = Math.floor(maxHp / 16); dotPerTurn += d; dotSources.push(`砂(-${d})`);
+    }
     if ((weather === 'hail' || weather === 'snow') && poke.types &&
         !poke.types.includes('こおり') &&
-        !['ゆきがくれ','ゆきふらし','アイスボディ','マジックガード'].includes(abil))
-        dotPerTurn += Math.floor(maxHp / 16);
+        !['ゆきがくれ','ゆきふらし','アイスボディ','マジックガード'].includes(abil)) {
+        const d = Math.floor(maxHp / 16); dotPerTurn += d; dotSources.push(`あられ(-${d})`);
+    }
 
-    if (dotPerTurn === 0 && (status !== 'bad_poison') && (attackDmgMin === 0 && attackDmgMax === 0)) return '';
+    // しおづけ: 岩・鋼タイプは1/8、それ以外は1/4
+    const shioId = side === 'opp' ? 'shioOpp' : 'shioMy';
+    if (document.getElementById(shioId)?.checked) {
+        const isRockSteel = poke.types && poke.types.some(t => ['いわ','はがね'].includes(t));
+        const d = Math.floor(maxHp / (isRockSteel ? 8 : 4));
+        dotPerTurn += d;
+        dotSources.push(`しおづけ(-${d})`);
+    }
+
+    // やどりぎのタネ（ダメージ側）: 1/8
+    const yadorigiDmgId = side === 'opp' ? 'yadorigi_dmgOpp' : 'yadorigi_dmgMy';
+    if (document.getElementById(yadorigiDmgId)?.checked) {
+        const d = Math.floor(maxHp / 8);
+        dotPerTurn += d;
+        dotSources.push(`やどりぎ(-${d})`);
+    }
+
+    // のろい（ゴーストタイプ使用）: 1/4
+    const noroiId = side === 'opp' ? 'noroiOpp' : 'noroiMy';
+    if (document.getElementById(noroiId)?.checked) {
+        const d = Math.floor(maxHp / 4);
+        dotPerTurn += d;
+        dotSources.push(`のろい(-${d})`);
+    }
+
+    // ---- 回復（毎ターン固定） ----
+    let healPerTurn = 0;
+    const healSources = [];
+
+    // たべのこし: 1/16
+    const leftoId = side === 'opp' ? 'leftoOpp' : 'leftoMy';
+    if (document.getElementById(leftoId)?.checked) {
+        const h = Math.floor(maxHp / 16);
+        healPerTurn += h; healSources.push(`たべのこし(+${h})`);
+    }
+
+    // ねをはる: 1/16（晴れ時1/8）
+    const neroId = side === 'opp' ? 'neroOpp' : 'neroMy';
+    if (document.getElementById(neroId)?.checked) {
+        const h = weather === 'sun' ? Math.floor(maxHp / 8) : Math.floor(maxHp / 16);
+        healPerTurn += h; healSources.push(`ねをはる(+${h}${weather==='sun'?'☀':''})`);
+    }
+
+    // やどりぎ回復（吸収側）: 1/8
+    const yadorigiHealId = side === 'opp' ? 'yadorigi_healOpp' : 'yadorigi_healMy';
+    if (document.getElementById(yadorigiHealId)?.checked) {
+        const h = Math.floor(maxHp / 8);
+        healPerTurn += h; healSources.push(`やどりぎ回復(+${h})`);
+    }
+
+    // アイスボディ（ゆき時）: 1/16
+    if (abil === 'アイスボディ' && weather === 'snow') {
+        const h = Math.floor(maxHp / 16);
+        healPerTurn += h; healSources.push(`アイスボディ(+${h})`);
+    }
+
+    const netPerTurn = dotPerTurn - healPerTurn;
+    const hasAnyEffect = dotPerTurn > 0 || healPerTurn > 0 || status === 'bad_poison' || attackDmgMax > 0;
+    if (!hasAnyEffect) return '';
 
     let rows = '';
     let hp = currentHp;
-    let badPoisonCount = 1; // もうどく倍率カウンタ
+    let badPoisonCount = 1;
 
-    for (let t = 1; t <= 6; t++) {
-        // もうどく: 1/16 × ターン数（最大15/16）
+    for (let t = 1; t <= 8; t++) {
         let turnDot = dotPerTurn;
+        // もうどく: 毎ターン増加 (最大 15/16)
         if (status === 'bad_poison') {
             turnDot += Math.floor(maxHp * Math.min(badPoisonCount, 15) / 16);
         }
+        const turnHeal = healPerTurn;
+        const turnNet = turnDot - turnHeal;
 
-        const totalMin = (attackDmgMin||0) + turnDot;
-        const totalMax = (attackDmgMax||0) + turnDot;
+        const totalDmgMin = (attackDmgMin||0) + turnDot;
+        const totalDmgMax = (attackDmgMax||0) + turnDot;
+        const totalNetMin = (attackDmgMin||0) + turnNet;
+        const totalNetMax = (attackDmgMax||0) + turnNet;
 
-        // HP追跡（最悪ケース=最大ダメージで引く）
-        hp -= (attackDmgMax||0) + turnDot;
+        // HP追跡（最悪ケース）
+        hp = hp - (attackDmgMax||0) - turnDot + turnHeal;
+        hp = Math.min(hp, maxHp); // 最大HP上限
         const survive = hp > 0;
 
         const dotLabel = status === 'bad_poison'
-            ? `もうどく(${badPoisonCount}/16)`
-            : (turnDot > 0 ? String(turnDot) : '0');
+            ? `もうどく(${badPoisonCount}/16)=${turnDot}`
+            : (turnDot > 0 ? `${turnDot}` : '0');
+        const healLabel = turnHeal > 0 ? `<span style="color:#27ae60">+${turnHeal}</span>` : '-';
+        const netLabel = turnNet >= 0
+            ? `<span style="color:#e74c3c">${totalNetMin}〜${totalNetMax}</span>`
+            : `<span style="color:#27ae60">${totalNetMin}〜${totalNetMax}</span>`;
+        const hpAfter = Math.max(0, hp);
+        const hpPctAfter = maxHp > 0 ? (hpAfter / maxHp * 100).toFixed(0) : 0;
 
-        rows += `<tr style="background:${!survive?'#fde8e8':''}">
-            <td style="padding:2px 8px">${t}T目</td>
-            <td style="padding:2px 8px">${attackDmgMin||0}〜${attackDmgMax||0}</td>
-            <td style="padding:2px 8px">${dotLabel}</td>
-            <td style="padding:2px 8px"><b>${totalMin}〜${totalMax}</b></td>
-            <td style="padding:2px 8px">${survive?'🟢 生存':'🔴 <b>瀕死</b>'}</td>
+        rows += `<tr style="background:${!survive?'#fde8e8':t%2===0?'#f9f9f9':'#fff'}">
+            <td style="padding:3px 6px;text-align:center">${t}T</td>
+            <td style="padding:3px 6px;text-align:center">${(attackDmgMin||0) > 0 ? `${attackDmgMin}〜${attackDmgMax}` : '-'}</td>
+            <td style="padding:3px 6px;text-align:center;color:#e74c3c">${dotLabel}</td>
+            <td style="padding:3px 6px;text-align:center">${healLabel}</td>
+            <td style="padding:3px 6px;text-align:center;font-weight:bold">${netLabel}</td>
+            <td style="padding:3px 6px;text-align:center">${survive ? `🟢 <b>${hpAfter}</b><span style="font-size:0.72rem;color:#666">(${hpPctAfter}%)</span>` : '🔴 <b>瀕死</b>'}</td>
         </tr>`;
 
         badPoisonCount++;
         if (!survive) break;
     }
-    return `<div style="margin-top:8px;"><b>⏱ ${side==='opp'?'相手':'自分'}の複合ダメージ予測（攻撃+定数）</b>
-    <table style="font-size:0.78rem;border-collapse:collapse;margin-top:4px;width:100%">
-    <tr style="background:#f2f2f2"><th style="padding:2px 8px">T</th><th>攻撃ダメ</th><th>定数ダメ</th><th>合計</th><th>状態</th></tr>
+
+    const srcLabel = [...dotSources, ...healSources].join(' / ') || '';
+    return `<div style="margin-top:8px;padding:6px;background:#fef9e7;border:1px solid #f0c040;border-radius:6px;">
+    <b>⏱ ${side==='opp'?'相手':'自分'}の複合ダメージ予測（攻撃+定数+回復）</b>
+    ${srcLabel ? `<div style="font-size:0.75rem;color:#888;margin:2px 0 4px">${srcLabel}</div>` : ''}
+    <table style="font-size:0.78rem;border-collapse:collapse;width:100%">
+    <tr style="background:#f2f2f2">
+        <th style="padding:3px 6px">T</th>
+        <th style="padding:3px 6px">攻撃</th>
+        <th style="padding:3px 6px;color:#e74c3c">定数ダメ</th>
+        <th style="padding:3px 6px;color:#27ae60">回復</th>
+        <th style="padding:3px 6px">差引合計</th>
+        <th style="padding:3px 6px">残HP</th>
+    </tr>
     ${rows}</table></div>`;
 }
 
@@ -8247,6 +8428,9 @@ function predictTotalSurvival(side, attackDmgMin, attackDmgMax) {
                 const pred = predictTotalSurvival(defSide, dMin, dMax);
                 if (pred && !out.innerHTML.includes('複合ダメージ予測')) {
                     out.innerHTML += pred;
+                }
+                if (document.getElementById('gravityField')?.checked && !out.innerHTML.includes('じゅうりょく')) {
+                    out.innerHTML += '<div style="margin-top:4px;padding:4px 8px;background:#eaf4fb;border:1px solid #7f8c8d;border-radius:4px;font-size:0.8rem;">🌐 <b>じゅうりょく中</b>: 浮遊特性無効・飛行タイプ/そらをとぶ状態にも地面技命中・命中率1.67倍</div>';
                 }
             }
         }, 80);
@@ -8599,12 +8783,18 @@ function updateSpeedAdj() {
     // P振り・性格の表示ラベル
     const natLabel = myNat === 1.1 ? '+補正' : myNat === 0.9 ? '-補正' : '無補正';
 
+    // スカーフ込みのパターンを追加
+    const oppSpeMaxScarf  = Math.floor(oppSpeMax  * 1.5);
+    const oppSpeMidScarf  = Math.floor(oppSpeMid  * 1.5);
+
     el.innerHTML = `
         <table style="font-size:0.82rem;border-collapse:collapse;width:100%;margin-bottom:8px;border:1px solid var(--border,#e2e8f0);border-radius:6px;overflow:hidden;">
             <tr style="background:var(--my-light,#ebf8ff);">
                 <th style="padding:5px 8px;text-align:left;color:var(--my-color,#2b6cb0);font-size:0.8rem;">相手の想定</th>
                 <th style="padding:5px 8px;text-align:left;color:var(--my-color,#2b6cb0);font-size:0.8rem;">必要な能力P</th>
             </tr>
+            ${rowHTML('最速 + スカーフ',      oppSpeMaxScarf, '#fdf3ff')}
+            ${rowHTML('準速 + スカーフ',      oppSpeMidScarf, '#f5eeff')}
             ${rowHTML('最速 (+補正+32P)',    oppSpeMax,  '#fff')}
             ${rowHTML('準速 (補正なし+32P)', oppSpeMid,  'var(--surface2,#f9f9f9)')}
             ${rowHTML('無振り (補正なし+0P)',oppSpeMin,  '#fff')}
