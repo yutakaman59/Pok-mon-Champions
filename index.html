@@ -594,11 +594,55 @@
                     <div class="stat-item"><label>特性</label><select id="myAbility" onchange="updateSpeed()"></select></div>
                     <div class="stat-item"><label>持ち物</label>
                         <select id="myItem" onchange="updateSpeed()">
-                            <option value="なし">なし</option><option value="こだわりハチマキ">ハチマキ(物理1.5倍)</option>
-                            <option value="いのちのたま">珠(1.3倍)</option><option value="こだわりスカーフ">スカーフ(素早1.5倍)</option>
-                            <option value="メガストーン">メガストーン</option>
-                            <option value="半減きのみ">半減きのみ</option>
-                        </select>
+                            <option value="なし">なし</option>
+                            <optgroup label="── こだわり系 ──">
+                              <option value="こだわりハチマキ">こだわりハチマキ（物理1.5倍）</option>
+                              <option value="こだわりメガネ">こだわりメガネ（特殊1.5倍）</option>
+                              <option value="こだわりスカーフ">こだわりスカーフ（素早1.5倍）</option>
+                            </optgroup>
+                            <optgroup label="── 火力・補助 ──">
+                              <option value="いのちのたま">いのちのたま（全技1.3倍）</option>
+                              <option value="とつげきチョッキ">とつげきチョッキ（特防1.5倍）</option>
+                              <option value="でんきだま">でんきだま（ピカチュウ専用/攻・特攻2倍）</option>
+                              <option value="おうじゃのしるし">おうじゃのしるし（10%ひるみ）</option>
+                              <option value="せんせいのツメ">せんせいのツメ（20%先制）</option>
+                              <option value="ひかりのこな">ひかりのこな（命中0.9倍）</option>
+                              <option value="ピントレンズ">ピントレンズ（急所+1）</option>
+                            </optgroup>
+                            <optgroup label="── タイプ強化（1.2倍） ──">
+                              <option value="もくたん">もくたん（炎1.2倍）</option>
+                              <option value="しんぴのしずく">しんぴのしずく（水1.2倍）</option>
+                              <option value="じしゃく">じしゃく（電気1.2倍）</option>
+                              <option value="きせきのタネ">きせきのタネ（草1.2倍）</option>
+                              <option value="とけないこおり">とけないこおり（氷1.2倍）</option>
+                              <option value="くろおび">くろおび（格闘1.2倍）</option>
+                              <option value="どくバリ">どくバリ（毒1.2倍）</option>
+                              <option value="やわらかいすな">やわらかいすな（地面1.2倍）</option>
+                              <option value="するどいくちばし">するどいくちばし（飛行1.2倍）</option>
+                              <option value="まがったスプーン">まがったスプーン（エスパー1.2倍）</option>
+                              <option value="ぎんのこな">ぎんのこな（虫1.2倍）</option>
+                              <option value="かたいいし">かたいいし（岩1.2倍）</option>
+                              <option value="のろいのおふだ">のろいのおふだ（ゴースト1.2倍）</option>
+                              <option value="りゅうのキバ">りゅうのキバ（ドラゴン1.2倍）</option>
+                              <option value="くろいメガネ">くろいメガネ（悪1.2倍）</option>
+                              <option value="メタルコート">メタルコート（鋼1.2倍）</option>
+                              <option value="ようせいのハネ">ようせいのハネ（フェアリー1.2倍）</option>
+                              <option value="シルクのスカーフ">シルクのスカーフ（ノーマル1.2倍）</option>
+                            </optgroup>
+                            <optgroup label="── 回復・耐久 ──">
+                              <option value="かいがらのすず">かいがらのすず（与ダメの1/8回復）</option>
+                              <option value="たべのこし">たべのこし（毎ターン1/16回復）</option>
+                              <option value="オボンのみ">オボンのみ（HP1/2以下で1/4回復）</option>
+                              <option value="オレンのみ">オレンのみ（HP1/2以下で10回復）</option>
+                              <option value="きあいのタスキ">きあいのタスキ（HP満タン時1耐え）</option>
+                              <option value="きあいのハチマキ">きあいのハチマキ（10%で1耐え）</option>
+                            </optgroup>
+                            <optgroup label="── きのみ・半減 ──">
+                              <option value="半減きのみ">半減きのみ（バツグン0.5倍）</option>
+                            </optgroup>
+                            <optgroup label="── メガストーン ──">
+                              <option value="メガストーン">メガストーン</option>
+                            </optgroup></select>
                     </div>
                     <div class="stat-item"><label>状態異常</label>
                         <select id="myStatus" onchange="updateSpeed()">
@@ -717,11 +761,55 @@
                     <div class="stat-item"><label>特性</label><select id="oppAbility" onchange="updateSpeed()"></select></div>
                     <div class="stat-item"><label>持ち物</label>
                         <select id="oppItem" onchange="updateSpeed()">
-                            <option value="なし">なし</option><option value="こだわりハチマキ">ハチマキ(物理1.5倍)</option>
-                            <option value="いのちのたま">珠(1.3倍)</option><option value="こだわりスカーフ">スカーフ(素早1.5倍)</option>
-                            <option value="メガストーン">メガストーン</option>
-                            <option value="半減きのみ">半減きのみ</option>
-                        </select>
+                            <option value="なし">なし</option>
+                            <optgroup label="── こだわり系 ──">
+                              <option value="こだわりハチマキ">こだわりハチマキ（物理1.5倍）</option>
+                              <option value="こだわりメガネ">こだわりメガネ（特殊1.5倍）</option>
+                              <option value="こだわりスカーフ">こだわりスカーフ（素早1.5倍）</option>
+                            </optgroup>
+                            <optgroup label="── 火力・補助 ──">
+                              <option value="いのちのたま">いのちのたま（全技1.3倍）</option>
+                              <option value="とつげきチョッキ">とつげきチョッキ（特防1.5倍）</option>
+                              <option value="でんきだま">でんきだま（ピカチュウ専用/攻・特攻2倍）</option>
+                              <option value="おうじゃのしるし">おうじゃのしるし（10%ひるみ）</option>
+                              <option value="せんせいのツメ">せんせいのツメ（20%先制）</option>
+                              <option value="ひかりのこな">ひかりのこな（命中0.9倍）</option>
+                              <option value="ピントレンズ">ピントレンズ（急所+1）</option>
+                            </optgroup>
+                            <optgroup label="── タイプ強化（1.2倍） ──">
+                              <option value="もくたん">もくたん（炎1.2倍）</option>
+                              <option value="しんぴのしずく">しんぴのしずく（水1.2倍）</option>
+                              <option value="じしゃく">じしゃく（電気1.2倍）</option>
+                              <option value="きせきのタネ">きせきのタネ（草1.2倍）</option>
+                              <option value="とけないこおり">とけないこおり（氷1.2倍）</option>
+                              <option value="くろおび">くろおび（格闘1.2倍）</option>
+                              <option value="どくバリ">どくバリ（毒1.2倍）</option>
+                              <option value="やわらかいすな">やわらかいすな（地面1.2倍）</option>
+                              <option value="するどいくちばし">するどいくちばし（飛行1.2倍）</option>
+                              <option value="まがったスプーン">まがったスプーン（エスパー1.2倍）</option>
+                              <option value="ぎんのこな">ぎんのこな（虫1.2倍）</option>
+                              <option value="かたいいし">かたいいし（岩1.2倍）</option>
+                              <option value="のろいのおふだ">のろいのおふだ（ゴースト1.2倍）</option>
+                              <option value="りゅうのキバ">りゅうのキバ（ドラゴン1.2倍）</option>
+                              <option value="くろいメガネ">くろいメガネ（悪1.2倍）</option>
+                              <option value="メタルコート">メタルコート（鋼1.2倍）</option>
+                              <option value="ようせいのハネ">ようせいのハネ（フェアリー1.2倍）</option>
+                              <option value="シルクのスカーフ">シルクのスカーフ（ノーマル1.2倍）</option>
+                            </optgroup>
+                            <optgroup label="── 回復・耐久 ──">
+                              <option value="かいがらのすず">かいがらのすず（与ダメの1/8回復）</option>
+                              <option value="たべのこし">たべのこし（毎ターン1/16回復）</option>
+                              <option value="オボンのみ">オボンのみ（HP1/2以下で1/4回復）</option>
+                              <option value="オレンのみ">オレンのみ（HP1/2以下で10回復）</option>
+                              <option value="きあいのタスキ">きあいのタスキ（HP満タン時1耐え）</option>
+                              <option value="きあいのハチマキ">きあいのハチマキ（10%で1耐え）</option>
+                            </optgroup>
+                            <optgroup label="── きのみ・半減 ──">
+                              <option value="半減きのみ">半減きのみ（バツグン0.5倍）</option>
+                            </optgroup>
+                            <optgroup label="── メガストーン ──">
+                              <option value="メガストーン">メガストーン</option>
+                            </optgroup></select>
                     </div>
                     <div class="stat-item"><label>状態異常</label>
                         <select id="oppStatus" onchange="updateSpeed()">
@@ -6121,6 +6209,7 @@ if (document.getElementById('oppSpeedDisplay')) document.getElementById('oppSpee
 
         function getDamageRange(atkReal, defReal, power, stabMod, eff, dmgMod, isMultiscale, defBerry, hits) {
             if (!defReal || defReal === 0) return { min: 0, max: 0 };
+            const h = (hits && hits > 1) ? hits : 1;
             let minDmg = 9999, maxDmg = 0;
             let baseDamage = Math.floor(22 * power * atkReal / defReal);
             baseDamage = Math.floor(baseDamage / 50) + 2;
@@ -6133,10 +6222,33 @@ if (document.getElementById('oppSpeedDisplay')) document.getElementById('oppSpee
                 if (defBerry && eff > 1) d = Math.floor(d * 0.5);
                 d = Math.floor(d * dmgMod);
                 if (d < 1 && eff > 0) d = 1;
+                d = Math.floor(d * h); // 連続ヒット数反映（おやこあい・連続技対応）
                 if (d < minDmg) minDmg = d;
                 if (d > maxDmg) maxDmg = d;
             }
             return { min: minDmg, max: maxDmg };
+        }
+
+        // おやこあい専用: 1発目(等倍) + 2発目(1/4倍)の合計ダメージ
+        function getDamageRangeParentalBond(atkReal, defReal, power, stabMod, eff, dmgMod, isMultiscale, defBerry) {
+            const hit1 = getDamageRange(atkReal, defReal, power,        stabMod, eff, dmgMod, isMultiscale, defBerry, 1);
+            const hit2 = getDamageRange(atkReal, defReal, power * 0.25, stabMod, eff, dmgMod, false,        false,     1); // 2発目はマルチスケイル/木の実解除
+            return {
+                min: hit1.min + hit2.min,
+                max: hit1.max + hit2.max,
+                hit1: hit1,
+                hit2: hit2,
+            };
+        }
+
+        function getPBMoveDamage(atkReal, defReal, power, stabMod, eff, dmgMod, isMultiscale, defBerry, isPB) {
+            return isPB ? getDamageRangeParentalBond(atkReal, defReal, power, stabMod, eff, dmgMod, isMultiscale, defBerry)
+                        : getDamageRange(atkReal, defReal, power, stabMod, eff, dmgMod, isMultiscale, defBerry, 1);
+        }
+
+        function pbDamageLabel(dmg, isPB) {
+            if (!isPB) return '';
+            return `<span style="color:#8e44ad;font-size:0.72rem;">👶 2発合計</span>`;
         }
 
         function getKOStatus(minPct, maxPct, currentHpPct) {
@@ -6873,6 +6985,8 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
                 return;
             }
             const moveInfo = moveDex[moveName] || { power: 0, type: '', category: '物理' };
+                var isParentalBond = false; // おやこあいフラグ（全ブロック共通）
+
             const _myIdx  = parseInt(document.querySelector('input[name="myActive"]:checked')?.value  || '0', 10);
             const _oppIdx = parseInt(document.querySelector('input[name="oppActive"]:checked')?.value || '0', 10);
             const _myStats4power  = myPoke  ? getExactStats('my',  _myIdx,  myPoke)  : null;
@@ -7014,7 +7128,7 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
                 if (abil === 'ようりょくそ' && weather === 'sun') { /* 素早さのみ */ }
                 if (abil === 'かぜのり' && weather === 'wind') mPow = Math.floor(mPow * 1.5);
                 if (abil === 'じょうききかん' && weather === 'sun') { /* 素早さのみ */ }
-                if (abil === 'おやこあい' && moveCat !== '変化') { /* 2hit処理は別途 */ }
+                isParentalBond = (abil === 'おやこあい' && moveCat !== '変化');
 
                 if (abil === 'もうか' && mType === 'ほのお' && hpPct <= 33.3) mPow = Math.floor(mPow * 1.5);
                 if (abil === 'げきりゅう' && mType === 'みず' && hpPct <= 33.3) mPow = Math.floor(mPow * 1.5);
@@ -7166,15 +7280,24 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
                             <b>${moveName}</b> (${moveType} / ${moveCat}) | 固定ダメージ技
                             </div>
                             <table style="font-size:0.82rem;border-collapse:collapse;width:100%;margin-bottom:6px;">
-                            <tr style="background:#dce8f5"><th style="padding:3px 6px;text-align:left;">条件</th><th style="padding:3px 6px;">ダメージ</th><th style="padding:3px 6px;">判定</th></tr>
+                            <tr style="background:#dce8f5"><th style="padding:3px 6px;text-align:left;">条件</th><th style="padding:3px 6px;">ダメージ</th><th style="padding:3px 6px;">おやこあい</th><th style="padding:3px 6px;">判定</th></tr>
                             ${_tblFixed}
                             </table>`;
                         return;
                     }
                 }
 
-                let dmg_vs_min = getDamageRange(atkReal, defReal_min, power, stab, eff, dmgMod, isMS, hasBerry, hits);
-                let dmg_vs_max = getDamageRange(atkReal, defReal_max, power, stab, eff, dmgMod, isMS, hasBerry, hits);
+                let dmg_vs_min, dmg_vs_max, oyakoNote = '';
+                if (isParentalBond) {
+                    const pb_min = getDamageRangeParentalBond(atkReal, defReal_min, power, stab, eff, dmgMod, isMS, hasBerry);
+                    const pb_max = getDamageRangeParentalBond(atkReal, defReal_max, power, stab, eff, dmgMod, isMS, hasBerry);
+                    dmg_vs_min = pb_min;
+                    dmg_vs_max = pb_max;
+                    oyakoNote = `<div style="font-size:0.78rem;color:#8e44ad;margin-top:2px;">👶 おやこあい: 1発目 ${pb_min.hit1.min}〜${pb_min.hit1.max} + 2発目(1/4) ${pb_min.hit2.min}〜${pb_min.hit2.max} = 合計 ${pb_min.min}〜${pb_min.max}</div>`;
+                } else {
+                    dmg_vs_min = getPBMoveDamage(atkReal, defReal_min, power, stab, eff, dmgMod, isMS, hasBerry, isParentalBond);
+                    dmg_vs_max = getPBMoveDamage(atkReal, defReal_max, power, stab, eff, dmgMod, isMS, hasBerry, isParentalBond);
+                }
 
                 let minPct_0 = (dmg_vs_min.min / hpReal_min * 100); let maxPct_0 = (dmg_vs_min.max / hpReal_min * 100);
                 let minPct_32 = (dmg_vs_max.min / hpReal_max * 100); let maxPct_32 = (dmg_vs_max.max / hpReal_max * 100);
@@ -7283,8 +7406,17 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
                             <span>確定: <b>${minP}%〜${maxP}%</b> (<span style="color:${koColor};">${koStat}</span>)</span> 
                         </div>`;
                     } else {
-                        let pDmgMin = getDamageRange(atkReal, dReal_min, pPow, stab, e, dmgMod, false, false, hits);
-                        let pDmgMax = getDamageRange(atkReal, dReal_max, pPow, stab, e, dmgMod, false, false, hits);
+                        let pDmgMin, pDmgMax, oyakoNoteP = '';
+                        if (isParentalBond) {
+                            const pb_min = getDamageRangeParentalBond(atkReal, dReal_min, pPow, stab, e, dmgMod, false, false);
+                            const pb_max = getDamageRangeParentalBond(atkReal, dReal_max, pPow, stab, e, dmgMod, false, false);
+                            pDmgMin = pb_min;
+                            pDmgMax = pb_max;
+                            oyakoNoteP = `<div style="font-size:0.78rem;color:#8e44ad;margin-top:2px;">👶 おやこあい: 1発目 ${pb_min.hit1.min}〜${pb_min.hit1.max} + 2発目(1/4) ${pb_min.hit2.min}〜${pb_min.hit2.max} = 合計 ${pb_min.min}〜${pb_min.max}</div>`;
+                        } else {
+                            pDmgMin = getPBMoveDamage(atkReal, dReal_min, pPow, stab, e, dmgMod, false, false, isParentalBond);
+                            pDmgMax = getPBMoveDamage(atkReal, dReal_max, pPow, stab, e, dmgMod, false, false, isParentalBond);
+                        }
 
                         let minP_0 = (pDmgMin.min / hMin * 100).toFixed(1); let maxP_0 = (pDmgMin.max / hMin * 100).toFixed(1);
                         let minP_32 = (pDmgMax.min / hMax * 100).toFixed(1); let maxP_32 = (pDmgMax.max / hMax * 100).toFixed(1);
@@ -7347,7 +7479,7 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
 
                     tblHtml = `<tr><td>耐久無振り (H0/${_defStatLabel}0)</td><td><b>${minPct_0.toFixed(1)}% 〜 ${maxPct_0.toFixed(1)}%</b></td><td>${getKOStatus(minPct_0, maxPct_0, oppCurrentHpPct - getFixedDmgPct(oppPoke, oppAbil, true))}</td></tr>
                                ${_inputRow}
-                               <tr><td>耐久特化 (H32/${_defStatLabel}32+性格)</td><td><b>${minPct_32.toFixed(1)}% 〜 ${maxPct_32.toFixed(1)}%</b></td><td>${getKOStatus(minPct_32, maxPct_32, oppCurrentHpPct - getFixedDmgPct(oppPoke, oppAbil, true))}</td></tr>`;
+                               <tr><td>耐久特化 (H32/${_defStatLabel}32+性格)</td><td><b>${minPct_32.toFixed(1)}% 〜 ${maxPct_32.toFixed(1)}%</b></td><td>${getKOStatus(minPct_32, maxPct_32, oppCurrentHpPct - getFixedDmgPct(oppPoke, oppAbil, true))}</td></tr>` + oyakoNote;
                 }
 
                 out.innerHTML = `<div class="result-title">🎯 与ダメージ予測結果</div>
@@ -7368,21 +7500,21 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
                         const subHpShow = subHpExact !== null ? subHpExact : subHpMin + '〜' + subHpMax;
                         const refSubHp = subHpExact !== null ? subHpExact : subHpMax;
                         const refDmgMin = activeOppStats.isConf
-                            ? getDamageRange(atkReal, (moveCat==='物理'?activeOppStats.def:activeOppStats.spd), power, stab, eff, dmgMod, isMS, hasBerry, hits).min
-                            : getDamageRange(atkReal, _dMin, power, stab, eff, dmgMod, isMS, hasBerry, hits).min;
+                            ? getPBMoveDamage(atkReal, (moveCat==='物理'?activeOppStats.def:activeOppStats.spd), power, stab, eff, dmgMod, isMS, hasBerry, isParentalBond).min
+                            : getPBMoveDamage(atkReal, _dMin, power, stab, eff, dmgMod, isMS, hasBerry, isParentalBond).min;
                         const refDmgMax = activeOppStats.isConf
-                            ? getDamageRange(atkReal, (moveCat==='物理'?activeOppStats.def:activeOppStats.spd), power, stab, eff, dmgMod, isMS, hasBerry, hits).max
-                            : getDamageRange(atkReal, _dMax, power, stab, eff, dmgMod, isMS, hasBerry, hits).max;
+                            ? getPBMoveDamage(atkReal, (moveCat==='物理'?activeOppStats.def:activeOppStats.spd), power, stab, eff, dmgMod, isMS, hasBerry, isParentalBond).max
+                            : getPBMoveDamage(atkReal, _dMax, power, stab, eff, dmgMod, isMS, hasBerry, isParentalBond).max;
                         const breakAll = refDmgMin >= refSubHp;
                         const breakSome = refDmgMax >= refSubHp;
                         const subColor = breakAll ? '#27ae60' : (breakSome ? '#f39c12' : '#e74c3c');
                         const subLabel = breakAll ? '確定破壊' : (breakSome ? '乱数破壊' : '破壊不可');
-                        return '<div style="margin-top:8px;padding:6px 10px;background:#f0f8ff;border:1px solid #3498db;border-radius:4px;font-size:0.88rem;">🛡️ 相手の<b>身代わりHP</b>: <b>' + subHpShow + '</b> &nbsp;|&nbsp; この技: <b>' + refDmgMin + '〜' + refDmgMax + '</b> &nbsp;→&nbsp; <span style="color:' + subColor + ';font-weight:bold;">' + subLabel + '</span></div>';
+                        return '<div style="margin-top:8px;padding:6px 10px;background:#f0f8ff;border:1px solid #3498db;border-radius:4px;font-size:0.88rem;">🛡️ 相手の<b>身代わりHP</b>: <b>' + subHpShow + '</b> &nbsp;|&nbsp; この技: <b>' + Math.min(refDmgMin, refDmgMax) + '〜' + Math.max(refDmgMin, refDmgMax) + '</b> &nbsp;→&nbsp; <span style="color:' + subColor + ';font-weight:bold;">' + subLabel + '</span></div>';
                     })()}
                     ${(()=>{
                         const survMsg = calcSurvivalTurns('opp', oppPoke, oppAbil, oppCurrentHpPct, calcStat(oppPoke.hp, parseInt(document.getElementById('oppHP').value,10)||0, 1.0, true));
                         if (!survMsg) return '';
-                        return '<div style="margin-top:6px;padding:6px 10px;background:#fef9e7;border:1px solid #f39c12;border-radius:4px;font-size:0.88rem;">⏱️ 相手の蓄積ダメ残ターン: ' + survMsg + '</div>';
+                        return '<div style="margin-top:6px;padding:6px 10px;background:#fef9e7;border:1px solid #f39c12;border-radius:4px;font-size:0.88rem;">⏱️ 相手の蓄積ダメ残ターン: ' + (isParentalBond ? '<span style="color:#8e44ad;">👶 2発合算</span> ' : '') + survMsg + '</div>';
                     })()}
                     `;
 
@@ -7819,6 +7951,7 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
                     power = _cr.power;
                 }
                 const moveCat = md.category;
+                const isParentalBond = (atkAbil === 'おやこあい' && moveCat !== '変化');
                 if (power === 0) { html += `<tr><td><b>${mv}</b></td><td>${moveType}</td><td>0</td><td colspan="3" style="color:#888;">威力0</td></tr>`; return; }
                 const eff = calcTypeEffectiveness(moveType, defPoke.types, atkAbil, defAbil);
                 if (eff === 0) { html += `<tr><td><b>${mv}</b></td><td>${moveType}</td><td>${power}</td><td colspan="3" style="color:#aaa;">無効</td></tr>`; return; }
@@ -7874,7 +8007,7 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
                 if (defAbil==='あついしぼう' && (moveType==='ほのお'||moveType==='こおり')) power=Math.floor(power*0.5);
                 if (defAbil==='すいほう' && moveType==='ほのお') power=Math.floor(power*0.5);
                 if (defAbil==='きよめのしお' && moveType==='ゴースト') power=Math.floor(power*0.5);
-                const dmg = getDamageRange(atkReal, defReal, power, stab, eff, _dmgModA, isMS, hasBerry, 1);
+                const dmg = getPBMoveDamage(atkReal, defReal, power, stab, eff, _dmgModA, isMS, hasBerry, isParentalBond);
                 const minPct = (dmg.min / defHp * 100).toFixed(1);
                 const maxPct = (dmg.max / defHp * 100).toFixed(1);
                 const koStat = getKOStatus(parseFloat(minPct), parseFloat(maxPct), defCurrentHpPct);
@@ -7899,7 +8032,7 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
                     multiRows = hitRows;
                 }
                 const multiLabel = (mhData && mhData.max > 1) ? ' <span style="font-size:0.75rem;color:#8e44ad;">×'+mhData.min+(mhData.max>mhData.min?'〜'+mhData.max:'')+'hit</span>' : '';
-                html += `<tr><td><b>${mv}</b>${multiLabel}</td><td>${moveType}${effMark}</td><td>${power}</td><td><b>${dmg.min}〜${dmg.max}</b></td><td>${minPct}〜${maxPct}%</td><td>${koStat}</td></tr>` + multiRows;
+                html += `<tr><td><b>${mv}</b>${multiLabel}${isParentalBond ? ' <span style="color:#8e44ad;font-size:0.72rem;">👶 2発合算</span>' : ''}</td><td>${moveType}${effMark}</td><td>${power}</td><td><b>${dmg.min}〜${dmg.max}</b></td><td>${minPct}〜${maxPct}%</td><td>${koStat}</td></tr>` + multiRows;
             });
             html += '</table>';
             out.innerHTML = html;
@@ -7960,6 +8093,7 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
                     const eff = calcTypeEffectiveness(md.type, defPoke.types, atkAbil, defAbil);
                     if (eff === 0) { row += `<td style="color:#aaa;text-align:center;"><span style="font-weight:bold;">×</span></td>`; return; }
                     const moveCat = md.category;
+                    const isParentalBond = (atkAbil === 'おやこあい' && moveCat !== '変化');
                     const baseA = moveCat === '物理' ? atkPoke.atk : atkPoke.spa;
                     const atkPts = parseInt(document.getElementById(attackerSide + (moveCat === '物理' ? 'Atk' : 'SpA'))?.value || '0', 10);
                     const atkNat = parseFloat(document.getElementById(attackerSide + 'Nature')?.value || '1.0');
@@ -7999,7 +8133,7 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
                     if (defAbil==='あついしぼう' && (md.type==='ほのお'||md.type==='こおり')) _mvPow=Math.floor(_mvPow*0.5);
                     if (defAbil==='すいほう' && md.type==='ほのお') _mvPow=Math.floor(_mvPow*0.5);
                     if (defAbil==='きよめのしお' && md.type==='ゴースト') _mvPow=Math.floor(_mvPow*0.5);
-                    const dmg = getDamageRange(atkReal, defReal, _mvPow, stab, eff, _dmgMod2, false, false, 1);
+                    const dmg = getPBMoveDamage(atkReal, defReal, _mvPow, stab, eff, _dmgMod2, false, false, isParentalBond);
                     const minPct = (dmg.min / defHp * 100).toFixed(0);
                     const maxPct = (dmg.max / defHp * 100).toFixed(0);
                     const ko1c = parseFloat(minPct) >= 100;
@@ -8420,8 +8554,9 @@ function predictTotalSurvival(side, attackDmgMin, attackDmgMax) {
             if (!out || !out.innerHTML) return;
             const atkSide = document.querySelector('input[name="attackerSide"]:checked')?.value;
             const defSide = atkSide === 'me' ? 'opp' : 'my';
-            // 直近ダメージ範囲を result から拾う試み
-            const dmgMatch = out.innerHTML.match(/(\d+)〜(\d+)/);
+            // 直近ダメージ範囲を result から拾う試み（おやこあい合計を優先）
+            const pbTotalMatch = out.innerHTML.match(/合計\s*(\d+)〜(\d+)/);
+            const dmgMatch = pbTotalMatch || out.innerHTML.match(/(\d+)〜(\d+)/);
             if (dmgMatch) {
                 const dMin = parseInt(dmgMatch[1],10);
                 const dMax = parseInt(dmgMatch[2],10);
