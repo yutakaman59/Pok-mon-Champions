@@ -80,9 +80,13 @@
 
         /* --- ダッシュボードグリッド --- */
         .dashboard {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+            display: flex;
             gap: 10px;
+            align-items: stretch;
+        }
+        .dashboard > .field-col {
+            flex: 1 1 0;
+            min-width: 0;
         }
         @media (max-width: 768px) {
             .dashboard { grid-template-columns: 1fr; }
@@ -95,6 +99,8 @@
             box-shadow: var(--shadow-sm);
             padding: 12px;
             border: 1px solid var(--border);
+            min-width: 0;
+            width: 100%; box-sizing: border-box;
         }
 
         /* --- チームボックス --- */
@@ -120,16 +126,17 @@
         .poke-row {
             display: flex;
             align-items: center;
-            gap: 6px;
-            margin-bottom: 6px;
-            flex-wrap: wrap;
+            gap: 4px;
+            margin-bottom: 3px;
+            flex-wrap: nowrap;
             border-bottom: 1px dashed var(--border);
-            padding-bottom: 6px;
+            padding-bottom: 3px;
         }
-        .poke-row select { flex: 1; min-width: 0; }
+        .poke-row select { flex: 1; min-width: 0; font-size: 0.78rem; padding: 2px 4px; min-height: 26px; }
+        .poke-row input[type=radio] { flex-shrink: 0; }
         .badge {
-            font-size: 0.65rem;
-            padding: 2px 5px;
+            font-size: 0.6rem;
+            padding: 1px 4px;
             border-radius: 4px;
             background: #718096;
             color: white;
@@ -137,12 +144,47 @@
             flex-shrink: 0;
         }
 
+        /* --- 技ボタングリッド --- */
+        .move-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4px;
+            margin-top: 6px;
+        }
+        .move-cell { display: flex; flex-direction: column; gap: 2px; }
+        .move-cell select { padding: 2px 4px; font-size: 0.78rem; min-height: 26px; }
+        .move-cell button {
+            padding: 4px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        /* --- 能力値折りたたみ --- */
+        details.stat-details summary {
+            cursor: pointer;
+            font-size: 0.78rem;
+            font-weight: bold;
+            color: var(--text-sub);
+            padding: 3px 0;
+            user-select: none;
+            list-style: none;
+        }
+        details.stat-details summary::before { content: "▶ "; font-size: 0.7rem; }
+        details.stat-details[open] summary::before { content: "▼ "; }
+
         /* --- アクティブ統計ボックス --- */
         .active-stats {
             border: 2px solid var(--my-border);
             border-radius: var(--radius-sm);
             padding: 10px;
             background: var(--my-light);
+            min-width: 0;
+            width: 100%; box-sizing: border-box;
         }
         .opp-stats {
             border-color: var(--opp-border);
@@ -217,7 +259,7 @@
             color: var(--text);
             font-size: 0.82rem;
             min-height: 32px;
-            width: 100%;
+            width: 100%; box-sizing: border-box;
         }
         .stat-item select:focus, .stat-item input:focus {
             outline: none;
@@ -253,7 +295,7 @@
 
         /* --- アクションパネル --- */
         .action-panel {
-            width: 100%;
+            width: 100%; box-sizing: border-box;
             background: var(--surface);
             border-radius: var(--radius);
             padding: 14px;
@@ -286,7 +328,7 @@
             font-weight: 700;
             cursor: pointer;
             font-size: 0.95rem;
-            width: 100%;
+            width: 100%; box-sizing: border-box;
             transition: opacity 0.15s, transform 0.1s;
             min-height: 44px;
             letter-spacing: 0.02em;
@@ -337,7 +379,7 @@
         .result-title { font-weight: 700; color: var(--accent); margin-bottom: 8px; font-size: 1rem; }
 
         /* --- 予測テーブル --- */
-        .predict-table { width: 100%; border-collapse: collapse; background: var(--surface); border-radius: var(--radius-sm); overflow: hidden; }
+        .predict-table { width: 100%; box-sizing: border-box; border-collapse: collapse; background: var(--surface); border-radius: var(--radius-sm); overflow: hidden; }
         .predict-table th, .predict-table td {
             border: 1px solid var(--border);
             padding: 6px 8px;
@@ -526,7 +568,30 @@
             .flex-row { gap: 8px; }
             .action-panel { padding: 10px; }
         }
-</style>
+
+        /* --- チームエリア折りたたみ --- */
+        .team-details { margin-bottom: 8px; width: 100%; box-sizing: border-box; }
+        .team-summary {
+            width: 100%; box-sizing: border-box;
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: var(--my-color);
+            border-bottom: 2px solid var(--my-color);
+            padding: 5px 8px;
+            cursor: pointer;
+            user-select: none;
+            list-style: none;
+            display: flex;
+            align-items: center;
+            border-radius: var(--radius-sm);
+            background: var(--surface2);
+            margin-bottom: 0;
+        }
+        .team-summary::before { content: "▶ "; font-size: 0.7rem; margin-right: 4px; }
+        .team-details[open] > .team-summary::before { content: "▼ "; }
+        .opp-summary { color: var(--opp-color) !important; border-bottom-color: var(--opp-color) !important; }
+
+        </style>
 </head>
 <body>
     <div class="header">
@@ -537,10 +602,12 @@
     <div class="dashboard">
         <!-- 自分の場 -->
         <div class="field-col">
-            <div class="team-box">
-                <div class="team-title">自分のチーム (選出3 / 場1)</div>
-                <div id="myTeamList"></div>
-            </div>
+            <details id="myTeamDetails" class="team-details">
+                <summary class="team-summary">▶ 自分のチーム (選出3 / 場1)</summary>
+                <div class="team-box">
+                    <div id="myTeamList"></div>
+                </div>
+            </details>
 
                         <div class="active-stats" id="myActiveBox">
                 <div style="font-weight:bold; color:#2980b9; border-bottom:1px solid #bdc3c7; padding-bottom:5px;">自分の場に出ているポケモン</div>
@@ -549,41 +616,15 @@
                     <div id="myMegaContainer" class="mega-container"></div>
                     
                 </div>
-                <div style="margin-top:10px; display:flex; gap:5px; flex-wrap:wrap;">
-                    <div style="flex:1; display:flex; flex-direction:column; gap:4px; min-width:80px;">
-                        <select id="myMove1" style="padding:4px;"><option value="">技1</option></select>
-                        <button onclick="triggerAttack('my', 1)" style="padding:6px; background:#e74c3c; color:white; border:none; border-radius:4px; cursor:pointer; font-size:0.8rem; font-weight:bold; box-shadow:0 2px 4px rgba(0,0,0,0.1);">💥 攻撃</button>
-                    </div>
-                    <div style="flex:1; display:flex; flex-direction:column; gap:4px; min-width:80px;">
-                        <select id="myMove2" style="padding:4px;"><option value="">技2</option></select>
-                        <button onclick="triggerAttack('my', 2)" style="padding:6px; background:#e74c3c; color:white; border:none; border-radius:4px; cursor:pointer; font-size:0.8rem; font-weight:bold; box-shadow:0 2px 4px rgba(0,0,0,0.1);">💥 攻撃</button>
-                    </div>
-                    <div style="flex:1; display:flex; flex-direction:column; gap:4px; min-width:80px;">
-                        <select id="myMove3" style="padding:4px;"><option value="">技3</option></select>
-                        <button onclick="triggerAttack('my', 3)" style="padding:6px; background:#e74c3c; color:white; border:none; border-radius:4px; cursor:pointer; font-size:0.8rem; font-weight:bold; box-shadow:0 2px 4px rgba(0,0,0,0.1);">💥 攻撃</button>
-                    </div>
-                    <div style="flex:1; display:flex; flex-direction:column; gap:4px; min-width:80px;">
-                        <select id="myMove4" style="padding:4px;"><option value="">技4</option></select>
-                        <button onclick="triggerAttack('my', 4)" style="padding:6px; background:#e74c3c; color:white; border:none; border-radius:4px; cursor:pointer; font-size:0.8rem; font-weight:bold; box-shadow:0 2px 4px rgba(0,0,0,0.1);">💥 攻撃</button>
-                    </div>
+                <div class="move-grid">
+                    <div class="move-cell"><select id="myMove1"><option value="">技1</option></select><button onclick="triggerAttack('my', 1)">💥 攻撃</button></div>
+                    <div class="move-cell"><select id="myMove2"><option value="">技2</option></select><button onclick="triggerAttack('my', 2)">💥 攻撃</button></div>
+                    <div class="move-cell"><select id="myMove3"><option value="">技3</option></select><button onclick="triggerAttack('my', 3)">💥 攻撃</button></div>
+                    <div class="move-cell"><select id="myMove4"><option value="">技4</option></select><button onclick="triggerAttack('my', 4)">💥 攻撃</button></div>
                 </div>
 
-                <div style="margin-top:10px; margin-bottom:10px; background:#fff; padding:8px; border-radius:4px; border:1px solid #2980b9;">
-                    <div class="stat-item">
-                        <label style="color:#2980b9; font-size:0.9rem;">現在の残りHP</label>
-                        <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
-                            <input type="range" id="myCurrentHpSlider" value="100" min="1" max="100" style="flex:1; background:linear-gradient(to right,#2ecc71 100%,#ddd 100%);" oninput="syncHpFromPercent('my', event)">
-                            <input type="number" id="myCurrentHpPct" value="100" min="1" max="100" style="width:64px; font-weight:bold; font-size:1rem;" oninput="syncHpFromPercent('my', event)">
-                            <span style="font-weight:bold;">%</span>
-                        </div>
-                        <div style="display:flex; align-items:center; gap:8px;">
-                            <input type="number" id="myCurrentHpReal" value="1" min="1" style="width:90px; font-weight:bold; font-size:1rem;" oninput="syncHpFromReal('my')">
-                            <span>実数値</span>
-                            
-                        </div>
-                    </div>
-                </div>
-
+                <div style="margin-top:5px;margin-bottom:5px;background:#fff;padding:4px 8px;border-radius:4px;border:1px solid #2980b9;display:flex;align-items:center;gap:5px;flex-wrap:wrap;"><label style="color:#2980b9;font-size:0.72rem;font-weight:bold;flex-shrink:0;">残HP</label><input type="range" id="myCurrentHpSlider" value="100" min="1" max="100" style="flex:1;min-width:60px;background:linear-gradient(to right,#2ecc71 100%,#ddd 100%);" oninput="syncHpFromPercent('my', event)"><input type="number" id="myCurrentHpPct" value="100" min="1" max="100" style="width:50px;font-weight:bold;font-size:0.85rem;padding:2px 3px;min-height:22px;" oninput="syncHpFromPercent('my', event)"><span style="font-size:0.75rem;">%</span><input type="number" id="myCurrentHpReal" value="1" min="1" style="width:58px;font-weight:bold;font-size:0.85rem;padding:2px 3px;min-height:22px;" oninput="syncHpFromReal('my')"><span style="font-size:0.7rem;color:#888;">実数</span></div>
+                <details class="stat-details"><summary>能力値・特性・持ち物・ランク</summary>
                 <div class="stat-grid">
                     <div class="stat-item"><label>HP 能力P</label><input type="number" id="myHP" value="0" min="0" max="32" oninput="checkPoints(); updateRealStats('my')"><span class="real-stat" id="myHPReal" style="margin-left:8px; font-weight:bold; color:#2980b9;">-</span></div>
                     <div class="stat-item"><label>攻撃 能力P</label><input type="number" id="myAtk" value="0" min="0" max="32" oninput="checkPoints(); updateRealStats('my')"><span class="real-stat" id="myAtkReal" style="margin-left:8px; font-weight:bold; color:#2980b9;">-</span></div>
@@ -697,6 +738,7 @@
                     <div class="stat-item"><label>特防ランク</label><select id="myRankD2" onchange=""><option value="6">+6</option><option value="5">+5</option><option value="4">+4</option><option value="3">+3</option><option value="2">+2</option><option value="1">+1</option><option value="0" selected>0</option><option value="-1">-1</option><option value="-2">-2</option><option value="-3">-3</option><option value="-4">-4</option><option value="-5">-5</option><option value="-6">-6</option></select></div>
                     <div class="stat-item"><label>素早ランク</label><select id="myRankS" onchange="updateSpeed()"><option value="6">+6</option><option value="5">+5</option><option value="4">+4</option><option value="3">+3</option><option value="2">+2</option><option value="1">+1</option><option value="0" selected>0</option><option value="-1">-1</option><option value="-2">-2</option><option value="-3">-3</option><option value="-4">-4</option><option value="-5">-5</option><option value="-6">-6</option></select></div>
                 </div>
+                </details>
                 </div>
             </div>
         </div>
@@ -704,10 +746,12 @@
 
         <!-- 相手の場 -->
         <div class="field-col">
-            <div class="team-box">
-                <div class="team-title opp-title">相手のチーム (選出3 / 場1)</div>
-                <div id="oppTeamList"></div>
-            </div>
+            <details id="oppTeamDetails" class="team-details">
+                <summary class="team-summary opp-summary">▶ 相手のチーム (選出3 / 場1)</summary>
+                <div class="team-box">
+                    <div id="oppTeamList"></div>
+                </div>
+            </details>
 
                         <div class="active-stats opp-stats" id="oppActiveBox">
                 <div style="font-weight:bold; color:#c0392b; border-bottom:1px solid #bdc3c7; padding-bottom:5px;">相手の場に出ているポケモン</div>
@@ -716,41 +760,15 @@
                     <div id="oppMegaContainer" class="mega-container"></div>
                     
                 </div>
-                <div style="margin-top:10px; display:flex; gap:5px; flex-wrap:wrap;">
-                    <div style="flex:1; display:flex; flex-direction:column; gap:4px; min-width:80px;">
-                        <select id="oppMove1" style="padding:4px;"><option value="">技1</option></select>
-                        <button onclick="triggerAttack('opp', 1)" style="padding:6px; background:#e74c3c; color:white; border:none; border-radius:4px; cursor:pointer; font-size:0.8rem; font-weight:bold; box-shadow:0 2px 4px rgba(0,0,0,0.1);">💥 攻撃</button>
-                    </div>
-                    <div style="flex:1; display:flex; flex-direction:column; gap:4px; min-width:80px;">
-                        <select id="oppMove2" style="padding:4px;"><option value="">技2</option></select>
-                        <button onclick="triggerAttack('opp', 2)" style="padding:6px; background:#e74c3c; color:white; border:none; border-radius:4px; cursor:pointer; font-size:0.8rem; font-weight:bold; box-shadow:0 2px 4px rgba(0,0,0,0.1);">💥 攻撃</button>
-                    </div>
-                    <div style="flex:1; display:flex; flex-direction:column; gap:4px; min-width:80px;">
-                        <select id="oppMove3" style="padding:4px;"><option value="">技3</option></select>
-                        <button onclick="triggerAttack('opp', 3)" style="padding:6px; background:#e74c3c; color:white; border:none; border-radius:4px; cursor:pointer; font-size:0.8rem; font-weight:bold; box-shadow:0 2px 4px rgba(0,0,0,0.1);">💥 攻撃</button>
-                    </div>
-                    <div style="flex:1; display:flex; flex-direction:column; gap:4px; min-width:80px;">
-                        <select id="oppMove4" style="padding:4px;"><option value="">技4</option></select>
-                        <button onclick="triggerAttack('opp', 4)" style="padding:6px; background:#e74c3c; color:white; border:none; border-radius:4px; cursor:pointer; font-size:0.8rem; font-weight:bold; box-shadow:0 2px 4px rgba(0,0,0,0.1);">💥 攻撃</button>
-                    </div>
+                <div class="move-grid">
+                    <div class="move-cell"><select id="oppMove1"><option value="">技1</option></select><button onclick="triggerAttack('opp', 1)">💥 攻撃</button></div>
+                    <div class="move-cell"><select id="oppMove2"><option value="">技2</option></select><button onclick="triggerAttack('opp', 2)">💥 攻撃</button></div>
+                    <div class="move-cell"><select id="oppMove3"><option value="">技3</option></select><button onclick="triggerAttack('opp', 3)">💥 攻撃</button></div>
+                    <div class="move-cell"><select id="oppMove4"><option value="">技4</option></select><button onclick="triggerAttack('opp', 4)">💥 攻撃</button></div>
                 </div>
 
-                <div style="margin-top:10px; margin-bottom:10px; background:#fff; padding:8px; border-radius:4px; border:1px solid #c0392b;">
-                    <div class="stat-item">
-                        <label style="color:#c0392b; font-size:0.9rem;">現在の残りHP</label>
-                        <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
-                            <input type="range" id="oppCurrentHpSlider" value="100" min="1" max="100" style="flex:1; background:linear-gradient(to right,#2ecc71 100%,#ddd 100%);" oninput="syncHpFromPercent('opp', event)">
-                            <input type="number" id="oppCurrentHpPct" value="100" min="1" max="100" style="width:64px; font-weight:bold; font-size:1rem;" oninput="syncHpFromPercent('opp', event)">
-                            <span style="font-weight:bold;">%</span>
-                        </div>
-                        <div style="display:flex; align-items:center; gap:8px;">
-                            <input type="number" id="oppCurrentHpReal" value="1" min="1" style="width:90px; font-weight:bold; font-size:1rem;" oninput="syncHpFromReal('opp')">
-                            <span>実数値</span>
-                            
-                        </div>
-                    </div>
-                </div>
-
+                <div style="margin-top:5px;margin-bottom:5px;background:#fff;padding:4px 8px;border-radius:4px;border:1px solid #c0392b;display:flex;align-items:center;gap:5px;flex-wrap:wrap;"><label style="color:#c0392b;font-size:0.72rem;font-weight:bold;flex-shrink:0;">残HP</label><input type="range" id="oppCurrentHpSlider" value="100" min="1" max="100" style="flex:1;min-width:60px;background:linear-gradient(to right,#e74c3c 100%,#ddd 100%);" oninput="syncHpFromPercent('opp', event)"><input type="number" id="oppCurrentHpPct" value="100" min="1" max="100" style="width:50px;font-weight:bold;font-size:0.85rem;padding:2px 3px;min-height:22px;" oninput="syncHpFromPercent('opp', event)"><span style="font-size:0.75rem;">%</span><input type="number" id="oppCurrentHpReal" value="1" min="1" style="width:58px;font-weight:bold;font-size:0.85rem;padding:2px 3px;min-height:22px;" oninput="syncHpFromReal('opp')"><span style="font-size:0.7rem;color:#888;">実数</span></div>
+                <details class="stat-details"><summary>能力値・特性・持ち物・ランク</summary>
                 <div class="stat-grid">
                     <div class="stat-item"><label>HP 能力P</label><input type="number" id="oppHP" value="0" min="0" max="32" oninput="updateRealStats('opp')"><span class="real-stat" id="oppHPReal" style="margin-left:8px; font-weight:bold; color:#c0392b;">-</span></div>
                     <div class="stat-item"><label>攻撃 能力P</label><input type="number" id="oppAtk" value="0" min="0" max="32" oninput="updateRealStats('opp')"><span class="real-stat" id="oppAtkReal" style="margin-left:8px; font-weight:bold; color:#c0392b;">-</span></div>
@@ -864,6 +882,7 @@
                     <div class="stat-item"><label>特防ランク</label><select id="oppRankD2" onchange=""><option value="6">+6</option><option value="5">+5</option><option value="4">+4</option><option value="3">+3</option><option value="2">+2</option><option value="1">+1</option><option value="0" selected>0</option><option value="-1">-1</option><option value="-2">-2</option><option value="-3">-3</option><option value="-4">-4</option><option value="-5">-5</option><option value="-6">-6</option></select></div>
                     <div class="stat-item"><label>素早ランク</label><select id="oppRankS" onchange="updateSpeed()"><option value="6">+6</option><option value="5">+5</option><option value="4">+4</option><option value="3">+3</option><option value="2">+2</option><option value="1">+1</option><option value="0" selected>0</option><option value="-1">-1</option><option value="-2">-2</option><option value="-3">-3</option><option value="-4">-4</option><option value="-5">-5</option><option value="-6">-6</option></select></div>
                 </div>
+                </details>
                 </div>
             </div>
         </div>
@@ -5456,24 +5475,51 @@ window.onload = function() {
                 }
 
                 const hpColor = hp > 50 ? '#27ae60' : (hp > 20 ? '#f39c12' : '#c0392b');
-                const moveStr = moves.join(' / ');
-                sumEl.innerHTML = `<span style="color:${hpColor}; font-weight:bold;">HP: ${hp}%</span> <span style="color:#ccc;">|</span> <span style="color:#666;">技: ${moveStr}</span>`;
+                const item = (state && state[`${side}Item`]) ? state[`${side}Item`] : '';
+                const status = (state && state[`${side}Status`]) ? state[`${side}Status`] : 'none';
+                const statusLabel = {burn:'やけど',poison:'どく',bad_poison:'もうどく',paralysis:'まひ',sleep:'ねむり',freeze:'こおり'}[status] || '';
+                const statusColors = {burn:'#e74c3c',poison:'#9b59b6',bad_poison:'#6c3483',paralysis:'#f1c40f',sleep:'#e91e8c',freeze:'#00bcd4'};
+                const statusColor = statusColors[status] || '#e67e22';
+                const statusHtml = statusLabel ? ` <span style="color:${statusColor};font-weight:bold;">${statusLabel}</span>` : '';
+                const mv = moves.filter(m => m && m !== '未設定' && m !== 'なし');
+                const itemDisp = item && item !== 'なし' ? item : 'なし';
+                const itemColor = item && item !== 'なし' ? '#8e44ad' : '#bbb';
+                const row1moves = mv.slice(0,2).join(' / ') || '-';
+                const row2moves = mv.slice(2,4).join(' / ') || '';
+                // 左列: HP行は2セルに分割してHPと状態異常を別々に
+                sumEl.innerHTML =
+                    `<table style="width:100%;table-layout:fixed;font-size:0.68rem;line-height:1.5;border-collapse:collapse;display:table;">`+
+                    `<colgroup><col style="width:6em"><col style="width:4.6em"><col style="width:1.1em"><col></colgroup>`+
+                    `<tr>`+
+                    `<td style="color:${hpColor};font-weight:bold;white-space:nowrap;padding-right:4px;">HP:${hp}%</td>`+
+                    `<td style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-left:4px;">${statusHtml}</td>`+
+                    `<td style="color:#ccc;text-align:center;padding:0 4px;">|</td>`+
+                    `<td style="color:var(--text-sub);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding-left:4px;">${row1moves}</td>`+
+                    `</tr><tr>`+
+                    `<td colspan="2" style="color:${itemColor};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-right:4px;">${itemDisp}</td>`+
+                    `<td style="color:#ccc;text-align:center;padding:0 4px;">|</td>`+
+                    `<td style="color:var(--text-sub);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding-left:4px;">${row2moves}</td>`+
+                    `</tr></table>`;
             }
         }
 
         function renderTeam(side, defaultTeam) {
-            let html = '';
+            // ヘッダー行
+            let html = `<div style="display:flex;align-items:center;gap:4px;margin-bottom:2px;padding-left:2px;">
+                <span style="font-size:0.65rem;font-weight:bold;color:#888;width:18px;text-align:center;">出</span>
+                <span style="font-size:0.65rem;font-weight:bold;color:#888;width:18px;text-align:center;">場</span>
+                <span style="font-size:0.65rem;font-weight:bold;color:#888;flex:1;min-width:80px;">ポケモン</span>
+                <span style="font-size:0.65rem;font-weight:bold;color:#888;flex:2;">情報</span>
+            </div>`;
             for(let i=0; i<6; i++) {
-                html += `<div class="poke-row">
-                    <div style="display:flex; align-items:center; gap:5px; width:100%;">
-                        <span class="badge">出</span><input type="checkbox" title="選出" id="${side}Selected${i}">
-                        <span class="badge">場</span><input type="radio" name="${side}Active" value="${i}" ${i===0?'checked':''} onchange="updateActive('${side}')">
-                        <select id="${side}Poke${i}" onchange="if(document.querySelector('input[name=\'${side}Active\']:checked').value==='${i}') updateActive('${side}'); setTimeout(()=>updateTeamSummary('${side}'), 50);" style="flex:1; padding:4px;">`;
+                html += `<div class="poke-row" style="display:flex;align-items:center;gap:4px;flex-wrap:nowrap;">` +
+                    `<input type="checkbox" title="選出" id="${side}Selected${i}" style="flex-shrink:0;width:18px;">` +
+                    `<input type="radio" name="${side}Active" value="${i}" ${i===0?'checked':''} onchange="updateActive('${side}')" style="flex-shrink:0;width:18px;">` +
+                    `<select id="${side}Poke${i}" onchange="if(document.querySelector('input[name=\'${side}Active\']:checked').value==='${i}') updateActive('${side}'); setTimeout(()=>updateTeamSummary('${side}'), 50);" style="flex:1;min-width:80px;max-width:110px;font-size:0.78rem;padding:2px 3px;min-height:26px;">`;
                 sortedPokeNames.forEach(p => { html += `<option value="${p}" ${p===defaultTeam[i]?'selected':''}>${p}</option>`; });
-                html += `</select>
-                    </div>
-                    <div id="${side}Summary${i}" style="flex-basis: 100%; font-size: 0.8rem; margin-left: 60px; min-height: 1.2em;"></div>
-                </div>`;
+                html += `</select>` +
+                    `<div id="${side}Summary${i}" class="poke-info-inline" style="flex:2;min-width:0;"></div>` +
+                    `</div>`;
             }
             document.getElementById(side + 'TeamList').innerHTML = html;
         }
@@ -6582,7 +6628,15 @@ if (document.getElementById('oppSpeedDisplay')) document.getElementById('oppSpee
             return 120;
         };
 
-        function getFixedDmgPct(pDex, pAbil, isOpp) {
+        function isGrounded(pDex, pAbil, side) {
+            const gravity = document.getElementById('gravityField')?.checked;
+            if (gravity) return true;
+            const item = document.getElementById(side === 'opp' ? 'oppItem' : 'myItem')?.value || '';
+            if (item === 'ふうせん') return false;
+            return !pDex.types.includes('ひこう') && pAbil !== 'ふゆう';
+        }
+
+                function getFixedDmgPct(pDex, pAbil, isOpp) {
             let dmg = 0;
             let sr = isOpp ? document.getElementById('srOpp')?.checked : document.getElementById('srMy')?.checked;
             if (sr) {
@@ -6590,7 +6644,7 @@ if (document.getElementById('oppSpeedDisplay')) document.getElementById('oppSpee
                 if (e > 0) dmg += 12.5 * e;
             }
             let spikes = isOpp ? document.getElementById('spikesOpp')?.checked : document.getElementById('spikesMy')?.checked;
-            if (spikes && !pDex.types.includes('ひこう') && pAbil !== 'ふゆう') {
+            if (spikes && isGrounded(pDex, pAbil, isOpp ? 'opp' : 'my')) {
                 const countId = isOpp ? 'spikesOppCount' : 'spikesMyCount';
                 const cnt = parseInt(document.getElementById(countId)?.value, 10) || 1;
                 const spikeDmgTable = { 1: 12.5, 2: 100/6, 3: 25.0 }; // 1枚=12.5%, 2枚=16.7%, 3枚=25%
@@ -7032,6 +7086,23 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
             const out = document.getElementById('resultOutput');
             out.style.display = 'block';
             updateSpeedTiers();
+
+            // 変化技・威力0の場合はダメージ計算をスキップ
+            if (moveCat === '変化' || power === 0) {
+                const defSideForPred = attackerSide === 'me' ? 'opp' : 'my';
+                const mySideForPred  = attackerSide === 'me' ? 'my'  : 'opp';
+                out.innerHTML = `
+                    <div class="result-title">🎯 与ダメージ予測結果</div>
+                    <div style="padding:12px; background:#f0f4f8; border-radius:6px; border-left:4px solid #7f8c8d; color:#555; font-size:0.9rem; margin-bottom:8px;">
+                        <b>${moveName}</b>（${moveType} / 変化技）はダメージを与えません。<br>
+                        <span style="font-size:0.82rem; color:#888;">定数ダメージ・回復の予測は下の生存シミュレーションをご参照ください。</span>
+                    </div>`;
+                const _predOpp = predictTotalSurvival(defSideForPred, 0, 0);
+                if (_predOpp) out.innerHTML += `<div style="margin-top:4px;"><b>相手の場合:</b>${_predOpp}</div>`;
+                const _predMy  = predictTotalSurvival(mySideForPred, 0, 0);
+                if (_predMy)  out.innerHTML += `<div style="margin-top:4px;"><b>自分の場合:</b>${_predMy}</div>`;
+                return;
+            }
             
 
             
@@ -7081,12 +7152,31 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
             }
 
             let terrainMod = 1.0;
-            if (terrain === 'electric' && moveType === 'でんき') terrainMod = 1.3;
-            if (terrain === 'grassy' && moveType === 'くさ') terrainMod = 1.3;
-            if (terrain === 'psychic' && moveType === 'エスパー') terrainMod = 1.3;
-            if (terrain === 'misty' && moveType === 'ドラゴン') terrainMod = 0.5;
-            if (terrain === 'grassy' && (moveName === 'じしん' || moveName === 'マグニチュード' || moveName === 'じならし')) {
-                terrainMod = 0.5;
+            const isGroundedObj = (poke, abil, item) => {
+                const gravity = document.getElementById('gravityField')?.checked;
+                if (gravity) return true;
+                if (item === 'ふうせん') return false;
+                if (!poke?.types) return true;
+                return !poke.types.includes('ひこう') && abil !== 'ふゆう';
+            };
+            const atkPokeDex = attackerSide === 'me' ? myPoke : oppPoke;
+            const atkAbil = attackerSide === 'me' ? myAbil : oppAbil;
+            const atkItem = document.getElementById(attackerSide === 'me' ? 'myItem' : 'oppItem')?.value || 'なし';
+            const atkGrounded = isGroundedObj(atkPokeDex, atkAbil, atkItem);
+            const defPokeDex = attackerSide === 'me' ? oppPoke : myPoke;
+            const defAbil = attackerSide === 'me' ? oppAbil : myAbil;
+            const defItem = document.getElementById(attackerSide === 'me' ? 'oppItem' : 'myItem')?.value || 'なし';
+            const defGrounded = isGroundedObj(defPokeDex, defAbil, defItem);
+            if (atkGrounded) {
+                if (terrain === 'electric' && moveType === 'でんき') terrainMod = 1.3;
+                if (terrain === 'grassy' && moveType === 'くさ') terrainMod = 1.3;
+                if (terrain === 'psychic' && moveType === 'エスパー') terrainMod = 1.3;
+            }
+            if (defGrounded) {
+                if (terrain === 'misty' && moveType === 'ドラゴン') terrainMod = 0.5;
+                if (terrain === 'grassy' && (moveName === 'じしん' || moveName === 'マグニチュード' || moveName === 'じならし')) {
+                    terrainMod = 0.5;
+                }
             }
 
             // 【修正4】天候・フィールド倍率は dmgMod に統合するため power への事前乗算を廃止
@@ -7384,7 +7474,7 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
                     if (fixedDmg !== null) {
                         const _fixedPct = (fixedDmg / hExact * 100).toFixed(1);
                         const _koSt = getKOStatus(_fixedPct, _fixedPct, _oppHpReal / hExact * 100);
-                        addHtml = `<div style="margin-top:2px;font-size:0.78rem;color:#555;">固定ダメージ: <b>${fixedDmg}</b> (${_fixedPct}%) ${_koSt}</div>`;
+                        addHtml = `<div style="margin-top:2px;font-size:0.68rem;color:#555;">固定ダメージ: <b>${fixedDmg}</b> (${_fixedPct}%) ${_koSt}</div>`;
                         sumEl.innerHTML = existingText + addHtml;
                         continue;
                     }
@@ -7401,7 +7491,7 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
                         else if (pDmg.max / hExact * 100 >= pReqHp) koStat = '乱1';
 
                         let koColor = koStat === '確1' ? '#c0392b' : (koStat === '乱1' ? '#d35400' : '#27ae60');
-                        addHtml = `<div style="margin-top:2px; font-size:0.85rem; color:#444;">
+                        addHtml = `<div style="margin-top:2px; font-size:0.68rem; color:#444;">
                             <span style="display:inline-block; width:16px; font-weight:bold; color:#e67e22;">${eSym}</span> 
                             <span>確定: <b>${minP}%〜${maxP}%</b> (<span style="color:${koColor};">${koStat}</span>)</span> 
                         </div>`;
@@ -7433,7 +7523,7 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
 
                         let koColor0 = koStat === '確1' ? '#c0392b' : (koStat === '乱1' ? '#d35400' : '#27ae60');
                         let koColor32 = koStat32 === '確1' ? '#c0392b' : (koStat32 === '乱1' ? '#d35400' : '#27ae60');
-                        addHtml = `<div style="margin-top:2px; font-size:0.85rem; color:#444;">
+                        addHtml = `<div style="margin-top:2px; font-size:0.68rem; color:#444;">
                             <span style="display:inline-block; width:16px; font-weight:bold; color:#e67e22;">${eSym}</span> 
                             <span>無振り: <b>${minP_0}%〜${maxP_0}%</b> (<span style="color:${koColor0};">${koStat}</span>)</span> 
                             <span style="color:#ccc; margin:0 4px;">|</span> 
@@ -7703,7 +7793,7 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
                     if (fixedDmgB !== null && _myHpMax > 0) {
                         const _fixedPctB = (fixedDmgB / _myHpMax * 100).toFixed(1);
                         const _koStB = getKOStatus(_fixedPctB, _fixedPctB, _myHpRealB / _myHpMax * 100);
-                        addHtml = `<div style="margin-top:2px;font-size:0.78rem;color:#555;">固定ダメージ: <b>${fixedDmgB}</b> (${_fixedPctB}%) ${_koStB}</div>`;
+                        addHtml = `<div style="margin-top:2px;font-size:0.68rem;color:#555;">固定ダメージ: <b>${fixedDmgB}</b> (${_fixedPctB}%) ${_koStB}</div>`;
                         sumEl.innerHTML = existingText + addHtml;
                         continue;
                     }
@@ -7720,7 +7810,7 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
                         else if (pDmg.max / hExact * 100 >= pReqHp) koStat = '乱1';
 
                         let koColor = koStat === '確1' ? '#c0392b' : (koStat === '乱1' ? '#d35400' : '#27ae60');
-                        addHtml = `<div style="margin-top:2px; font-size:0.85rem; color:#444;">
+                        addHtml = `<div style="margin-top:2px; font-size:0.68rem; color:#444;">
                             <span style="display:inline-block; width:16px; font-weight:bold; color:#e67e22;">${eSym}</span> 
                             <span>確定: <b>${minP}%〜${maxP}%</b> (<span style="color:${koColor};">${koStat}</span>)</span> 
                         </div>`;
@@ -7747,7 +7837,7 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
 
                         let koColor0 = koStat === '確1' ? '#c0392b' : (koStat === '乱1' ? '#d35400' : '#27ae60');
                         let koColor32 = koStat32 === '確1' ? '#c0392b' : (koStat32 === '乱1' ? '#d35400' : '#27ae60');
-                        addHtml = `<div style="margin-top:2px; font-size:0.85rem; color:#444;">
+                        addHtml = `<div style="margin-top:2px; font-size:0.68rem; color:#444;">
                             <span style="display:inline-block; width:16px; font-weight:bold; color:#e67e22;">${eSym}</span> 
                             <span>無振り: <b>${minP_0}%〜${maxP_0}%</b> (<span style="color:${koColor0};">${koStat}</span>)</span> 
                             <span style="color:#ccc; margin:0 4px;">|</span> 
@@ -7993,11 +8083,24 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
                 if (weather==='sun' && moveType==='みず') _wModA=0.5;
                 if (weather==='rain' && moveType==='みず') _wModA=1.5;
                 if (weather==='rain' && moveType==='ほのお') _wModA=0.5;
-                if (terrain==='electric' && moveType==='でんき') _tModA=1.3;
-                if (terrain==='grassy' && moveType==='くさ') _tModA=1.3;
-                if (terrain==='psychic' && moveType==='エスパー') _tModA=1.3;
-                if (terrain==='misty' && moveType==='ドラゴン') _tModA=0.5;
-                if (terrain==='grassy' && (mv==='じしん'||mv==='マグニチュード'||mv==='じならし')) _tModA=0.5;
+                const _isGroundedA = (poke, abil, item) => {
+                    if (document.getElementById('gravityField')?.checked) return true;
+                    if (item==='ふうせん') return false;
+                    if (!poke?.types) return true;
+                    return !poke.types.includes('ひこう') && abil !== 'ふゆう';
+                };
+                const _defItem = document.getElementById(defenderSide+'Item')?.value || 'なし';
+                const _atkGrounded = _isGroundedA(atkPoke, atkAbil, atkItem);
+                const _defGrounded = _isGroundedA(defPoke, defAbil, _defItem);
+                if (_atkGrounded) {
+                    if (terrain==='electric' && moveType==='でんき') _tModA=1.3;
+                    if (terrain==='grassy' && moveType==='くさ') _tModA=1.3;
+                    if (terrain==='psychic' && moveType==='エスパー') _tModA=1.3;
+                }
+                if (_defGrounded) {
+                    if (terrain==='misty' && moveType==='ドラゴン') _tModA=0.5;
+                    if (terrain==='grassy' && (mv==='じしん'||mv==='マグニチュード'||mv==='じならし')) _tModA=0.5;
+                }
                 const _dmgModA = dmgMod * _wModA * _tModA;
                 // 砂嵐・雪の防御補正
                 if (weather==='sand' && defPoke.types.includes('いわ') && moveCat==='特殊') defReal=Math.floor(defReal*1.5);
@@ -8122,11 +8225,24 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
                     if (_weather2==='sun' && md.type==='みず') _wMod2=0.5;
                     if (_weather2==='rain' && md.type==='みず') _wMod2=1.5;
                     if (_weather2==='rain' && md.type==='ほのお') _wMod2=0.5;
-                    if (_terrain2==='electric' && md.type==='でんき') _tMod2=1.3;
-                    if (_terrain2==='grassy' && md.type==='くさ') _tMod2=1.3;
-                    if (_terrain2==='psychic' && md.type==='エスパー') _tMod2=1.3;
-                    if (_terrain2==='misty' && md.type==='ドラゴン') _tMod2=0.5;
-                    if (_terrain2==='grassy' && (mv==='じしん'||mv==='マグニチュード'||mv==='じならし')) _tMod2=0.5;
+                    const _isGrounded2 = (poke, abil, item) => {
+                        if (document.getElementById('gravityField')?.checked) return true;
+                        if (item === 'ふうせん') return false;
+                        if (!poke?.types) return true;
+                        return !poke.types.includes('ひこう') && abil !== 'ふゆう';
+                    };
+                    const _def2Item = (_st[defenderSide+'Item']) || 'なし';
+                    const _atkGrounded2 = _isGrounded2(atkPoke, atkAbil, atkItem);
+                    const _defGrounded2 = _isGrounded2(defPoke, defAbil, _def2Item);
+                    if (_atkGrounded2) {
+                        if (_terrain2==='electric' && md.type==='でんき') _tMod2=1.3;
+                        if (_terrain2==='grassy' && md.type==='くさ') _tMod2=1.3;
+                        if (_terrain2==='psychic' && md.type==='エスパー') _tMod2=1.3;
+                    }
+                    if (_defGrounded2) {
+                        if (_terrain2==='misty' && md.type==='ドラゴン') _tMod2=0.5;
+                        if (_terrain2==='grassy' && (mv==='じしん'||mv==='マグニチュード'||mv==='じならし')) _tMod2=0.5;
+                    }
                     let _dmgMod2 = dmgMod * _wMod2 * _tMod2;
                     // 防御側特性による威力補正
                     if (defAbil==='たいねつ' && md.type==='ほのお') _mvPow=Math.floor(_mvPow*0.5);
@@ -8288,14 +8404,18 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
 
         function calcTypeEffectiveness(mType, defTypes, atkAbil, defAbil) {
                 let e = 1.0;
+                const gravity = document.getElementById('gravityField')?.checked;
                 defTypes.forEach(t => {
                     let typeMultiplier = (typeChart[mType] && typeChart[mType][t] !== undefined) ? typeChart[mType][t] : 1.0;
                     if ((atkAbil === 'きもったま' || atkAbil === 'しんがん') && (mType === 'ノーマル' || mType === 'かくとう') && t === 'ゴースト') {
                         typeMultiplier = 1.0;
                     }
+                    if (gravity && mType === 'じめん' && t === 'ひこう') {
+                        typeMultiplier = 1.0; // 重力下ではじめん技はひこうに等倍
+                    }
                     e *= typeMultiplier;
                 });
-                if (defAbil === 'ふゆう' && mType === 'じめん') e = 0;
+                if (!gravity && defAbil === 'ふゆう' && mType === 'じめん') e = 0;
                 if (defAbil === 'もらいび' && mType === 'ほのお') e = 0;
                 if ((defAbil === 'ちょすい' || defAbil === 'よびみず') && mType === 'みず') e = 0;
                 if ((defAbil === 'ちくでん' || defAbil === 'ひらいしん') && mType === 'でんき') e = 0;
@@ -8475,6 +8595,23 @@ function predictTotalSurvival(side, attackDmgMin, attackDmgMax) {
     if (abil === 'アイスボディ' && weather === 'snow') {
         const h = Math.floor(maxHp / 16);
         healPerTurn += h; healSources.push(`アイスボディ(+${h})`);
+    }
+
+    // グラスフィールド: 接地ポケモンが毎ターン 1/16 回復
+    {
+        const terrain = document.getElementById('battleTerrain')?.value || 'none';
+        const atkAbilGF = document.getElementById('myAbility')?.value || '';
+        const oppAbilGF = document.getElementById('oppAbility')?.value || '';
+        const effectiveTerrain = (atkAbilGF === 'グラスメイカー' || oppAbilGF === 'グラスメイカー') ? 'grassy' : terrain;
+        if (effectiveTerrain === 'grassy') {
+            const gravity = document.getElementById('gravityField')?.checked;
+            const item = document.getElementById(side + 'Item')?.value || 'なし';
+            const isGroundedGF = gravity || (item !== 'ふうせん' && !poke.types?.includes('ひこう') && abil !== 'ふゆう');
+            if (isGroundedGF) {
+                const h = Math.floor(maxHp / 16);
+                healPerTurn += h; healSources.push(`グラスフィールド(+${h})`);
+            }
+        }
     }
 
     const netPerTurn = dotPerTurn - healPerTurn;
