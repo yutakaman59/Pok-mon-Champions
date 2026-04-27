@@ -153,8 +153,13 @@
             flex: 1 1 0;
             min-width: 0;
         }
-        @media (max-width: 768px) {
-            .dashboard { grid-template-columns: 1fr; }
+        /* 横並び時: gap:18px が左右間隔を担う */
+        /* 縦並び時: flex-direction:column + gap:20px が上下間隔を担う */
+        @media (max-width: 900px) {
+            .dashboard {
+                flex-direction: column;
+                gap: 20px;
+            }
         }
 
         /* --- カード共通 --- */
@@ -8922,8 +8927,11 @@ function predictTotalSurvival(side, attackDmgMin, attackDmgMax) {
     }
 
     const netPerTurn = dotPerTurn - healPerTurn;
+    // attackDmgMax>0 なら定数なしでも表示（相手攻撃時の自分HP推移を見せる）
     const hasAnyEffect = dotPerTurn > 0 || healPerTurn > 0 || status === 'bad_poison' || attackDmgMax > 0;
     if (!hasAnyEffect) return '';
+    // attackDmgMax=0かつ定数なし→無意味なので非表示
+    if (attackDmgMax === 0 && dotPerTurn === 0 && healPerTurn === 0 && status !== 'bad_poison') return '';
 
     let rows = '';
     let hp = currentHp;
@@ -8998,9 +9006,12 @@ function predictTotalSurvival(side, attackDmgMin, attackDmgMax) {
             if (!out || !out.innerHTML) return;
             const atkSide = document.querySelector('input[name="attackerSide"]:checked')?.value;
             const defSide = atkSide === 'me' ? 'opp' : 'my';
-            // ダメージ範囲を抽出（おやこあい合計優先→通常範囲→0,0フォールバック）
-            const pbTotalMatch = out.innerHTML.match(/合計\s*(\d+)〜(\d+)/);
-            const dmgMatch = pbTotalMatch || out.innerHTML.match(/(\d+)〜(\d+)/);
+            // ダメージ範囲を抽出（おやこあい合計優先→整数〜整数→スペースあり〜→0フォールバック）
+            const pbTotalMatch = out.innerHTML.match(/合計\s*(\d+)\s*〜\s*(\d+)/);
+            // スペースなし優先、次にスペースあり（小数点を含まない整数のみ）
+            const dmgMatchExact = out.innerHTML.match(/(?<![\d.])(\d{2,})〜(\d{2,})(?![\d.])/);
+            const dmgMatchSpace = out.innerHTML.match(/(?<![\d.])(\d{2,})\s*〜\s*(\d{2,})(?![\d.])/);
+            const dmgMatch = pbTotalMatch || dmgMatchExact || dmgMatchSpace;
             const dMin = dmgMatch ? parseInt(dmgMatch[1],10) : 0;
             const dMax = dmgMatch ? parseInt(dmgMatch[2],10) : 0;
             if (true) {
