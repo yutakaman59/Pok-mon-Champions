@@ -1587,7 +1587,45 @@
     </div>
     </div>
         <!-- ダメージ履歴ログ -->
-        <div class="card" style="margin-top:8px;">
+        
+<!-- ===== 📋 ターンログ ===== -->
+<div class="card" style="margin-top:8px;">
+  <div class="action-header" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;"
+       onclick="const el=document.getElementById('turnLogWrap');const arr=document.getElementById('turnLogArr');el.style.display=el.style.display==='none'?'block':'none';arr.textContent=el.style.display==='none'?'▶ クリックして開く':'▼ クリックして閉じる';">
+    <span>📋 ターンログ <span id="turnCounter" style="font-size:0.82rem;color:#888;margin-left:6px;">ターン 0</span></span>
+    <span id="turnLogArr" style="font-size:0.8rem;color:#888;">▶ クリックして開く</span>
+  </div>
+  <div id="turnLogWrap" style="display:none;margin-top:6px;">
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:8px;">
+      <button onclick="recordTurn()" style="background:#2980b9;color:#fff;border:none;padding:7px 16px;border-radius:6px;cursor:pointer;font-size:0.9rem;">📝 このターンを記録</button>
+      <button onclick="clearTurnLog()" style="background:#e74c3c;color:#fff;border:none;padding:7px 12px;border-radius:6px;cursor:pointer;font-size:0.85rem;">🗑 全削除</button>
+    </div>
+    <div id="turnLogContainer" style="max-height:300px;overflow-y:auto;border:1px solid #ddd;border-radius:6px;background:#fafafa;padding:6px;">
+      <div style="color:#aaa;font-size:0.85rem;text-align:center;padding:16px;">まだログがありません</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 🧠 アドバイザー ===== -->
+<div class="card" style="margin-top:8px;">
+  <div class="action-header" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;"
+       onclick="const el=document.getElementById('advisorWrap');const arr=document.getElementById('advisorArr');el.style.display=el.style.display==='none'?'block':'none';arr.textContent=el.style.display==='none'?'▶ クリックして開く':'▼ クリックして閉じる';">
+    <span>🧠 アドバイザー</span>
+    <span id="advisorArr" style="font-size:0.8rem;color:#888;">▶ クリックして開く</span>
+  </div>
+  <div id="advisorWrap" style="display:none;margin-top:6px;">
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
+      <button onclick="runAdvisor('best')" style="background:#27ae60;color:#fff;border:none;padding:7px 16px;border-radius:6px;cursor:pointer;font-size:0.9rem;">💡 今ターンの最善手</button>
+      <button onclick="runAdvisor('predict')" style="background:#8e44ad;color:#fff;border:none;padding:7px 16px;border-radius:6px;cursor:pointer;font-size:0.9rem;">🔮 相手行動予測</button>
+      <button onclick="runAdvisor('select')" style="background:#e67e22;color:#fff;border:none;padding:7px 16px;border-radius:6px;cursor:pointer;font-size:0.9rem;">🏆 選出アドバイス</button>
+    </div>
+    <div id="advisorOutput" style="background:#f8f9fa;border-radius:8px;border:1px solid #e0e0e0;padding:14px;min-height:60px;font-size:0.9rem;line-height:1.7;">
+      <span style="color:#aaa;">ボタンを押すとアドバイスが表示されます</span>
+    </div>
+  </div>
+</div>
+
+<div class="card" style="margin-top:8px;">
           <div class="action-header" style="cursor:pointer; display:flex; justify-content:space-between; align-items:center;"
                onclick="const el=document.getElementById('damageLogWrap'); el.style.display=el.style.display==='none'?'block':'none';">
             <span>📜 ダメージ計算履歴</span>
@@ -11684,5 +11722,657 @@ function executeConsistencyCheck() {
 }
 
 </script>
+
+<script>
+// ===== ターンログ & アドバイザー =====
+window.turnLog = [];
+window.turnCount = 0;
+
+// ---------- ターンログ記録 ----------
+function recordTurn() {
+    window.turnCount++;
+    const attackerSideRaw = document.querySelector('input[name="attackerSide"]:checked')?.value || 'me';
+    const attackerSide = attackerSideRaw === 'me' ? 'my' : 'opp';
+    const defenderSide = attackerSide === 'my' ? 'opp' : 'my';
+
+    const myPoke  = getEffectivePoke('my');
+    const oppPoke = getEffectivePoke('opp');
+    const moveName = document.getElementById('moveSelect')?.value || '—';
+    const weather  = document.getElementById('battleWeather')?.value || 'none';
+    const myHpPct  = parseFloat(document.getElementById('myCurrentHpPct')?.value) || 100;
+    const oppHpPct = parseFloat(document.getElementById('oppCurrentHpPct')?.value) || 100;
+    const myRankA  = parseInt(document.getElementById('myRankA')?.value) || 0;
+    const myRankS  = parseInt(document.getElementById('myRankS')?.value) || 0;
+    const oppRankA = parseInt(document.getElementById('oppRankA')?.value) || 0;
+    const myStatus  = document.getElementById('myStatus')?.value || 'none';
+    const oppStatus = document.getElementById('oppStatus')?.value || 'none';
+
+    // 結果出力からダメージ取得
+    const resultEl = document.getElementById('resultOutput');
+    let dmgText = '';
+    if (resultEl) {
+        const bTags = resultEl.querySelectorAll('b');
+        for (const b of bTags) {
+            if (b.textContent.includes('〜')) { dmgText = b.textContent; break; }
+        }
+    }
+
+    // 相手の技スロットに自動セット
+    if (attackerSideRaw === 'opp' && moveName && moveName !== '—' && moveName !== '--') {
+        autoSetOppMove(moveName);
+    }
+
+    const entry = {
+        turn: window.turnCount,
+        attackerSide: attackerSideRaw,
+        myPoke:  myPoke?.name  || '—',
+        oppPoke: oppPoke?.name || '—',
+        moveName,
+        dmgText,
+        myHpPct, oppHpPct,
+        myRankA, myRankS, oppRankA,
+        myStatus, oppStatus,
+        weather,
+        timestamp: Date.now()
+    };
+    window.turnLog.push(entry);
+    renderTurnLog();
+}
+
+function autoSetOppMove(moveName) {
+    for (let s = 1; s <= 4; s++) {
+        const sel = document.getElementById(`oppMove${s}`);
+        if (!sel) continue;
+        // すでにセット済みなら skip
+        if (sel.value === moveName) return;
+        // 空きスロットにセット
+        if (!sel.value || sel.value === '' || sel.value === '--') {
+            // optionがなければ追加
+            if (!sel.querySelector(`option[value="${moveName}"]`)) {
+                const opt = new Option(moveName, moveName);
+                sel.add(opt);
+            }
+            sel.value = moveName;
+            return;
+        }
+    }
+}
+
+function renderTurnLog() {
+    const container = document.getElementById('turnLogContainer');
+    const counter   = document.getElementById('turnCounter');
+    if (!container) return;
+    counter.textContent = `ターン ${window.turnCount}`;
+    if (window.turnLog.length === 0) {
+        container.innerHTML = '<div style="color:#aaa;font-size:0.85rem;text-align:center;padding:16px;">まだログがありません</div>';
+        return;
+    }
+    const rows = window.turnLog.slice().reverse().map((e, ri) => {
+        const origIdx = window.turnLog.length - 1 - ri;
+        const attacker = e.attackerSide === 'me' ? `🟦 ${e.myPoke}` : `🟥 ${e.oppPoke}`;
+        const defender = e.attackerSide === 'me' ? e.oppPoke : e.myPoke;
+        const statusIcon = { paralysis:'⚡', burn:'🔥', poison:'🟣', badly:'🟣🟣', sleep:'💤', freeze:'🧊', none:'' };
+        const myS  = statusIcon[e.myStatus]  || '';
+        const oppS = statusIcon[e.oppStatus] || '';
+        const weatherIcon = { sun:'☀️', rain:'🌧', sand:'🌪', snow:'❄️', none:'' };
+        const wIcon = weatherIcon[e.weather] || '';
+        const dmg = e.dmgText ? `<span style="color:#e74c3c;font-weight:bold;">${e.dmgText}</span>` : '';
+        return `<div style="border-bottom:1px solid #eee;padding:5px 4px;font-size:0.82rem;display:flex;align-items:center;gap:4px;">
+            <button onclick="deleteTurnLog(${origIdx})" title="このターンを削除" style="background:none;border:1px solid #ddd;border-radius:4px;color:#aaa;cursor:pointer;font-size:0.72rem;padding:1px 5px;flex-shrink:0;">✕</button>
+            <span style="color:#888;min-width:28px;display:inline-block;">T${e.turn}</span>
+            <b>${attacker}</b> → <b>${defender}</b>
+            <span style="color:#2980b9;margin-left:4px;">${e.moveName}</span>
+            ${dmg ? ' ' + dmg : ''}
+            <span style="margin-left:6px;font-size:0.75rem;color:#888;">
+                自HP:${e.myHpPct}%${myS} 相HP:${e.oppHpPct}%${oppS} ${wIcon}
+            </span>
+        </div>`;
+    }).join('');
+    container.innerHTML = rows;
+}
+
+function clearTurnLog() {
+    if (!confirm('ターンログをクリアしますか？')) return;
+    window.turnLog = [];
+    window.turnCount = 0;
+    renderTurnLog();
+}
+
+function deleteTurnLog(idx) {
+    window.turnLog.splice(idx, 1);
+    renderTurnLog();
+}
+
+// ---------- アドバイザー ----------
+function runAdvisor(mode) {
+    const out = document.getElementById('advisorOutput');
+    out.innerHTML = '<span style="color:#aaa;">計算中...</span>';
+    setTimeout(() => {
+        try {
+            if (mode === 'best')    out.innerHTML = advisorBestMove();
+            else if (mode === 'predict') out.innerHTML = advisorPredict();
+            else if (mode === 'select')  out.innerHTML = advisorSelect();
+        } catch(e) {
+            out.innerHTML = `<span style="color:#e74c3c;">エラー: ${e.message}</span>`;
+        }
+    }, 50);
+}
+
+// ===== パーティ取得ヘルパー =====
+function getMyParty() {
+    const party = [];
+    const activeIdx = parseInt(document.querySelector('input[name="myActive"]:checked')?.value ?? -1);
+    for (let i = 0; i < 6; i++) {
+        const name = document.getElementById(`myPoke${i}`)?.value;
+        if (!name || !pokedex[name]) continue;
+        const isActive = activeIdx === i;
+        const st = window.teamSlotState?.['my']?.[i] || {};
+        const hpPct = isActive ? parseFloat(document.getElementById('myCurrentHpPct')?.value)||100 : parseFloat(st['myCurrentHpPct'])||100;
+        const isSelected = document.getElementById(`mySelected${i}`)?.checked ?? false;
+        const ability = isActive ? document.getElementById('myAbility')?.value||'' : st['myAbility']||'';
+        const item    = isActive ? document.getElementById('myItem')?.value||''    : st['myItem']||'';
+        const moves = [1,2,3,4].map(s => isActive ? document.getElementById(`myMove${s}`)?.value||'' : st[`myMove${s}`]||'').filter(m => m && m !== '--');
+        party.push({ idx:i, name, isActive, isSelected, hpPct, ability, item, moves, ...pokedex[name] });
+    }
+    return party;
+}
+
+function getOppParty() {
+    const party = [];
+    const activeIdx = parseInt(document.querySelector('input[name="oppActive"]:checked')?.value ?? -1);
+    const selectedCount = [0,1,2,3,4,5].filter(i => document.getElementById(`oppSelected${i}`)?.checked).length;
+    const useSelection = selectedCount >= 3; // 3体揃って初めて選出確定、2体以下は6体全員候補
+    for (let i = 0; i < 6; i++) {
+        const name = document.getElementById(`oppPoke${i}`)?.value;
+        if (!name || !pokedex[name]) continue;
+        const isActive = activeIdx === i;
+        const isSelected = document.getElementById(`oppSelected${i}`)?.checked ?? false;
+        if (useSelection && !isSelected && !isActive) continue;
+        const st = window.teamSlotState?.['opp']?.[i] || {};
+        const hpPct = isActive ? parseFloat(document.getElementById('oppCurrentHpPct')?.value)||100 : parseFloat(st['oppCurrentHpPct'])||100;
+        const ability = isActive ? document.getElementById('oppAbility')?.value||'' : st['oppAbility']||'';
+        const item    = isActive ? document.getElementById('oppItem')?.value||''    : st['oppItem']||'';
+        const moves = [1,2,3,4].map(s => isActive ? document.getElementById(`oppMove${s}`)?.value||'' : st[`oppMove${s}`]||'').filter(m => m && m !== '--');
+        party.push({ idx:i, name, isActive, isSelected, useSelection, hpPct, ability, item, moves, ...pokedex[name] });
+    }
+    return party;
+}
+
+// 特性無効マップ
+const _IMMUNE_MAP = {
+    'でんき':['ちくでん','でんきエンジン','ひらいしん'],
+    'みず':  ['ちょすい','よびみず'],
+    'ほのお':['もらいび'],
+    'じめん':['ふゆう','ぼうじん'],
+    'くさ':  ['そうしょく'],
+    'どく':  ['めんえき'],
+    'ノーマル':['ノーマルスキン'],
+};
+function _isImmune(atkType, defAbil) {
+    return (_IMMUNE_MAP[atkType] || []).includes(defAbil);
+}
+
+// ===== Mode A: 今ターンの最善手 =====
+function advisorBestMove() {
+    const myPoke  = getEffectivePoke('my');
+    const oppPoke = getEffectivePoke('opp');
+    if (!myPoke || !oppPoke) return '<span style="color:#e74c3c;">⚠️ 自分・相手のポケモンを選択してください</span>';
+
+    const myAbil   = document.getElementById('myAbility')?.value || '';
+    const oppAbil  = document.getElementById('oppAbility')?.value || '';
+    const myItem   = document.getElementById('myItem')?.value || '';
+    const weather  = document.getElementById('battleWeather')?.value || 'none';
+    const myHpPct  = parseFloat(document.getElementById('myCurrentHpPct')?.value) || 100;
+    const oppHpPct = parseFloat(document.getElementById('oppCurrentHpPct')?.value) || 100;
+    const myStatus = document.getElementById('myStatus')?.value || 'none';
+
+    const oppHpMax  = calcStat(oppPoke.hp, 0, 1.0, true);
+    const oppHpReal = Math.max(1, Math.round(oppHpMax * oppHpPct / 100));
+
+    // タイプ強化アイテムマップ
+    const _TIM = {'もくたん':'ほのお','しんぴのしずく':'みず','じしゃく':'でんき','きせきのタネ':'くさ','とけないこおり':'こおり','くろおび':'かくとう','どくバリ':'どく','やわらかいすな':'じめん','するどいくちばし':'ひこう','まがったスプーン':'エスパー','ぎんのこな':'むし','かたいいし':'いわ','のろいのおふだ':'ゴースト','りゅうのキバ':'ドラゴン','くろいメガネ':'あく','メタルコート':'はがね','ようせいのハネ':'フェアリー','シルクのスカーフ':'ノーマル'};
+
+    // 自分の4技評価
+    const results = [];
+    for (let s = 1; s <= 4; s++) {
+        const sel = document.getElementById(`myMove${s}`);
+        if (!sel || !sel.value || sel.value === '' || sel.value === '--') continue;
+        const mv = sel.value;
+        const info = moveDex[mv];
+        if (!info) continue;
+        let moveType = info.type || '';
+        let moveCat  = info.category || '物理';
+        let power = info.power || 0;
+        if (power <= 0) { results.push({mv, cat:'変化', score:-1, label:'変化技', detail:''}); continue; }
+        const baseA = moveCat === '物理' ? myPoke.atk : myPoke.spa;
+        const myAtkP = parseInt(document.getElementById(moveCat==='物理'?'myAtk':'mySpA')?.value)||0;
+        const myNat  = parseFloat(document.getElementById('myNature')?.value)||1.0;
+        const myRankA = parseInt(document.getElementById(moveCat==='物理'?'myRankA':'myRankC')?.value)||0;
+        let atkReal = Math.floor(calcStat(baseA, myAtkP, myNat, false) * getRankMod(myRankA));
+        if (myItem==='こだわりハチマキ'&&moveCat==='物理') atkReal=Math.floor(atkReal*1.5);
+        if (myItem==='こだわりメガネ'&&moveCat==='特殊')  atkReal=Math.floor(atkReal*1.5);
+        let dmgMod = myItem==='いのちのたま' ? 1.3 : 1.0;
+        if (_TIM[myItem]===moveType) dmgMod*=1.2;
+        let wMod=1.0;
+        if (weather==='sun'&&moveType==='ほのお') wMod=1.5;
+        if (weather==='sun'&&moveType==='みず')   wMod=0.5;
+        if (weather==='rain'&&moveType==='みず')  wMod=1.5;
+        if (weather==='rain'&&moveType==='ほのお') wMod=0.5;
+        dmgMod*=wMod;
+        const stab = myPoke.types.includes(moveType)?(myAbil==='てきおうりょく'?2.0:1.5):1.0;
+        const eff  = calcTypeEffectiveness(moveType, oppPoke.types, myAbil, oppAbil);
+        const baseD = moveCat==='物理' ? oppPoke.def : oppPoke.spd;
+        const oppDefRank = parseInt(document.getElementById(moveCat==='物理'?'oppRankD':'oppRankD2')?.value)||0;
+        const defReal_min = Math.floor(calcStat(baseD,0,1.0,false)*getRankMod(oppDefRank));
+        const defReal_max = Math.floor(calcStat(baseD,32,1.1,false)*getRankMod(oppDefRank));
+        if (eff===0||power===0) { results.push({mv,cat:moveCat,score:0,label:'無効',detail:`${moveType}は効果がありません`}); continue; }
+        const dmg_min = getDamageRange(atkReal,Math.max(1,defReal_min),power,stab,eff,dmgMod,false,false);
+        const dmg_max = getDamageRange(atkReal,Math.max(1,defReal_max),power,stab,eff,dmgMod,false,false);
+        const minPct = dmg_min.min/oppHpReal*100;
+        const maxPct = dmg_max.max/oppHpReal*100;
+        let koLabel, score;
+        if (minPct>=100)       {koLabel='確定1発';score=100;}
+        else if (maxPct>=100)  {const p=Math.round(dmg_min.max>=oppHpReal?85:50);koLabel=`乱数1発(約${p}%)`;score=70+p*0.3;}
+        else if (minPct*2>=100){koLabel='確定2発';score=50;}
+        else if (maxPct*2>=100){koLabel='乱数2発';score=35;}
+        else {koLabel=`確定${Math.ceil(100/Math.max(0.1,maxPct))}発`;score=Math.max(5,30-Math.ceil(100/Math.max(0.1,maxPct))*5);}
+        const effLabel=eff>=4?'4倍':eff>=2?'2倍':eff<=0.25?'1/4倍':eff<1?'1/2倍':'';
+        const detail=`ダメージ ${dmg_min.min}〜${dmg_max.max} / 推定HP${oppHpReal} (${minPct.toFixed(0)}〜${maxPct.toFixed(0)}%)${effLabel?' ['+effLabel+']':''}`;
+        results.push({mv,cat:moveCat,score,koLabel,detail,minPct,maxPct,eff});
+    }
+    if (results.length===0) return '<span style="color:#e74c3c;">⚠️ 技が設定されていません</span>';
+    results.sort((a,b)=>b.score-a.score);
+
+    // 相手既知技で最悪被ダメ
+    const oppMoveNames=[1,2,3,4].map(s=>document.getElementById(`oppMove${s}`)?.value).filter(m=>m&&m!==''&&m!=='--');
+    let worstDmgHtml='';
+    if (oppMoveNames.length>0) {
+        const oppItem=document.getElementById('oppItem')?.value||'';
+        const myHpMax=calcStat(myPoke.hp,parseInt(document.getElementById('myHP')?.value)||0,1.0,true);
+        const myHpReal=Math.max(1,Math.round(myHpMax*myHpPct/100));
+        let worstPct=0,worstMv='';
+        for (const omv of oppMoveNames) {
+            const oi=moveDex[omv]; if(!oi||!oi.power) continue;
+            const ot=oi.type||''; const oc=oi.category||'物理';
+            const oBaseA=oc==='物理'?oppPoke.atk:oppPoke.spa;
+            const oppAtkP=parseInt(document.getElementById(oc==='物理'?'oppAtk':'oppSpA')?.value)||0;
+            const oppNat=parseFloat(document.getElementById('oppNature')?.value)||1.0;
+            const oppAtkRank=parseInt(document.getElementById(oc==='物理'?'oppRankA':'oppRankC')?.value)||0;
+            let oAtk=Math.floor(calcStat(oBaseA,oppAtkP,oppNat,false)*getRankMod(oppAtkRank));
+            if (oppItem==='こだわりハチマキ'&&oc==='物理') oAtk=Math.floor(oAtk*1.5);
+            if (oppItem==='こだわりメガネ'&&oc==='特殊')  oAtk=Math.floor(oAtk*1.5);
+            let oDmgMod=oppItem==='いのちのたま'?1.3:1.0;
+            const _tim={'もくたん':'ほのお','しんぴのしずく':'みず','じしゃく':'でんき','きせきのタネ':'くさ','とけないこおり':'こおり','くろおび':'かくとう','どくバリ':'どく','やわらかいすな':'じめん','するどいくちばし':'ひこう','まがったスプーン':'エスパー','ぎんのこな':'むし','かたいいし':'いわ','のろいのおふだ':'ゴースト','りゅうのキバ':'ドラゴン','くろいメガネ':'あく','メタルコート':'はがね','ようせいのハネ':'フェアリー','シルクのスカーフ':'ノーマル'};
+            if (_tim[oppItem]===ot) oDmgMod*=1.2;
+            let oWMod=1.0;
+            if(weather==='sun'&&ot==='ほのお')oWMod=1.5;
+            if(weather==='rain'&&ot==='みず') oWMod=1.5;
+            oDmgMod*=oWMod;
+            const oStab=oppPoke.types.includes(ot)?(oppAbil==='てきおうりょく'?2.0:1.5):1.0;
+            const oEff=calcTypeEffectiveness(ot,myPoke.types,oppAbil,myAbil);
+            if(oEff===0) continue;
+            const myBaseD=oc==='物理'?myPoke.def:myPoke.spd;
+            const myDefRank=parseInt(document.getElementById(oc==='物理'?'myRankD':'myRankD2')?.value)||0;
+            const myDefP=parseInt(document.getElementById(oc==='物理'?'myDef':'mySpD')?.value)||0;
+            const myDefNat=parseFloat(document.getElementById(oc==='物理'?'myDefNature':'mySpdNature')?.value)||1.0;
+            const myDef=Math.floor(calcStat(myBaseD,myDefP,myDefNat,false)*getRankMod(myDefRank));
+            const oDmg=getDamageRange(oAtk,Math.max(1,myDef),oi.power,oStab,oEff,oDmgMod,false,false);
+            const oPct=oDmg.max/myHpReal*100;
+            if(oPct>worstPct){worstPct=oPct;worstMv=omv;}
+        }
+        if(worstMv){
+            const survives=worstPct<100;
+            worstDmgHtml=`<div style="margin-top:10px;padding:8px;background:#fff8e1;border-radius:6px;border-left:3px solid #f39c12;font-size:0.85rem;">
+                ⚠️ <b>相手既知技の最悪ケース：${worstMv}</b><br>
+                <span style="color:${survives?'#27ae60':'#e74c3c'};">${survives?'🛡 耐えられます':'💀 倒される可能性があります'}（最大${worstPct.toFixed(0)}%ダメージ）</span>
+            </div>`;
+        }
+    }
+
+    // 自然言語
+    const best=results[0];
+    const myStatusNote=myStatus==='paralysis'?'（麻痺のため行動不能の可能性あり）':myStatus==='sleep'?'（眠り状態）':'';
+    let intro='';
+    if(best.score<=0)           intro=`<span style="color:#e74c3c;">⚠️ 有効打がありません。交代を検討してください。</span>`;
+    else if(best.score>=100)    intro=`<span style="color:#27ae60;font-size:1rem;">✅ <b>${best.mv}</b> で<b>確定1発</b>です。そのまま攻めましょう。${myStatusNote}</span>`;
+    else if(best.score>=70)     intro=`<span style="color:#e67e22;font-size:1rem;">🎯 <b>${best.mv}</b> で<b>${best.koLabel}</b>です。勝負に出るタイミングです。${myStatusNote}</span>`;
+    else if(best.score>=50)     intro=`<span style="color:#2980b9;font-size:1rem;">⚔️ <b>${best.mv}</b>（<b>${best.koLabel}</b>）が最善です。相手の行動に注意しながら攻めましょう。${myStatusNote}</span>`;
+    else                        intro=`<span style="color:#7f8c8d;font-size:1rem;">🔄 有効打が薄い状況です。<b>${best.mv}</b>（${best.koLabel}）が最善ですが、交代も検討してください。${myStatusNote}</span>`;
+
+    const tableRows=results.map((r,i)=>{
+        const bg=i===0?'#e8f5e9':'#fff';
+        const icon=i===0?'🥇':i===1?'🥈':i===2?'🥉':'　';
+        return `<tr style="background:${bg};"><td style="padding:5px 8px;">${icon} <b>${r.mv}</b></td><td style="padding:5px 8px;color:#555;">${r.cat||'—'}</td><td style="padding:5px 8px;font-weight:bold;color:${r.score>=100?'#27ae60':r.score>=70?'#e67e22':r.score>=50?'#2980b9':'#aaa'};">${r.koLabel||r.label}</td><td style="padding:5px 8px;font-size:0.8rem;color:#666;">${r.detail}</td></tr>`;
+    }).join('');
+
+    // ===== 交代候補セクション =====
+    const myParty = getMyParty();
+    const bench = myParty.filter(p => !p.isActive && p.hpPct > 0);
+
+    const switchCandidates = bench.map(bp => {
+        const bPoke = pokedex[bp.name]; if(!bPoke) return null;
+        let offScore=0, defScore=0, notes=[];
+
+        // 攻撃評価: タイプ＋技
+        let bestEff=0, bestLabel='';
+        for (const t of (bPoke.types||[])) {
+            const e=calcTypeEffectiveness(t,oppPoke.types,bp.ability,oppAbil);
+            if(e>bestEff){bestEff=e;bestLabel=t;}
+        }
+        for (const mv of bp.moves) {
+            const info=moveDex[mv]; if(!info||!info.power) continue;
+            const e=calcTypeEffectiveness(info.type,oppPoke.types,bp.ability,oppAbil);
+            if(e>bestEff){bestEff=e;bestLabel=info.type;}
+        }
+        if(bestEff>=4)     {offScore+=40;notes.push(`相手に<b>4倍打点</b>(${bestLabel})`);}
+        else if(bestEff>=2){offScore+=25;notes.push(`相手に<b>2倍打点</b>(${bestLabel})`);}
+        else if(bestEff>=1){offScore+=10;notes.push('等倍打点あり');}
+        else               {offScore-=10;notes.push('有効打なし');}
+
+        // 防御評価: 相手既知技＋特性無効
+        for (const mv of oppMoveNames) {
+            const oi=moveDex[mv]; if(!oi) continue;
+            const ot=oi.type||'';
+            if(_isImmune(ot,bp.ability)){
+                defScore+=20;
+                notes.push(`<b>${ot}技を特性無効</b>(${bp.ability})`);
+                continue;
+            }
+            const e=calcTypeEffectiveness(ot,bPoke.types,oppAbil,bp.ability);
+            if(e===0)        {defScore+=15;notes.push(`${mv}無効`);}
+            else if(e<=0.25) {defScore+=12;notes.push(`${mv}1/4倍`);}
+            else if(e<=0.5)  {defScore+=8; notes.push(`${mv}1/2倍`);}
+            else if(e>=4)    {defScore-=25;notes.push(`${mv}に<b>4倍弱点</b>`);}
+            else if(e>=2)    {defScore-=12;notes.push(`${mv}に2倍弱点`);}
+        }
+        // 相手技が不明でもタイプ耐性を評価
+        if(oppMoveNames.length===0){
+            let bestDefEff=999;
+            for(const t of(oppPoke.types||[])){
+                const e=calcTypeEffectiveness(t,bPoke.types,oppAbil,bp.ability);
+                if(e<bestDefEff) bestDefEff=e;
+            }
+            if(bestDefEff===0)       {defScore+=15;notes.push('相手タイプを無効');}
+            else if(bestDefEff<=0.5) {defScore+=8; notes.push('相手タイプに耐性');}
+            else if(bestDefEff>=2)   {defScore-=12;notes.push('相手タイプに弱点');}
+        }
+
+        return {name:bp.name,offScore,defScore,totalScore:offScore+defScore,notes,hpPct:bp.hpPct};
+    }).filter(Boolean).sort((a,b)=>b.totalScore-a.totalScore);
+
+    let switchHtml='';
+    if(switchCandidates.length>0){
+        const top3=switchCandidates.slice(0,3);
+        const stars=s=>s>=50?'⭐⭐⭐⭐':s>=30?'⭐⭐⭐':s>=10?'⭐⭐':'⭐';
+        const switchRows=top3.map((c,i)=>{
+            const bg=i===0?'#e3f2fd':'#fff';
+            const icon=i===0?'🔄':i===1?'2️⃣':'3️⃣';
+            const reason=c.notes.slice(0,3).join(' / ');
+            return `<tr style="background:${bg};"><td style="padding:5px 8px;">${icon} <b>${c.name}</b></td><td style="padding:5px 8px;text-align:center;color:#27ae60;">+${Math.max(0,c.offScore)}</td><td style="padding:5px 8px;text-align:center;color:#2980b9;">+${Math.max(0,c.defScore)}</td><td style="padding:5px 8px;">${stars(c.totalScore)}</td><td style="padding:5px 8px;font-size:0.78rem;color:#555;">${reason}</td></tr>`;
+        }).join('');
+        const switchIntro=switchCandidates[0].totalScore>=30
+            ?`<div style="margin-bottom:6px;font-size:0.88rem;">🔄 <b>${switchCandidates[0].name}</b> への交代が有力です。${switchCandidates[0].notes[0]||''}</div>`
+            :(best.score<50?`<div style="margin-bottom:6px;font-size:0.88rem;color:#e67e22;">⚠️ 現状では交代も検討してください。</div>`:'');
+        switchHtml=`<div style="margin-top:12px;">
+            <b style="font-size:0.88rem;">🔄 交代候補（ベンチ）</b>
+            <div style="font-size:0.76rem;color:#888;margin-bottom:4px;">攻撃・防御・特性を考慮したスコア</div>
+            ${switchIntro}
+            <table style="width:100%;border-collapse:collapse;font-size:0.84rem;border:1px solid #e0e0e0;">
+                <tr style="background:#eaf0fb;font-weight:bold;"><th style="padding:5px 8px;text-align:left;">ポケモン</th><th style="padding:5px 8px;">攻</th><th style="padding:5px 8px;">防</th><th style="padding:5px 8px;">総合</th><th style="padding:5px 8px;text-align:left;">理由</th></tr>
+                ${switchRows}
+            </table>
+        </div>`;
+    } else if(bench.length===0){
+        switchHtml='<div style="margin-top:8px;color:#888;font-size:0.85rem;">📋 ベンチに控えのポケモンがいません</div>';
+    }
+
+    return `<div style="margin-bottom:10px;">${intro}</div>
+        <table style="width:100%;border-collapse:collapse;font-size:0.85rem;border:1px solid #e0e0e0;border-radius:6px;overflow:hidden;">
+            <tr style="background:#eaf0fb;font-weight:bold;"><th style="padding:6px 8px;text-align:left;">技</th><th style="padding:6px 8px;">分類</th><th style="padding:6px 8px;">判定</th><th style="padding:6px 8px;text-align:left;">詳細</th></tr>
+            ${tableRows}
+        </table>
+        ${worstDmgHtml}${switchHtml}`;
+}
+
+// ===== Mode C: 選出アドバイス =====
+function advisorSelect() {
+    const myTeam  = getMyParty();
+    const oppTeam = getOppParty();
+    if (myTeam.length===0)  return '<span style="color:#e74c3c;">⚠️ 自分のパーティを登録してください</span>';
+    if (oppTeam.length===0) return '<span style="color:#e74c3c;">⚠️ 相手のパーティを登録してください（またはポケモンを入力してください）</span>';
+
+    const selCount = [0,1,2,3,4,5].filter(i => document.getElementById(`oppSelected${i}`)?.checked).length;
+    const oppNote = selCount >= 3
+        ? `（相手選出確定: ${oppTeam.map(p=>p.name).join('・')}）`
+        : selCount > 0
+            ? `（相手選出候補${selCount}体+未確定分あり — パーティ全体を考慮）`
+            : `（相手パーティ全${oppTeam.length}体を考慮）`;
+
+    const scored = myTeam.map(mp => {
+        const bPoke = pokedex[mp.name]; if(!bPoke) return null;
+        let advantageCount=0, disadvantageCount=0, immuneCount=0;
+        for (const op of oppTeam) {
+            const oPoke = pokedex[op.name]; if(!oPoke) continue;
+            // 攻め: 自分のタイプ＋技で相手に最大何倍か
+            let maxOff=0;
+            for(const t of(bPoke.types||[])){
+                const e=calcTypeEffectiveness(t,oPoke.types,mp.ability,'');
+                if(e>maxOff)maxOff=e;
+            }
+            for(const mv of mp.moves){
+                const info=moveDex[mv]; if(!info||!info.power) continue;
+                const e=calcTypeEffectiveness(info.type,oPoke.types,mp.ability,'');
+                if(e>maxOff)maxOff=e;
+            }
+            if(maxOff>=2)advantageCount++;
+            // 守り: 相手タイプで自分が何倍受けるか
+            let maxDef=0;
+            for(const t of(oPoke.types||[])){
+                if(_isImmune(t,mp.ability)){immuneCount++;continue;}
+                const e=calcTypeEffectiveness(t,bPoke.types,'',mp.ability);
+                if(e>maxDef)maxDef=e;
+            }
+            if(maxDef>=2)disadvantageCount++;
+        }
+        const score=advantageCount*2-disadvantageCount+immuneCount;
+        const isSelected=mp.isSelected;
+        return {name:mp.name,types:bPoke.types,advantageCount,disadvantageCount,immuneCount,score,isSelected,hpPct:mp.hpPct};
+    }).filter(Boolean).sort((a,b)=>b.score-a.score);
+
+    const recommend=scored.slice(0,3);
+    const stars=s=>s>=4?'⭐⭐⭐⭐':s>=2?'⭐⭐⭐':s>=0?'⭐⭐':'⭐';
+
+    const tableRows=scored.map((p,i)=>{
+        const bg=i<3?'#e8f5e9':'#fff';
+        const checkMark=p.isSelected?'☑ ':'';
+        return `<tr style="background:${bg};"><td style="padding:5px 8px;">${i<3?'✅':'　'}${checkMark}<b>${p.name}</b></td><td style="padding:5px 8px;text-align:center;">${p.advantageCount}/${oppTeam.length}体</td><td style="padding:5px 8px;text-align:center;">${p.disadvantageCount}/${oppTeam.length}体</td><td style="padding:5px 8px;text-align:center;">${p.immuneCount>0?`無効${p.immuneCount}`:'-'}</td><td style="padding:5px 8px;">${stars(p.score)}</td></tr>`;
+    }).join('');
+
+    const intro=`<div style="margin-bottom:10px;font-size:1rem;">
+        🏆 <b>推奨選出: ${recommend.map(p=>'<b>'+p.name+'</b>').join('・')}</b><br>
+        <span style="font-size:0.83rem;color:#555;">${oppNote} — 先発には <b>${recommend[0]?.name}</b> が有利です。</span>
+    </div>`;
+
+    return intro+`<table style="width:100%;border-collapse:collapse;font-size:0.85rem;border:1px solid #e0e0e0;">
+        <tr style="background:#eaf0fb;font-weight:bold;"><th style="padding:6px 8px;text-align:left;">ポケモン</th><th style="padding:6px 8px;">有効打</th><th style="padding:6px 8px;">被弱点</th><th style="padding:6px 8px;">無効化</th><th style="padding:6px 8px;">スコア</th></tr>
+        ${tableRows}
+    </table>`;
+}
+
+
+// ===== Mode B: 相手行動予測 =====
+function advisorPredict() {
+    const oppPoke = getEffectivePoke('opp');
+    if (!oppPoke) return '<span style="color:#e74c3c;">⚠️ 相手のポケモンを選択してください</span>';
+    const oppHpPct = parseFloat(document.getElementById('oppCurrentHpPct')?.value) || 100;
+
+    // 既知技を集計
+    const knownMoves = [1,2,3,4].map(s => document.getElementById(`oppMove${s}`)?.value).filter(m => m && m !== '' && m !== '--');
+    if (knownMoves.length === 0 && window.turnLog.length === 0) {
+        return `<div style="color:#888;padding:8px;">📋 まだ相手の技・ログがありません。<br>ターンを記録するか、相手の技スロットに技を入力してください。</div>`;
+    }
+
+    // ログから相手の行動パターン分析
+    const oppLogs = window.turnLog.filter(e => e.attackerSide === 'opp' && e.moveName && e.moveName !== '—');
+    const moveFreq = {};
+    const hpZoneMoves = { high: {}, mid: {}, low: {} }; // HP>66%, 33-66%, <33%
+    const prevMoves = {};
+
+    for (let i = 0; i < oppLogs.length; i++) {
+        const e = oppLogs[i];
+        const mv = e.moveName;
+        moveFreq[mv] = (moveFreq[mv] || 0) + 1;
+        const zone = e.oppHpPct > 66 ? 'high' : e.oppHpPct > 33 ? 'mid' : 'low';
+        hpZoneMoves[zone][mv] = (hpZoneMoves[zone][mv] || 0) + 1;
+        if (i > 0) {
+            const prev = oppLogs[i-1].moveName;
+            if (!prevMoves[prev]) prevMoves[prev] = {};
+            prevMoves[prev][mv] = (prevMoves[prev][mv] || 0) + 1;
+        }
+    }
+
+    // 現在HPゾーン
+    const curZone = oppHpPct > 66 ? 'high' : oppHpPct > 33 ? 'mid' : 'low';
+    const zoneLabel = { high: '高HP(66%以上)', mid: '中HP(33〜66%)', low: '低HP(33%以下)' };
+
+    // 予測スコア算出
+    const allCandidates = [...new Set([...knownMoves, ...Object.keys(moveFreq)])];
+    // 1回きり技: すでに使用済みなら予測スコアを最下位に
+    const ONE_TIME_MOVES = ['ステルスロック','どくびし','ねばねばネット',
+        'にほんばれ','あまごい','すなあらし','あられ','ゆきげしき',
+        'トリックルーム','マジックルーム','ワンダールーム','いやしのねがい','みらいよち'];
+
+    const scored = allCandidates.map(mv => {
+        let score = 0;
+        const usedCount = moveFreq[mv] || 0;
+        if (ONE_TIME_MOVES.includes(mv) && usedCount >= 1) {
+            return { mv, score: 1, oneTime: true }; // 使用済み1回きり技は最下位
+        }
+        if (usedCount) score += usedCount * 10;
+        if (hpZoneMoves[curZone][mv]) score += hpZoneMoves[curZone][mv] * 15;
+        const lastOppMove = oppLogs.length > 0 ? oppLogs[oppLogs.length-1].moveName : null;
+        if (lastOppMove && prevMoves[lastOppMove]?.[mv]) score += prevMoves[lastOppMove][mv] * 20;
+        return { mv, score, oneTime: false };
+    }).sort((a,b) => b.score - a.score);
+
+    const total = scored.reduce((s,x) => s + x.score, 0) || 1;
+    const top3 = scored.filter(x => x.score > 1 && !x.oneTime).slice(0, 3);
+
+    let predHtml = '';
+    if (top3.length > 0) {
+        predHtml = `<div style="margin-bottom:8px;font-size:0.85rem;color:#555;">
+            現在の相手HP: <b>${oppHpPct}%</b>（${zoneLabel[curZone]}帯）
+        </div>`;
+        predHtml += `<table style="width:100%;border-collapse:collapse;font-size:0.85rem;margin-bottom:10px;">
+            <tr style="background:#f3e5f5;font-weight:bold;">
+                <th style="padding:5px 8px;text-align:left;">予測技</th>
+                <th style="padding:5px 8px;">使用確率</th>
+                <th style="padding:5px 8px;">根拠</th>
+            </tr>`;
+        top3.forEach((x, i) => {
+            const pct = Math.round(x.score / total * 100);
+            const icon = i===0?'🔮':i===1?'📊':'💭';
+            const zoneBonus = hpZoneMoves[curZone][x.mv] ? ` / ${zoneLabel[curZone]}で使用傾向あり` : '';
+            const freqNote = moveFreq[x.mv] ? `過去${moveFreq[x.mv]}回使用` : '既知技';
+            predHtml += `<tr style="background:${i===0?'#fce4ec':'#fff'};">
+                <td style="padding:5px 8px;">${icon} <b>${x.mv}</b></td>
+                <td style="padding:5px 8px;font-weight:bold;color:#8e44ad;">${pct}%</td>
+                <td style="padding:5px 8px;font-size:0.78rem;color:#666;">${freqNote}${zoneBonus}</td>
+            </tr>`;
+        });
+        predHtml += '</table>';
+    } else {
+        predHtml = `<div style="color:#888;padding:8px;">まだ分析できるデータが少ないです。ターンを記録してください。</div>`;
+    }
+
+    // 癖コメント
+    let quirkHtml = '';
+    const mamoruCount = (moveFreq['まもる'] || 0);
+    const totalTurns = oppLogs.length;
+    if (totalTurns >= 2) {
+        const quirkList = [];
+        if (mamoruCount / totalTurns >= 0.3) quirkList.push('⚠️ まもるを多用する傾向があります（使用率' + Math.round(mamoruCount/totalTurns*100) + '%）');
+        const lowMoves = Object.keys(hpZoneMoves.low);
+        if (lowMoves.length > 0 && oppHpPct <= 33) quirkList.push(`💀 低HP時によく使う技: <b>${lowMoves.slice(0,2).join('・')}</b>`);
+        if (quirkList.length > 0) {
+            quirkHtml = `<div style="padding:8px;background:#fff8e1;border-radius:6px;border-left:3px solid #f39c12;font-size:0.85rem;margin-top:6px;">
+                ${quirkList.join('<br>')}
+            </div>`;
+        }
+    }
+
+    const introText = top3.length > 0
+        ? `<div style="margin-bottom:10px;font-size:1rem;">🔮 ログ<b>${totalTurns}ターン</b>の分析から、次の相手の行動を予測します。${top3[0]?`<br><b style="color:#8e44ad;">${top3[0].mv}</b> が最も使用される可能性が高いです。`:''}${oppHpPct<=33?' 低HP帯のため積み技・回復技に注意しましょう。':''}</div>`
+        : '';
+
+    return introText + predHtml + quirkHtml;
+}
+
+// ===== Mode C: 選出アドバイス =====
+function advisorSelect() {
+    const myTeam = [];
+    const oppTeam = [];
+    for (let i = 0; i < 6; i++) {
+        const mn = document.getElementById(`myPoke${i}`)?.value;
+        const on = document.getElementById(`oppPoke${i}`)?.value;
+        if (mn && pokedex[mn]) myTeam.push({ name: mn, ...pokedex[mn] });
+        if (on && pokedex[on]) oppTeam.push({ name: on, ...pokedex[on] });
+    }
+    if (myTeam.length === 0) return '<span style="color:#e74c3c;">⚠️ 自分のパーティを登録してください</span>';
+    if (oppTeam.length === 0) return '<span style="color:#e74c3c;">⚠️ 相手のパーティを登録してください</span>';
+
+    // 刺さりスコア: タイプ相性ベース
+    const scored = myTeam.map(mp => {
+        let advantageCount = 0, disadvantageCount = 0;
+        for (const op of oppTeam) {
+            // 自分のタイプで相手に何倍か（攻め）
+            let maxOffEff = 0;
+            for (const t of mp.types) {
+                const e = calcTypeEffectiveness(t, op.types, '', '');
+                if (e > maxOffEff) maxOffEff = e;
+            }
+            if (maxOffEff >= 2) advantageCount++;
+            // 相手のタイプで自分が何倍受けるか（守り）
+            let maxDefEff = 0;
+            for (const t of op.types) {
+                const e = calcTypeEffectiveness(t, mp.types, '', '');
+                if (e > maxDefEff) maxDefEff = e;
+            }
+            if (maxDefEff >= 2) disadvantageCount++;
+        }
+        const score = advantageCount * 2 - disadvantageCount;
+        return { name: mp.name, types: mp.types, advantageCount, disadvantageCount, score };
+    }).sort((a,b) => b.score - a.score);
+
+    const recommend = scored.slice(0, 3);
+    const stars = s => s >= 4 ? '⭐⭐⭐⭐' : s >= 2 ? '⭐⭐⭐' : s >= 0 ? '⭐⭐' : '⭐';
+
+    const tableRows = scored.map((p, i) => {
+        const bg = i < 3 ? '#e8f5e9' : '#fff';
+        return `<tr style="background:${bg};">
+            <td style="padding:5px 8px;">${i<3?'✅':''} <b>${p.name}</b></td>
+            <td style="padding:5px 8px;text-align:center;">${p.advantageCount}/${oppTeam.length}体</td>
+            <td style="padding:5px 8px;text-align:center;">${p.disadvantageCount}/${oppTeam.length}体</td>
+            <td style="padding:5px 8px;">${stars(p.score)}</td>
+        </tr>`;
+    }).join('');
+
+    const intro = `<div style="margin-bottom:10px;font-size:1rem;">
+        🏆 <b>推奨選出: ${recommend.map(p=>'<b>'+p.name+'</b>').join('・')}</b><br>
+        <span style="font-size:0.85rem;color:#555;">タイプ相性ベースのスコアリングです。先発には <b>${recommend[0]?.name}</b> が有利です。</span>
+    </div>`;
+
+    return intro + `<table style="width:100%;border-collapse:collapse;font-size:0.85rem;border:1px solid #e0e0e0;">
+        <tr style="background:#eaf0fb;font-weight:bold;">
+            <th style="padding:6px 8px;text-align:left;">ポケモン</th>
+            <th style="padding:6px 8px;">有効打(相手)</th>
+            <th style="padding:6px 8px;">被有効打</th>
+            <th style="padding:6px 8px;">スコア</th>
+        </tr>
+        ${tableRows}
+    </table>`;
+}
+</script>
+
 </body>
 </html>
