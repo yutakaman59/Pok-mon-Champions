@@ -1,987 +1,246 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <title>ポケチャン バトルダッシュボード</title>
-    <style>
-        /* =============================================
-           ポケチャン バトルダッシュボード - UIリニューアル
-           スマホ対応・モダンデザイン
-           ============================================= */
-
-        /* --- CSS変数 --- */
-        :root {
-            --bg:        #f0f4f8;
-            --surface:   #ffffff;
-            --surface2:  #f8f9fa;
-            --border:    #e2e8f0;
-            --text:      #2d3748;
-            --text-sub:  #718096;
-            --my-color:  #2b6cb0;
-            --my-light:  #ebf8ff;
-            --my-border: #90cdf4;
-            --opp-color: #c53030;
-            --opp-light: #fff5f5;
-            --opp-border:#feb2b2;
-            --accent:    #6b46c1;
-            --accent-light:#faf5ff;
-            --success:   #276749;
-            --warning:   #c05621;
-            --shadow-sm: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
-            --shadow-md: 0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.05);
-            --radius-sm: 6px;
-            --radius:    10px;
-            --radius-lg: 14px;
-        }
-
-        /* --- ダークモード変数 --- */
-        body.dark-mode {
-            --bg:        #0d1117 !important;
-            --surface:   #161b22 !important;
-            --surface2:  #1c2128 !important;
-            --border:    #30363d !important;
-            --text:      #e6edf3 !important;
-            --text-sub:  #8b949e !important;
-            --my-color:  #58a6ff !important;
-            --my-light:  #0d2137 !important;
-            --my-border: #1f4f7a !important;
-            --opp-color: #f85149 !important;
-            --opp-light: #200d0d !important;
-            --opp-border:#5c1717 !important;
-            --accent:    #a371f7 !important;
-            --accent-light:#1a0d2e !important;
-        }
-        /* ダークモード: ハードコード背景色の上書き */
-        body.dark-mode input, body.dark-mode select, body.dark-mode textarea {
-            background: #1c2128 !important; color: #e6edf3 !important;
-            border-color: #30363d !important;
-        }
-        body.dark-mode table { background: transparent !important; }
-        body.dark-mode tr { background: transparent !important; }
-        body.dark-mode tr:nth-child(even) { background: #1c2128 !important; }
-        body.dark-mode tr:nth-child(odd)  { background: #161b22 !important; }
-        body.dark-mode th { background: #21262d !important; color: #c9d1d9 !important; }
-        body.dark-mode td { color: #c9d1d9 !important; border-color: #30363d !important; }
-        /* インラインbg上書き */
-        body.dark-mode [style*="background:#fff"],
-        body.dark-mode [style*="background: #fff"],
-        body.dark-mode [style*="background:#f9f9f9"],
-        body.dark-mode [style*="background: #f9f9f9"],
-        body.dark-mode [style*="background:#f2f2f2"],
-        body.dark-mode [style*="background:#f8f9fa"] {
-            background: #1c2128 !important;
-        }
-        body.dark-mode [style*="background:#fadbd8"],
-        body.dark-mode [style*="background:#fde8e8"],
-        body.dark-mode [style*="background:#fff5f5"] {
-            background: #1e0f0f !important;
-        }
-        body.dark-mode [style*="background:#f0fff4"],
-        body.dark-mode [style*="background:#e8f5e9"],
-        body.dark-mode [style*="background:#ebf8ff"] {
-            background: #0a1f0a !important;
-        }
-        body.dark-mode [style*="background:#fef9e7"],
-        body.dark-mode [style*="background:#fff3e0"],
-        body.dark-mode [style*="background:#fdf3e3"],
-        body.dark-mode [style*="background:#fffbe6"],
-        body.dark-mode [style*="background:#fefde8"],
-        body.dark-mode [style*="background:#ffe69c"] {
-            background: #1a1500 !important;
-        }
-        body.dark-mode [style*="background:#f3e8ff"],
-        body.dark-mode [style*="background:#faf5ff"],
-        body.dark-mode [style*="background:#f4ecf7"],
-        body.dark-mode [style*="background:#fdf2f8"] {
-            background: #150d22 !important;
-        }
-        body.dark-mode [style*="background:#eaf4fb"],
-        body.dark-mode [style*="background:#f0f8ff"],
-        body.dark-mode [style*="background:#e8f4fd"] {
-            background: #0d1f2e !important;
-        }
-        body.dark-mode [style*="background:#fffaf0"] {
-            background: #1a1200 !important;
-        }
-        body.dark-mode [style*="background:#f5e6ff"] {
-            background: #150d22 !important;
-        }
-        /* 場の状態パネル */
-        body.dark-mode [style*="background:#fff3e0"] {
-            background: #1a1200 !important;
-            border-color: #7a5c00 !important;
-        }
-        /* テーブル行の生存/瀕死色 */
-        body.dark-mode tr[style*="background:#fde8e8"] { background: #1e0f0f !important; }
-        body.dark-mode .item-auto-badge {
-            background: #0a1f0a !important; color: #68d391 !important; border-color: #276749 !important;
-        }
-
-        /* --- ベース --- */
-        *, *::before, *::after { box-sizing: border-box; }
-        html { -webkit-text-size-adjust: 100%; }
-        body {
-            font-family: 'Helvetica Neue', 'Hiragino Sans', 'Meiryo', Arial, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            margin: 0;
-            padding: 8px;
-            font-size: 14px;
-            line-height: 1.5;
-            -webkit-font-smoothing: antialiased;
-        }
-
-        /* --- ヘッダー --- */
-        .header {
-            text-align: center;
-            background: linear-gradient(135deg, #1a365d 0%, #2d3748 50%, #553c9a 100%);
-            color: white;
-            padding: 14px 16px;
-            border-radius: var(--radius-lg);
-            margin-bottom: 12px;
-            box-shadow: var(--shadow-md);
-        }
-        h1 { margin: 0; font-size: 1.3rem; letter-spacing: 0.03em; }
-
-        /* --- ダッシュボードグリッド --- */
-        .dashboard {
-            display: flex;
-            gap: 18px;
-            align-items: stretch;
-        }
-        .dashboard > .field-col {
-            flex: 1 1 0;
-            min-width: 0;
-        }
-        /* 横並び時: gap:18px が左右間隔を担う */
-        /* 縦並び時: flex-direction:column + gap:20px が上下間隔を担う */
-        @media (max-width: 900px) {
-            .dashboard {
-                flex-direction: column;
-                gap: 20px;
-            }
-        }
-
-        /* --- カード共通 --- */
-        .field-col {
-            background: var(--surface);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow-sm);
-            padding: 12px;
-            border: 1px solid var(--border);
-            min-width: 0;
-            width: 100%; box-sizing: border-box;
-        }
-
-        /* --- チームボックス --- */
-        .team-box {
-            border: 1px solid var(--border);
-            padding: 10px;
-            border-radius: var(--radius-sm);
-            margin-bottom: 12px;
-            background: var(--surface2);
-        }
-        .team-title {
-            font-weight: 700;
-            font-size: 0.85rem;
-            color: var(--my-color);
-            border-bottom: 2px solid var(--my-color);
-            display: inline-block;
-            padding-bottom: 2px;
-            margin-bottom: 8px;
-        }
-        .opp-title { color: var(--opp-color) !important; border-bottom-color: var(--opp-color) !important; }
-
-        /* --- ポケモン行 --- */
-        .poke-row {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            margin-bottom: 3px;
-            flex-wrap: nowrap;
-            border-bottom: 1px dashed var(--border);
-            padding-bottom: 3px;
-        }
-        .poke-row select { flex: 1; min-width: 0; font-size: 0.78rem; padding: 2px 4px; min-height: 26px; }
-        .poke-row input[type=radio] { flex-shrink: 0; }
-        .badge {
-            font-size: 0.6rem;
-            padding: 1px 4px;
-            border-radius: 4px;
-            background: #718096;
-            color: white;
-            white-space: nowrap;
-            flex-shrink: 0;
-        }
-
-        /* --- 技ボタングリッド --- */
-        .move-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 4px;
-            margin-top: 6px;
-        }
-        .move-cell { display: flex; flex-direction: column; gap: 2px; }
-        .move-cell select { padding: 2px 4px; font-size: 0.78rem; min-height: 26px; }
-        .move-cell button {
-            padding: 4px;
-            background: #e74c3c;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.75rem;
-            font-weight: bold;
-        }
-
-        /* --- 能力値折りたたみ --- */
-        details.stat-details summary {
-            cursor: pointer;
-            font-size: 0.78rem;
-            font-weight: bold;
-            color: var(--text-sub);
-            padding: 3px 0;
-            user-select: none;
-            list-style: none;
-        }
-        details.stat-details summary::before { content: "▶ "; font-size: 0.7rem; }
-        details.stat-details[open] summary::before { content: "▼ "; }
-
-        /* --- アクティブ統計ボックス --- */
-        .active-stats {
-            border: 2px solid var(--my-border);
-            border-radius: var(--radius-sm);
-            padding: 10px;
-            background: var(--my-light);
-            min-width: 0;
-            width: 100%; box-sizing: border-box;
-        }
-        .opp-stats {
-            border-color: var(--opp-border);
-            background: var(--opp-light);
-        }
-
-        /* --- 素早さバッジ --- */
-        .speed-badge {
-            display: inline-block;
-            margin-left: auto;
-            font-weight: bold;
-            color: #c05621;
-            background: #fffaf0;
-            padding: 3px 8px;
-            border-radius: var(--radius-sm);
-            font-size: 0.85rem;
-            border: 1px solid #f6ad55;
-        }
-        body.dark-mode .speed-badge { color:#f6ad55; background:#1a0f00; border-color:#7a4500; }
-
-        /* --- メガシンカ --- */
-        .mega-container { margin-left: 6px; }
-        .mega-label {
-            background: #f3e8ff;
-            padding: 3px 7px;
-            border-radius: var(--radius-sm);
-            font-size: 0.82rem;
-            font-weight: bold;
-            color: #6b46c1;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            border: 1px solid #9f7aea;
-            white-space: nowrap;
-        }
-        .mega-select {
-            background: #f3e8ff;
-            border: 1px solid #9f7aea;
-            border-radius: var(--radius-sm);
-            font-size: 0.82rem;
-            font-weight: bold;
-            color: #6b46c1;
-            padding: 3px;
-            cursor: pointer;
-        }
-        body.dark-mode .mega-label, body.dark-mode .mega-select {
-            background:#1a0d2e; color:#a371f7; border-color:#553c9a;
-        }
-
-        /* --- 能力値グリッド --- */
-        .stat-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 6px;
-            margin-top: 8px;
-        }
-        @media (max-width: 480px) {
-            .stat-grid { grid-template-columns: repeat(2, 1fr); }
-        }
-        .stat-item { display: flex; flex-direction: column; gap: 2px; }
-        .stat-item label {
-            font-size: 0.72rem;
-            font-weight: 600;
-            color: var(--text-sub);
-            letter-spacing: 0.02em;
-        }
-        .stat-item select, .stat-item input[type=number], .stat-item input[type=text] {
-            padding: 5px 6px;
-            border: 1px solid var(--border);
-            border-radius: var(--radius-sm);
-            background: var(--surface);
-            color: var(--text);
-            font-size: 0.82rem;
-            min-height: 32px;
-            width: 100%; box-sizing: border-box;
-        }
-        .stat-item select:focus, .stat-item input:focus {
-            outline: none;
-            border-color: var(--accent);
-            box-shadow: 0 0 0 2px rgba(107,70,193,0.15);
-        }
-
-        /* --- フォームコントロール全般 --- */
-        input[type=number], input[type=text], select, textarea {
-            background: var(--surface);
-            color: var(--text);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-sm);
-            font-size: 0.9rem;
-            padding: 5px 7px;
-            min-height: 36px;
-            transition: border-color 0.15s, box-shadow 0.15s;
-        }
-        input:focus, select:focus, textarea:focus {
-            outline: none;
-            border-color: var(--accent);
-            box-shadow: 0 0 0 2px rgba(107,70,193,0.15);
-        }
-
-        /* --- チェックボックス・ラジオ --- */
-        input[type=checkbox], input[type=radio] {
-            width: 16px; height: 16px;
-            cursor: pointer;
-            accent-color: var(--accent);
-            min-height: unset;
-        }
-        label { cursor: pointer; }
-
-        /* --- アクションパネル --- */
-        .action-panel {
-            width: 100%; box-sizing: border-box;
-            background: var(--surface);
-            border-radius: var(--radius);
-            padding: 14px;
-            box-shadow: var(--shadow-sm);
-            margin-top: 10px;
-            border: 1px solid var(--border);
-            border-left: 4px solid var(--accent);
-        }
-        .action-header {
-            font-weight: 700;
-            font-size: 1rem;
-            color: var(--accent);
-            margin-bottom: 10px;
-        }
-        .flex-row {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-bottom: 10px;
-            align-items: flex-end;
-        }
-
-        /* --- ボタン類 --- */
-        .btn-calc {
-            background: linear-gradient(135deg, var(--accent) 0%, #553c9a 100%);
-            color: white;
-            padding: 11px 18px;
-            border: none;
-            border-radius: var(--radius-sm);
-            font-weight: 700;
-            cursor: pointer;
-            font-size: 0.95rem;
-            width: 100%; box-sizing: border-box;
-            transition: opacity 0.15s, transform 0.1s;
-            min-height: 44px;
-            letter-spacing: 0.02em;
-        }
-        .btn-calc:hover { opacity: 0.88; }
-        .btn-calc:active { transform: scale(0.98); }
-
-        /* 攻撃ボタン */
-        button[onclick*="triggerAttack"] {
-            background: linear-gradient(135deg, #e53e3e, #c53030);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            padding: 4px 9px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            cursor: pointer;
-            min-height: 32px;
-            transition: opacity 0.15s;
-            white-space: nowrap;
-        }
-        button[onclick*="triggerAttack"]:hover { opacity: 0.85; }
-
-        /* ターン管理ボタン */
-        button[onclick*="advanceTurn"], button[onclick*="resetTurnMgr"] {
-            padding: 8px 14px;
-            border-radius: var(--radius-sm);
-            border: none;
-            font-weight: 600;
-            cursor: pointer;
-            font-size: 0.88rem;
-            min-height: 40px;
-            transition: opacity 0.15s;
-        }
-        button[onclick*="advanceTurn"] { background: #2b6cb0; color: white; }
-        button[onclick*="resetTurnMgr"] { background: #718096; color: white; }
-        button[onclick*="advanceTurn"]:hover, button[onclick*="resetTurnMgr"]:hover { opacity: 0.85; }
-
-        /* --- 結果ボックス --- */
-        .result-box {
-            margin-top: 12px;
-            padding: 12px;
-            background: var(--accent-light);
-            border: 1px solid #d6bcfa;
-            border-radius: var(--radius-sm);
-            display: none;
-        }
-        .result-title { font-weight: 700; color: var(--accent); margin-bottom: 8px; font-size: 1rem; }
-
-        /* --- 予測テーブル --- */
-        .predict-table { width: 100%; box-sizing: border-box; border-collapse: collapse; background: var(--surface); border-radius: var(--radius-sm); overflow: hidden; }
-        .predict-table th, .predict-table td {
-            border: 1px solid var(--border);
-            padding: 6px 8px;
-            text-align: center;
-            font-size: 0.82rem;
-        }
-        .predict-table th { background: var(--surface2); font-weight: 600; color: var(--text-sub); }
-
-        /* --- KOバッジ --- */
-        .ko-yes    { color: #c53030; font-weight: 700; background: #fff5f5; padding: 2px 6px; border-radius: 4px; }
-        .ko-maybe  { color: #c05621; font-weight: 700; background: #fffaf0; padding: 2px 6px; border-radius: 4px; }
-        .ko-2hit   { color: #2b6cb0; font-weight: 700; background: #ebf8ff; padding: 2px 6px; border-radius: 4px; }
-        .ko-2maybe { color: #6b46c1; font-weight: 700; background: #faf5ff; padding: 2px 6px; border-radius: 4px; }
-        .ko-no     { color: #276749; background: #f0fff4; padding: 2px 6px; border-radius: 4px; }
-
-        /* --- ダメージログ --- */
-        #damageLog {
-            max-height: 200px;
-            overflow-y: auto;
-            background: #1a202c;
-            color: #e2e8f0;
-            border-radius: var(--radius-sm);
-            padding: 8px 10px;
-            font-size: 0.78rem;
-            font-family: 'Courier New', monospace;
-        }
-        #damageLog .log-entry { border-bottom: 1px solid #2d3748; padding: 3px 0; }
-        #damageLog .log-entry:last-child { border-bottom: none; }
-        #logClearBtn {
-            font-size: 0.75rem;
-            padding: 3px 9px;
-            background: #c53030;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            float: right;
-            margin-bottom: 6px;
-            min-height: 28px;
-        }
-
-        /* --- セクション見出し --- */
-        h3, h4 { color: var(--text); margin: 8px 0 4px; }
-        .section-title {
-            font-weight: 700;
-            font-size: 0.88rem;
-            color: var(--text-sub);
-            background: var(--surface2);
-            border-radius: 4px;
-            padding: 3px 7px;
-            display: inline-block;
-            margin-bottom: 4px;
-        }
-
-        /* --- アコーディオン(detailsタグ) --- */
-        details { margin-bottom: 8px; }
-        details summary {
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 0.88rem;
-            padding: 8px 10px;
-            background: var(--surface2);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-sm);
-            list-style: none;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            user-select: none;
-            transition: background 0.15s;
-        }
-        details summary:hover { background: var(--border); }
-        details summary::-webkit-details-marker { display: none; }
-        details[open] summary { border-radius: var(--radius-sm) var(--radius-sm) 0 0; }
-        details > *:not(summary) {
-            border: 1px solid var(--border);
-            border-top: none;
-            border-radius: 0 0 var(--radius-sm) var(--radius-sm);
-            padding: 10px;
-            background: var(--surface);
-        }
-
-        /* --- 速度計算ボックス --- */
-        #speedCalcBox {
-            background: var(--my-light);
-            border: 1px solid var(--my-border);
-            border-radius: var(--radius-sm);
-            padding: 8px 10px;
-            margin-top: 8px;
-            font-size: 0.82rem;
-        }
-
-        /* --- 技追加情報 --- */
-        #moveExtraInfo {
-            font-size: 0.78rem;
-            color: var(--text-sub);
-            margin-top: 3px;
-            padding: 3px 8px;
-            background: var(--my-light);
-            border-radius: 4px;
-            border: 1px solid var(--my-border);
-        }
-
-        /* --- ランクバッジ --- */
-        .rank-badge {
-            display: inline-block;
-            border-radius: 3px;
-            padding: 1px 5px;
-            font-size: 0.7rem;
-            color: white;
-            font-weight: bold;
-        }
-
-        /* --- ダークモードボタン --- */
-        #darkModeToggle {
-            position: fixed;
-            bottom: 16px;
-            right: 16px;
-            z-index: 9999;
-            background: #1a2a3a;
-            color: #8ec8f0;
-            border: 1px solid #2a4a5a;
-            border-radius: 50%;
-            width: 46px;
-            height: 46px;
-            font-size: 1.3rem;
-            cursor: pointer;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: transform 0.2s;
-        }
-        #darkModeToggle:hover { transform: scale(1.1); }
-
-        /* --- ダークモード上書き --- */
-        body.dark-mode { background: var(--bg) !important; color: var(--text) !important; }
-        body.dark-mode .field-col { background: var(--surface) !important; border-color: var(--border) !important; }
-        body.dark-mode .team-box { background: var(--surface2) !important; border-color: var(--border) !important; }
-        body.dark-mode .active-stats { background: var(--my-light) !important; border-color: var(--my-border) !important; }
-        body.dark-mode .opp-stats { background: var(--opp-light) !important; border-color: var(--opp-border) !important; }
-        body.dark-mode input, body.dark-mode select, body.dark-mode textarea {
-            background: var(--surface2) !important;
-            color: var(--text) !important;
-            border-color: var(--border) !important;
-        }
-        body.dark-mode .action-panel { background: var(--surface) !important; border-color: var(--border) !important; }
-        body.dark-mode .result-box { background: var(--accent-light) !important; border-color: #553c9a !important; }
-        body.dark-mode .predict-table th { background: var(--surface2) !important; color: var(--text-sub) !important; }
-        body.dark-mode .predict-table td { background: var(--surface) !important; color: var(--text) !important; }
-        body.dark-mode details summary { background: var(--surface2) !important; border-color: var(--border) !important; color: var(--text) !important; }
-        body.dark-mode details summary:hover { background: var(--border) !important; }
-        body.dark-mode details > *:not(summary) { background: var(--surface) !important; border-color: var(--border) !important; }
-        body.dark-mode #speedCalcBox { background: var(--my-light) !important; border-color: var(--my-border) !important; color: var(--text) !important; }
-        body.dark-mode #moveExtraInfo { background: var(--my-light) !important; border-color: var(--my-border) !important; color: var(--text-sub) !important; }
-        body.dark-mode .header { background: linear-gradient(135deg, #0d1b2e 0%, #0d1117 50%, #1a0d2e 100%) !important; }
-        body.dark-mode h3, body.dark-mode h4 { color: var(--text) !important; }
-        body.dark-mode .section-title { background: var(--surface2) !important; color: var(--text-sub) !important; }
-        body.dark-mode hr { border-color: var(--border) !important; }
-        body.dark-mode .ko-yes    { background: var(--opp-light) !important; }
-        body.dark-mode .ko-maybe  { background: #1a0f00 !important; }
-        body.dark-mode .ko-2hit   { background: var(--my-light) !important; }
-        body.dark-mode .ko-2maybe { background: var(--accent-light) !important; }
-        body.dark-mode .ko-no     { background: #0a1f0a !important; color: #68d391 !important; }
-        body.dark-mode #resultOutput { background: var(--surface) !important; }
-
-        /* --- スマホ向け追加調整 --- */
-        @media (max-width: 480px) {
-            body { padding: 6px; font-size: 13px; }
-            h1 { font-size: 1.1rem; }
-            .field-col { padding: 10px 8px; }
-            .btn-calc { font-size: 0.9rem; padding: 10px; }
-            .predict-table th, .predict-table td { padding: 4px 5px; font-size: 0.75rem; }
-            .poke-row { gap: 4px; }
-            input[type=number], input[type=text], select { min-height: 40px; font-size: 16px; }
-            /* iOS zoom防止: font-size 16px以上 */
-        }
-
-        /* --- タブレット --- */
-        @media (min-width: 769px) and (max-width: 1024px) {
-            .stat-grid { grid-template-columns: repeat(3, 1fr); }
-        }
-
-        /* viewport meta対応のため追記 */
-        @media (max-width: 768px) {
-            .flex-row { gap: 8px; }
-            .action-panel { padding: 10px; }
-        }
-
-        /* --- チームエリア折りたたみ --- */
-        .team-details { margin-bottom: 8px; width: 100%; box-sizing: border-box; }
-        .team-summary {
-            width: 100%; box-sizing: border-box;
-            font-weight: 700;
-            font-size: 0.85rem;
-            color: var(--my-color);
-            border-bottom: 2px solid var(--my-color);
-            padding: 5px 8px;
-            cursor: pointer;
-            user-select: none;
-            list-style: none;
-            display: flex;
-            align-items: center;
-            border-radius: var(--radius-sm);
-            background: var(--surface2);
-            margin-bottom: 0;
-        }
-        .team-summary::before { content: "▶ "; font-size: 0.7rem; margin-right: 4px; }
-        .team-details[open] > .team-summary::before { content: "▼ "; }
-        .opp-summary { color: var(--opp-color) !important; border-bottom-color: var(--opp-color) !important; }
-
-
-        /* --- 能力P クイック入力ボタン --- */
-        .ev-btn {
-            font-size: 0.68rem;
-            padding: 1px 5px;
-            background: #e2e8f0;
-            color: #2d3748;
-            border: 1px solid #cbd5e0;
-            border-radius: 3px;
-            cursor: pointer;
-            font-weight: 700;
-            transition: background 0.12s;
-            line-height: 1.6;
-            flex-shrink: 0;
-        }
-        .ev-btn:hover { background: #bee3f8; border-color: #63b3ed; }
-        .ev-btn:active { background: #90cdf4; }
-        .ev-input-wrap { display: flex; gap: 2px; align-items: center; flex-wrap: nowrap; }
-        .ev-input-wrap input { flex: 1; min-width: 0; }
-        body.dark-mode .ev-btn { background: #2d3748; color: #e2e8f0; border-color: #4a5568; }
-        body.dark-mode .ev-btn:hover { background: #2c5282; border-color: #63b3ed; }
-
-        /* --- チーム管理パネル --- */
-        #savedTeamsList { max-height: 340px; overflow-y: auto; margin-top: 8px; }
-        .saved-team-item {
-            background: var(--surface2); border: 1px solid var(--border);
-            border-radius: 6px; padding: 8px 10px; margin-bottom: 6px;
-        }
-        .saved-team-item-name {
-            font-weight: 700; font-size: 0.88rem; color: #805ad5;
-            margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center;
-        }
-        .saved-team-preview { font-size: 0.75rem; color: var(--text-sub); margin-bottom: 5px; line-height: 1.6; }
-        .tm-btn {
-            padding: 5px 10px; border: none; border-radius: 4px;
-            font-weight: 700; cursor: pointer; font-size: 0.78rem;
-            min-height: 28px; transition: opacity 0.15s;
-        }
-        .tm-btn:hover { opacity: 0.85; }
-        .tm-btn-save   { background: #805ad5; color: white; }
-        .tm-btn-load-my  { background: #2b6cb0; color: white; }
-        .tm-btn-load-opp { background: #c53030; color: white; }
-        .tm-btn-del    { background: #718096; color: white; }
-        body.dark-mode .saved-team-item { background: var(--surface2); border-color: var(--border); }
-        body.dark-mode .saved-team-item-name { color: #9f7aea; }
-
-        /* --- 状態トグルバッジ --- */
-        .state-badge-area {
-            display: flex; flex-wrap: wrap; gap: 5px;
-            padding: 8px 6px 6px;
-            border-top: 1px dashed var(--border);
-            margin-top: 6px;
-        }
-        .state-badge {
-            display: inline-flex; align-items: center; justify-content: center;
-            padding: 3px 9px;
-            border-radius: 999px;
-            font-size: 0.72rem; font-weight: 700;
-            cursor: pointer; user-select: none;
-            border: 1.5px solid #b0bec5;
-            background: var(--surface2); color: var(--text-sub);
-            transition: background 0.15s, color 0.15s, border-color 0.15s;
-            white-space: nowrap;
-            min-height: 24px;
-        }
-        .state-badge.on {
-            background: #2b6cb0; color: #fff; border-color: #2b6cb0;
-        }
-        .state-badge.on-green {
-            background: #276749; color: #fff; border-color: #276749;
-        }
-        .state-badge.on-red {
-            background: #c53030; color: #fff; border-color: #c53030;
-        }
-        .state-badge.on-purple {
-            background: #6b46c1; color: #fff; border-color: #6b46c1;
-        }
-        .state-badge.on-orange {
-            background: #c05621; color: #fff; border-color: #c05621;
-        }
-        .state-badge.on-yellow {
-            background: #b7950b; color: #fff; border-color: #b7950b;
-        }
-        body.dark-mode .state-badge { background: var(--surface2); color: var(--text-sub); border-color: var(--border); }
-        body.dark-mode .state-badge.on         { background: #1a4a8a; color: #90cdf4; border-color: #2b6cb0; }
-        body.dark-mode .state-badge.on-green   { background: #0a2a1a; color: #68d391; border-color: #276749; }
-        body.dark-mode .state-badge.on-red     { background: #2a0a0a; color: #fc8181; border-color: #c53030; }
-        body.dark-mode .state-badge.on-purple  { background: #1a0d2e; color: #d6bcfa; border-color: #6b46c1; }
-        body.dark-mode .state-badge.on-orange  { background: #1a0f00; color: #f6ad55; border-color: #c05621; }
-        body.dark-mode .state-badge.on-yellow  { background: #1a1400; color: #f6e05e; border-color: #b7950b; }
-        .item-auto-badge {
-            display: inline-flex; align-items: center; gap: 3px;
-            padding: 2px 7px; border-radius: 999px; font-size: 0.68rem;
-            background: #e8f5e9; border: 1px solid #81c784; color: #276749;
-            font-weight: 700; white-space: nowrap;
-        }
-        body.dark-mode .item-auto-badge { background: #0a2a1a; color: #68d391; border-color: #276749; }
-
-        /* --- HP バー（レンジスライダー） --- */
-        input[type=range] {
-            -webkit-appearance: none;
-            appearance: none;
-            height: 7px;
-            border-radius: 4px;
-            background: #ddd;
-            cursor: pointer;
-            outline: none;
-            transition: background 0.1s;
-        }
-        input[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 15px; height: 15px;
-            border-radius: 50%;
-            background: #555;
-            cursor: pointer;
-            border: 2px solid #fff;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.25);
-        }
-        input[type=range]::-moz-range-thumb {
-            width: 13px; height: 13px;
-            border-radius: 50%;
-            background: #555;
-            cursor: pointer;
-            border: 2px solid #fff;
-        }
-        input[type=range]::-webkit-slider-runnable-track { border-radius: 4px; }
-        input[type=range]::-moz-range-track {
-            height: 7px; border-radius: 4px; background: inherit;
-        }
-        body.dark-mode input[type=range]::-webkit-slider-thumb { background: #90cdf4; border-color: #1c2128; }
-        body.dark-mode input[type=range]::-moz-range-thumb    { background: #90cdf4; border-color: #1c2128; }
-    
-        /* ===== ポケモン名オートコンプリート ===== */
-        .poke-autocomplete-wrap { position: relative; display: inline-block; width: 100%; }
-        .poke-suggest-list {
-            position: absolute; top: 100%; left: 0; right: 0; z-index: 9999;
-            background: #fff; border: 1px solid #90cdf4; border-radius: 0 0 6px 6px;
-            max-height: 180px; overflow-y: auto; font-size: 0.82rem;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15); display: none;
-        }
-        .poke-suggest-list div {
-            padding: 5px 10px; cursor: pointer; white-space: nowrap;
-            border-bottom: 1px solid #f0f4f8;
-        }
-        .poke-suggest-list div:last-child { border-bottom: none; }
-        .poke-suggest-list div:hover, .poke-suggest-list div.ac-active {
-            background: #ebf8ff; color: #2b6cb0;
-        }
-        body.dark-mode .poke-suggest-list { background:#1c2128; border-color:#1f4f7a; }
-        body.dark-mode .poke-suggest-list div { border-color:#30363d; }
-        body.dark-mode .poke-suggest-list div:hover,
-        body.dark-mode .poke-suggest-list div.ac-active { background:#0d2137; color:#58a6ff; }
-
-        /* ===== 持ち物・特性ツールチップ ===== */
-        .has-tip { position: relative; }
-        .has-tip::after {
-            content: attr(data-tip);
-            position: absolute;
-            bottom: calc(100% + 6px);
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(20,20,20,0.92);
-            color: #fff;
-            font-size: 0.72rem;
-            white-space: pre-line;
-            max-width: 220px;
-            width: max-content;
-            padding: 6px 10px;
-            border-radius: 6px;
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.15s;
-            z-index: 10000;
-            line-height: 1.6;
-            text-align: left;
-        }
-        .has-tip:hover::after { opacity: 1; }
-        .has-tip::before {
-            content: '';
-            position: absolute;
-            bottom: calc(100% + 1px);
-            left: 50%;
-            transform: translateX(-50%);
-            border: 5px solid transparent;
-            border-top-color: rgba(20,20,20,0.92);
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.15s;
-            z-index: 10000;
-        }
-        .has-tip:hover::before { opacity: 1; }
-
-        /* ===== スマートフォン対応レイアウト ===== */
-        @media (max-width: 600px) {
-            body { font-size: 13px !important; }
-            .container { padding: 4px !important; max-width: 100% !important; }
-            .card { padding: 8px !important; border-radius: 8px !important; margin-bottom: 8px !important; }
-            .action-panel { padding: 6px 8px !important; margin-top: 6px !important; }
-            /* flex系を縦並びに */
-            .flex-row,
-            div[style*="display:flex"]:not(.state-badge-area):not([style*="align-items:center"]) {
-                flex-wrap: wrap !important;
-            }
-            .stat-item { min-width: 100px !important; }
-            /* iOS入力ズーム防止 (16px以上で防止) */
-            select, input[type="number"], input[type="text"] {
-                font-size: 16px !important;
-            }
-            /* ボタンを大きく */
-            .btn-calc {
-                width: 100% !important;
-                font-size: 0.9rem !important;
-                padding: 12px 8px !important;
-                margin-bottom: 6px !important;
-            }
-            /* バッジを小さく整列 */
-            .state-badge { font-size: 0.68rem !important; padding: 3px 5px !important; }
-            /* 予測テーブル */
-            .predict-table { font-size: 0.72rem !important; }
-            .predict-table td, .predict-table th { padding: 3px 4px !important; }
-            /* 結果ボックス */
-            .result-box { font-size: 0.85rem !important; padding: 8px !important; }
-            /* Sライン一覧 */
-            #speedTierList { max-height: 200px !important; }
-            /* チーム管理パネル */
-            #teamMgrArea { padding: 6px !important; }
-        }
-        @media (max-width: 768px) {
-            .container { max-width: 100% !important; padding: 6px !important; }
-        }
-        /* タッチデバイス: ボタン・セレクトを大きく */
-        @media (hover: none) and (pointer: coarse) {
-            .state-badge { min-height: 34px !important; }
-            button:not(.state-badge) { min-height: 38px !important; }
-            select { min-height: 36px !important; }
-            input[type="number"] { min-height: 34px !important; }
-        }
-        /* 乱数表示のレスポンシブ */
-        @media (max-width: 480px) {
-            #rollDetail > div { gap: 2px !important; }
-            #rollDetail span { min-width: 46px !important; font-size: 0.72rem !important; }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
+<title>ポケチャン ダメージ計算ツール</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f0f4f8;--sur:#fff;--sur2:#f7f9fc;--bdr:#e2e8f0;
+  --tx:#1a202c;--sub:#718096;--xs:#a0aec0;
+  --my:#2563eb;--op:#dc2626;--ac:#7c3aed;--gr:#15803d;--ye:#b45309;
+  --sh:0 1px 3px rgba(0,0,0,.08);--r:10px;--rs:6px
+}
+body.dark-mode{
+  --bg:#0d1117;--sur:#161b22;--sur2:#1c2128;--bdr:#30363d;
+  --tx:#e6edf3;--sub:#8b949e;--xs:#6e7681;
+  --my:#60a5fa;--op:#f87171;--ac:#a78bfa;--gr:#4ade80;--ye:#fbbf24
+}
+body{font-family:'Hiragino Sans','Noto Sans JP',sans-serif;background:var(--bg);color:var(--tx);font-size:14px;line-height:1.5;min-height:100vh}
+/* HEADER */
+#hdr{background:linear-gradient(135deg,#1e3a8a,#2563eb 55%,#7c3aed);color:#fff;
+  padding:8px 14px;display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:200;box-shadow:0 2px 8px rgba(0,0,0,.3);gap:8px;flex-wrap:wrap}
+#hdr h1{font-size:.96rem;font-weight:700;white-space:nowrap}
+.hsub{font-size:.67rem;opacity:.75}
+.hr{display:flex;align-items:center;gap:5px;flex-wrap:wrap;flex-shrink:0}
+.hs{font-size:.74rem;padding:3px 7px;border-radius:5px;border:1.5px solid rgba(255,255,255,.35);background:rgba(255,255,255,.12);color:#fff;cursor:pointer}
+.hs option{color:#1a202c;background:#fff}
+.hbg{font-size:.71rem;padding:3px 9px;border-radius:20px;border:1.5px solid rgba(255,255,255,.35);color:#fff;cursor:pointer;background:rgba(255,255,255,.1);white-space:nowrap;transition:.15s}
+.hbg.on{background:rgba(255,255,255,.35);font-weight:700}
+.dkbtn{background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);color:#fff;padding:4px 10px;border-radius:20px;cursor:pointer;font-size:.79rem}
+/* LAYOUT */
+#wrap{width:100%;max-width:100%;margin:0;padding:10px 16px}
+#grid{display:grid;grid-template-columns:1fr 2fr 1fr;grid-template-areas:"my res opp";gap:10px;align-items:start}
+@media(max-width:1100px){#grid{grid-template-columns:1fr 1fr;grid-template-areas:"my opp""res res"}}
+@media(max-width:640px){#grid{grid-template-columns:1fr;grid-template-areas:"my""opp""res"}}
+/* CARD */
+.card{background:var(--sur);border:1px solid var(--bdr);border-radius:var(--r);box-shadow:var(--sh);overflow:hidden}
+/* POKE CARD */
+#my-col{grid-area:my}
+#opp-col{grid-area:opp}
+.ptop{padding:9px 12px 7px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;border-bottom:1px solid var(--bdr)}
+.stag{font-size:.69rem;font-weight:700;padding:2px 8px;border-radius:20px;flex-shrink:0}
+.stag.my{background:var(--my);color:#fff}
+.stag.op{background:var(--op);color:#fff}
+.aname{font-size:1.05rem;font-weight:700;flex:1;min-width:60px}
+.mega-container{display:flex;gap:4px;flex-wrap:wrap}
+.tacc-hd{display:flex;align-items:center;justify-content:space-between;padding:5px 12px;font-size:.75rem;color:var(--sub);cursor:pointer;border-bottom:1px solid var(--bdr);user-select:none}
+.tacc-hd:hover{color:var(--tx)}
+.tacc-bd{padding:6px 12px;border-bottom:1px solid var(--bdr)}
+.tacc-bd.cl{display:none}
+/* HP */
+.hpw{padding:7px 12px;background:var(--sur2);border-bottom:1px solid var(--bdr);display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.hpw label{font-size:.69rem;font-weight:700;color:var(--sub);flex-shrink:0}
+.hpw input[type=range]{flex:1;height:5px;min-width:50px;cursor:pointer;accent-color:#16a34a}
+.hpn{width:42px;font-weight:700;font-size:.82rem;text-align:center;padding:3px;border:1px solid var(--bdr);border-radius:4px;background:var(--sur);color:var(--tx)}
+.hpr{width:50px;font-size:.76rem;text-align:center;padding:3px;border:1px solid var(--bdr);border-radius:4px;background:var(--sur2);color:var(--sub)}
+/* MOVES */
+.mvw{padding:8px 12px;border-bottom:1px solid var(--bdr)}
+.mvg{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.mvr{display:flex;gap:3px}
+.mvr select{flex:1;font-size:.76rem;padding:5px 3px;border:1.5px solid var(--bdr);border-radius:var(--rs);background:var(--sur);color:var(--tx);cursor:pointer;min-width:0}
+.mvr select:focus{border-color:var(--my);outline:none}
+#opp-col .mvr select:focus{border-color:var(--op)}
+.abtn{border:none;border-radius:var(--rs);padding:5px 8px;cursor:pointer;font-size:.76rem;font-weight:700;color:#fff;white-space:nowrap;transition:.15s;flex-shrink:0}
+.abtn.my{background:linear-gradient(135deg,#2563eb,#3b82f6)}
+.abtn.op{background:linear-gradient(135deg,#dc2626,#ef4444)}
+.abtn:hover{opacity:.84}
+/* STATS */
+.sacc-hd{display:flex;align-items:center;gap:5px;padding:6px 12px;font-size:.75rem;color:var(--sub);cursor:pointer;user-select:none;border-bottom:1px solid var(--bdr)}
+.sacc-hd:hover{color:var(--tx)}
+.sacc-hd .sar{font-size:.68rem;margin-left:auto;transition:transform .2s}
+.sacc-bd{padding:8px 12px 10px;border-bottom:1px solid var(--bdr)}
+.sacc-bd.cl{display:none}
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(138px,1fr));gap:5px}
+.stat-item{display:flex;flex-direction:column;gap:3px}
+.stat-item label{font-size:.7rem;color:var(--sub);font-weight:600}
+.ev-input-wrap{display:flex;align-items:center;gap:2px;flex-wrap:wrap}
+.ev-input-wrap input[type=number]{width:46px;padding:3px;border:1px solid var(--bdr);border-radius:4px;font-size:.78rem;background:var(--sur);color:var(--tx);text-align:center}
+.ev-btn{font-size:.67rem;padding:2px 4px;border:1px solid var(--bdr);border-radius:3px;cursor:pointer;background:var(--sur2);color:var(--sub)}
+.ev-btn:hover{background:var(--bdr)}
+.real-stat{font-size:.78rem;font-weight:700;min-width:26px;text-align:right}
+#my-col .real-stat{color:var(--my)}
+#opp-col .real-stat{color:var(--op)}
+/* BADGES */
+.bdga{padding:6px 12px;display:flex;gap:4px;flex-wrap:wrap}
+.state-badge{font-size:.7rem;padding:2px 8px;border-radius:20px;border:1.5px solid var(--bdr);background:var(--sur);color:var(--sub);cursor:pointer;white-space:nowrap;transition:.15s}
+.state-badge.on{border-color:var(--ac);background:var(--ac);color:#fff;font-weight:700}
+.state-badge.on-red{border-color:var(--op);background:var(--op);color:#fff;font-weight:700}
+.state-badge.on-green{border-color:var(--gr);background:var(--gr);color:#fff;font-weight:700}
+.state-badge.on-purple{border-color:var(--ac);background:var(--ac);color:#fff;font-weight:700}
+.state-badge.on-yellow{border-color:var(--ye);background:var(--ye);color:#fff;font-weight:700}
+.item-auto-badge{display:none;font-size:.68rem;padding:2px 7px;border-radius:12px;background:#888;border:1px solid #666;color:#fff;font-weight:600;cursor:default}.badge-lefto{background:#27ae60;border-color:#219a52}.badge-lo{background:#e74c3c;border-color:#c0392b}.badge-shell{background:#16a085;border-color:#1abc9c}
+.spdisp{font-size:.74rem;color:var(--sub);padding:3px 12px;border-bottom:1px solid var(--bdr)}
+.speed-faster{color:var(--gr);font-weight:700}
+.speed-slower{color:var(--op)}
+.palert{font-size:.74rem;padding:3px 8px;border-radius:4px;margin:3px 12px;display:none}
+/* RESULT */
+#res-col{grid-area:res;position:sticky;top:50px}
+@media(max-width:920px){#res-col{position:static}}
+.rhd{padding:9px 12px;border-bottom:1px solid var(--bdr);font-weight:700;font-size:.86rem}
+.rbd{padding:10px 12px}
+.attog{display:flex;gap:0;margin-bottom:9px;border-radius:var(--rs);overflow:hidden;border:1.5px solid var(--bdr)}
+.atbtn{flex:1;padding:8px;border:none;cursor:pointer;font-size:.82rem;font-weight:600;transition:.15s;background:var(--sur2);color:var(--sub)}
+.atbtn.my{background:var(--my);color:#fff}
+.atbtn.op{background:var(--op);color:#fff}
+.msl{font-size:.68rem;color:var(--sub);display:block;margin-bottom:3px}
+#moveSelect{width:100%;padding:7px 8px;font-size:.86rem;font-weight:700;border:2px solid var(--my);border-radius:var(--rs);background:var(--sur);color:var(--tx);cursor:pointer;margin-bottom:7px}
+.mpg{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-bottom:7px}
+.mpi{display:flex;flex-direction:column;gap:2px}
+.mpi label{font-size:.68rem;color:var(--sub)}
+.mpi input,.mpi select{padding:5px;border:1px solid var(--bdr);border-radius:4px;font-size:.78rem;background:var(--sur);color:var(--tx);width:100%}
+#moveConditionContainer{font-size:.78rem;color:var(--op);background:#fff5f5;padding:5px 8px;border-radius:4px;margin-bottom:6px;display:none;border:1px solid #fecaca}
+.xrow{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px;align-items:center;font-size:.78rem}
+.xrow select{font-size:.78rem;padding:3px 5px;border:1px solid var(--bdr);border-radius:4px;background:var(--sur);color:var(--tx)}
+#actualDamageBox{display:none;background:#fffbeb;padding:6px 8px;border-radius:var(--rs);border:1px solid #fde68a;margin-bottom:7px}
+#actualDamageBox label{font-size:.74rem;color:var(--ye);display:block;margin-bottom:3px}
+#actualDamage{width:88px;font-weight:700;padding:4px;border:1px solid var(--bdr);border-radius:4px;background:var(--sur);color:var(--op)}
+.cbmain{width:100%;padding:10px;border:none;border-radius:var(--rs);font-size:.9rem;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#1d4ed8,#7c3aed);color:#fff;transition:.15s;margin-bottom:5px}
+.cbmain:hover{opacity:.87}
+.cbsub,.btn-calc{width:100%;padding:7px;border:1px solid var(--bdr);border-radius:var(--rs);font-size:.78rem;font-weight:600;cursor:pointer;background:var(--sur);color:var(--tx);transition:.15s;margin-bottom:4px}
+.cbsub:hover,.btn-calc:hover{background:var(--sur2)}
+#resultOutput{min-height:60px;margin-top:7px}
+#rollChartContainer{display:none;margin-top:7px;border:1px solid var(--bdr);border-radius:var(--rs);padding:8px;background:var(--sur2)}
+/* KO */
+.ko-yes{background:#166534;color:#fff;padding:2px 10px;border-radius:20px;font-weight:700;font-size:.85rem;display:inline-block}
+.ko-maybe{background:#92400e;color:#fff;padding:2px 10px;border-radius:20px;font-weight:700;font-size:.85rem;display:inline-block}
+.ko-2hit{background:#1e3a8a;color:#fff;padding:2px 9px;border-radius:20px;font-weight:600;font-size:.8rem;display:inline-block}
+.ko-2maybe{background:#78350f;color:#fff;padding:2px 8px;border-radius:20px;font-size:.78rem;display:inline-block}
+.ko-3hit{background:#4c1d95;color:#fff;padding:2px 8px;border-radius:20px;font-size:.78rem;display:inline-block}
+.ko-3maybe{background:#3b0764;color:#fff;padding:2px 8px;border-radius:20px;font-size:.76rem;display:inline-block}
+.ko-4hit{background:#475569;color:#fff;padding:2px 8px;border-radius:20px;font-size:.76rem;display:inline-block}
+.ko-no{background:var(--sur2);color:var(--sub);padding:2px 8px;border-radius:20px;font-size:.76rem;display:inline-block;border:1px solid var(--bdr)}
+/* TOOLS */
+#tools{margin-top:0;grid-column:1/-1}
+.tc{background:var(--sur);border:1px solid var(--bdr);border-radius:var(--r);box-shadow:var(--sh);margin-bottom:7px;overflow:hidden}
+.thd{display:flex;align-items:center;justify-content:space-between;padding:9px 14px;cursor:pointer;user-select:none;font-weight:700;font-size:.84rem;transition:.1s;gap:7px}
+.thd:hover{background:var(--sur2)}
+.thd .tha{font-size:.68rem;color:var(--xs);transition:transform .2s}
+.thd.op2 .tha{transform:rotate(180deg)}
+.tbd{padding:11px 14px;border-top:1px solid var(--bdr)}
+.tbd.cl{display:none}
+.tbar{display:flex;gap:0;border-bottom:2px solid var(--bdr);margin-bottom:11px;flex-wrap:wrap}
+.tbtn{padding:6px 12px;border:none;border-bottom:3px solid transparent;background:none;cursor:pointer;font-size:.8rem;color:var(--sub);white-space:nowrap;transition:.15s}
+.tbtn.act{font-weight:700;color:var(--my);border-bottom-color:var(--my)}
+.tpane{display:none}
+.tpane.act{display:block}
+/* compat */
+.action-panel{background:var(--sur);border:1px solid var(--bdr);border-radius:var(--r);padding:11px 13px;margin-bottom:7px;box-shadow:var(--sh)}
+.action-header{font-weight:700;font-size:.86rem;margin-bottom:7px}
+.flex-row{display:flex;gap:7px;flex-wrap:wrap}
+.stat-details summary{list-style:none;cursor:pointer;font-size:.76rem;color:var(--sub);padding:3px 0}
+.result-box{}
+.tm-btn{padding:5px 10px;border:none;border-radius:4px;cursor:pointer;font-size:.8rem;font-weight:700}
+.tm-btn-save{background:var(--ac);color:#fff}
+#consistencyResult{font-size:.8rem;margin-top:6px}
+.consistency-btn{font-size:.76rem;padding:4px 10px;background:var(--ac);color:#fff;border:none;border-radius:4px;cursor:pointer}
+#priorityMoveResult{font-size:.8rem;margin-top:6px}
+#turnMgrLog{font-size:.78rem;max-height:200px;overflow-y:auto;border:1px solid var(--bdr);border-radius:var(--rs);padding:8px;background:var(--sur2);margin-top:7px}
+.mega-label{font-size:.7rem;font-weight:700;padding:2px 8px;border-radius:4px;cursor:pointer;display:inline-flex;align-items:center;gap:4px}
+.mega-choices{display:flex;gap:5px;flex-wrap:wrap}
+.poke-info-inline{font-size:.7rem;color:var(--sub)}
+#speedAdjResult{font-size:.8rem;margin-top:5px}
+#multiHitContainer,#stockCountContainer{display:none}
+/* dark compat */
+body.dark-mode input,body.dark-mode select,body.dark-mode textarea{background:var(--sur)!important;color:var(--tx)!important;border-color:var(--bdr)!important}
+body.dark-mode [style*="background:#fff"],body.dark-mode [style*="background: #fff"],
+body.dark-mode [style*="background:#f9f9f9"],body.dark-mode [style*="background:#f8f9fa"],
+body.dark-mode [style*="background:#fafafa"],body.dark-mode [style*="background:#f2f2f2"],
+body.dark-mode [style*="background:#eaf4fb"],body.dark-mode [style*="background:#fdf2f8"],
+body.dark-mode [style*="background:#fefde8"],body.dark-mode [style*="background:#fff3e0"],
+body.dark-mode [style*="background:#f0fff4"],body.dark-mode [style*="background:#fff8f0"],
+body.dark-mode [style*="background:#fff5f5"],body.dark-mode [style*="background:#fffbeb"],
+body.dark-mode [style*="background:#f0f4f8"]{background:var(--sur2)!important}
+body.dark-mode [style*="color:#333"],body.dark-mode [style*="color:#444"],body.dark-mode [style*="color:#555"],body.dark-mode [style*="color:#666"]{color:var(--sub)!important}
+body.dark-mode table{background:transparent!important}
+body.dark-mode th{background:var(--sur2)!important;color:var(--sub)!important}
+body.dark-mode td{color:var(--tx)!important;border-color:var(--bdr)!important}
+body.dark-mode tr:nth-child(even){background:var(--sur2)!important}
+body.dark-mode .hs option{color:var(--tx)!important;background:var(--sur)!important}
+</style>
 </head>
 <body>
-    <div class="header">
-        <h1>ポケチャン バトルダッシュボード</h1>
-        <div style="font-size:0.8rem; margin-top:5px;">メガシンカ対応</div>
-    </div>
-
-    <!-- 🗂️ チーム管理 (統合) -->
-        <!-- 🗂️ チーム管理 (統合) -->
-        <div class="action-panel" style="border-left: 5px solid #805ad5; margin-top: 0; margin-bottom: 10px;">
-            <div class="action-header" style="color: #805ad5; cursor: pointer; display: flex; justify-content: space-between; align-items: center;"
-                 onclick="const el=document.getElementById('teamMgrAreaUnified');el.style.display=el.style.display==='none'?'block':'none';">
-                <span>🗂️ チーム管理・保存／読み込み</span>
-                <span style="font-size:0.8rem;color:#888;font-weight:normal;">▼ クリックして開く</span>
-            </div>
-            <div id="teamMgrAreaUnified" style="display:none; margin-top:8px;">
-
-                <!-- ── チーム保存セクション ── -->
-                <div style="border-bottom:1px dashed #d8b4fe; padding-bottom:10px; margin-bottom:10px;">
-                    <p style="font-size:0.82rem; color:#555; margin-bottom:8px;">
-                        現在の自分・相手のチーム（6匹分）を名前を付けて保存できます。保存したチームは自分/相手どちらにも読み込めます。
-                    </p>
-                    <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-bottom:8px;">
-                        <input type="text" id="teamSaveName" placeholder="チーム名を入力..." style="flex:1; min-width:140px; padding:5px 8px; font-size:0.85rem;">
-                        <select id="teamSaveSide" style="padding:5px 8px; font-size:0.85rem;">
-                            <option value="my">自分のチーム</option>
-                            <option value="opp">相手のチーム</option>
-                            <option value="both">両チーム</option>
-                        </select>
-                        <button class="tm-btn tm-btn-save" onclick="saveTeamToStorage()">💾 保存</button>
-                    </div>
-                    <div id="teamSaveMsg" style="font-size:0.8rem; color:#27ae60; font-weight:bold; min-height:1.2em; margin-bottom:4px;"></div>
-                    <div style="font-weight:700; font-size:0.82rem; color:#805ad5; margin-bottom:4px;">保存済みチーム</div>
-                    <div id="savedTeamsList"></div>
-                </div>
-
-                <!-- ── テキスト出力・読み込みセクション ── -->
-                <div>
-                    <p style="font-size:0.85rem; color:#444; margin-bottom:8px;">📋 パーティ情報をテキストで出力・読み込みできます</p>
-                    <textarea id="saveLoadText" style="width:100%; height:70px; font-family:monospace; padding:5px; border-radius:4px; border:1px solid #ccc; font-size:0.8rem;"></textarea>
-                    <div style="display:flex; gap:10px; margin-top:8px;">
-                        <button onclick="exportData()" style="flex:1; background:#805ad5; color:#fff; border:none; padding:7px; border-radius:4px; font-weight:bold; cursor:pointer; font-size:0.85rem;">📤 出力（コピー）</button>
-                        <button onclick="importData()" style="flex:1; background:#2980b9; color:#fff; border:none; padding:7px; border-radius:4px; font-weight:bold; cursor:pointer; font-size:0.85rem;">📥 復元（読み込む）</button>
-                    </div>
-                    <p id="saveLoadMsg" style="font-size:0.8rem; color:#e74c3c; margin-top:6px; font-weight:bold;"></p>
-                </div>
-
-            </div>
-        </div>
-    <div class="dashboard">
-
-
-        <!-- 自分の場 -->
-        <div class="field-col">
-            <details id="myTeamDetails" class="team-details">
-                <summary class="team-summary">▶ 自分のチーム (選出3 / 場1)</summary>
-                <div class="team-box">
-                    <div id="myTeamList"></div>
-                </div>
-            </details>
-
-                        <div class="active-stats" id="myActiveBox">
-                <div style="font-weight:bold; color:#2980b9; border-bottom:1px solid #bdc3c7; padding-bottom:5px;">自分の場に出ているポケモン</div>
-                <div style="display:flex; align-items:center; margin-top:5px; flex-wrap:wrap; gap:5px;">
-                    <h2 id="myActiveName" style="margin:0; font-size:1.2rem;">未選択</h2>
-                    <div id="myMegaContainer" class="mega-container"></div>
-                    
-                </div>
-                <div class="move-grid">
-                    <div class="move-cell"><select id="myMove1"><option value="">技1</option></select><button onclick="triggerAttack('my', 1)">💥 攻撃</button></div>
-                    <div class="move-cell"><select id="myMove2"><option value="">技2</option></select><button onclick="triggerAttack('my', 2)">💥 攻撃</button></div>
-                    <div class="move-cell"><select id="myMove3"><option value="">技3</option></select><button onclick="triggerAttack('my', 3)">💥 攻撃</button></div>
-                    <div class="move-cell"><select id="myMove4"><option value="">技4</option></select><button onclick="triggerAttack('my', 4)">💥 攻撃</button></div>
-                </div>
-
-                <div style="margin-top:5px;margin-bottom:5px;background:var(--surface);padding:4px 8px;border-radius:4px;border:1px solid #2980b9;display:flex;align-items:center;gap:5px;flex-wrap:wrap;"><label style="color:#2980b9;font-size:0.72rem;font-weight:bold;flex-shrink:0;">残HP</label><input type="range" id="myCurrentHpSlider" value="100" min="1" max="100" style="flex:1;min-width:60px;background:linear-gradient(to right,#3dba5b 100%,#ddd 100%);" oninput="syncHpFromPercent('my', event)"><input type="number" id="myCurrentHpPct" value="100" min="1" max="100" style="width:50px;font-weight:bold;font-size:0.85rem;padding:2px 3px;min-height:22px;" oninput="syncHpFromPercent('my', event)"><span style="font-size:0.75rem;">%</span><input type="number" id="myCurrentHpReal" value="1" min="1" style="width:58px;font-weight:bold;font-size:0.85rem;padding:2px 3px;min-height:22px;" oninput="syncHpFromReal('my')"><span style="font-size:0.7rem;color:#888;">実数</span></div>
-                <details class="stat-details"><summary>能力値・特性・持ち物・ランク</summary>
-                <div class="stat-grid">
+<div id="hdr">
+  <div><h1>🎮 ポケチャン ダメ計</h1><div class="hsub">メガシンカ対応 ポケモンチャンピオンズ</div></div>
+  <div class="hr">
+    <select class="hs" id="battleWeather">
+      <option value="none">天候:なし</option>
+      <option value="sun">☀️ にほんばれ</option>
+      <option value="rain">🌧️ あまごい</option>
+      <option value="sand">🌪️ すなあらし</option>
+      <option value="snow">❄️ ゆき</option>
+    </select>
+    <select class="hs" id="battleTerrain">
+      <option value="none">フィールド:なし</option>
+      <option value="electric">⚡ エレキ</option>
+      <option value="grassy">🌿 グラス</option>
+      <option value="psychic">🔮 サイコ</option>
+      <option value="misty">🌫️ ミスト</option>
+    </select>
+    <button class="hbg" id="badge_trickroom" onclick="toggleFieldBadge(this,'trickRoom','on')">トリル</button>
+    <button class="hbg" id="badge_double"    onclick="toggleBadge(this,'doubleBattle','on')">ダブル</button>
+    <button class="dkbtn" id="darkModeToggle" onclick="toggleDarkMode()">🌙</button>
+  </div>
+  <input type="hidden" id="condProtect"   value="0" data-was-checkbox="1">
+  <input type="hidden" id="lateAttack"    value="0" data-was-checkbox="1">
+  <input type="hidden" id="hitFirstCheck" value="0" data-was-checkbox="1">
+  <input type="hidden" id="gravityField"  value="0" data-was-checkbox="1">
+  <input type="hidden" id="doubleBattle"  value="0" data-was-checkbox="1">
+  <input type="hidden" id="trickRoom"     value="0" data-was-checkbox="1">
+</div>
+<div id="wrap">
+  <div id="grid">
+    <div id="my-col" class="card">
+<div class="ptop">
+  <span class="stag my">🔵 自分</span>
+  <span class="aname" id="myActiveName">未選択</span>
+  <div id="myMegaContainer" class="mega-container"></div>
+</div>
+<div class="tacc-hd" onclick="(function(el){var b=document.getElementById('myTeamDetails_bd');b.classList.toggle('cl');el.querySelector('.ta').style.transform=b.classList.contains('cl')?'':'rotate(180deg)';})(this)">
+  <span>📋 チーム選択</span><span class="ta" style="font-size:.68rem;color:var(--xs);transition:transform .2s">▼</span>
+</div>
+<div id="myTeamDetails_bd" class="tacc-bd cl"><div id="myTeamList"></div></div>
+<div class="hpw">
+  <label>残HP</label>
+  <input type="range" id="myCurrentHpSlider" value="100" min="1" max="100" oninput="syncHpFromPercent('my',event)">
+  <input type="number" class="hpn" id="myCurrentHpPct" value="100" min="1" max="100" oninput="syncHpFromPercent('my',event)">
+  <span style="font-size:.7rem;color:var(--sub)">%</span>
+  <input type="number" class="hpr" id="myCurrentHpReal" value="1" min="1" oninput="syncHpFromReal('my')">
+  <span style="font-size:.68rem;color:var(--xs)">実数</span>
+</div>
+<div class="mvw"><div class="mvg"><div class="mvr"><select id="myMove1"><option value="">技1</option></select><button class="abtn my" onclick="triggerAttack('my',1)">💥</button></div>
+<div class="mvr"><select id="myMove2"><option value="">技2</option></select><button class="abtn my" onclick="triggerAttack('my',2)">💥</button></div>
+<div class="mvr"><select id="myMove3"><option value="">技3</option></select><button class="abtn my" onclick="triggerAttack('my',3)">💥</button></div>
+<div class="mvr"><select id="myMove4"><option value="">技4</option></select><button class="abtn my" onclick="triggerAttack('my',4)">💥</button></div>
+</div></div>
+<div class="spdisp" id="mySpeedDisplay"></div>
+<div class="palert" id="pointAlert"></div>
+<div class="sacc-hd" onclick="(function(el){var b=document.getElementById('my_sb');b.classList.toggle('cl');el.querySelector('.sar').style.transform=b.classList.contains('cl')?'':'rotate(180deg)';})(this)">
+  <span>⚙️ 能力値・特性・持ち物・ランク</span><span class="sar">▼</span>
+</div>
+<div id="my_sb" class="sacc-bd cl"><div class="stat-grid">
                     <div class="stat-item"><label>HP 能力P</label><div class="ev-input-wrap"><input type="number" id="myHP" value="0" min="0" max="32" oninput="checkPoints(); updateRealStats('my')"><button class="ev-btn" onclick="setEV('myHP',event)">0</button><button class="ev-btn" onclick="setEV('myHP',event,2)">2</button><button class="ev-btn" onclick="setEV('myHP',event,32)">32</button></div><span class="real-stat" id="myHPReal" style="margin-left:8px; font-weight:bold; color:#2980b9;">-</span></div>
                     <div class="stat-item"><label>攻撃 能力P</label><div class="ev-input-wrap"><input type="number" id="myAtk" value="0" min="0" max="32" oninput="checkPoints(); updateRealStats('my')"><button class="ev-btn" onclick="setEV('myAtk',event)">0</button><button class="ev-btn" onclick="setEV('myAtk',event,2)">2</button><button class="ev-btn" onclick="setEV('myAtk',event,32)">32</button></div><span class="real-stat" id="myAtkReal" style="margin-left:8px; font-weight:bold; color:#2980b9;">-</span></div>
                     <div class="stat-item"><label>防御 能力P</label><div class="ev-input-wrap"><input type="number" id="myDef" value="0" min="0" max="32" oninput="checkPoints(); updateRealStats('my')"><button class="ev-btn" onclick="setEV('myDef',event)">0</button><button class="ev-btn" onclick="setEV('myDef',event,2)">2</button><button class="ev-btn" onclick="setEV('myDef',event,32)">32</button></div><span class="real-stat" id="myDefReal" style="margin-left:8px; font-weight:bold; color:#2980b9;">-</span></div>
@@ -1123,42 +382,108 @@
                         onclick="toggleBadge(this,'minimizeMy','on-purple')">ちいさくなる</button>
                     <button class="state-badge" id="badge_helping_my"
                         onclick="toggleBadge(this,'helpingHandMy','on')">てだすけ</button>
-                    <span class="item-auto-badge" id="itemBadge_lo_my" style="display:none">🔮 珠ダメ</span>
-                    <span class="item-auto-badge" id="itemBadge_lefto_my" style="display:none">🍃 たべのこし</span>
-                    <span class="item-auto-badge" id="itemBadge_shell_my" style="display:none">🐚 かいがらのすず</span>
+                    <span class="item-auto-badge badge-lo" id="itemBadge_lo_my" style="display:none">🔮 珠ダメ</span>
+                    <span class="item-auto-badge badge-lefto" id="itemBadge_lefto_my" style="display:none">🍃 たべのこし</span>
+                    <span class="item-auto-badge badge-shell" id="itemBadge_shell_my" style="display:none">🐚 かいがらのすず</span>
                 </div>
-                </details>
                 </div>
-            </div>
-        </div>
-        </div>
-
-        <!-- 相手の場 -->
-        <div class="field-col">
-            <details id="oppTeamDetails" class="team-details">
-                <summary class="team-summary opp-summary">▶ 相手のチーム (選出3 / 場1)</summary>
-                <div class="team-box">
-                    <div id="oppTeamList"></div>
-                </div>
-            </details>
-
-                        <div class="active-stats opp-stats" id="oppActiveBox">
-                <div style="font-weight:bold; color:#c0392b; border-bottom:1px solid #bdc3c7; padding-bottom:5px;">相手の場に出ているポケモン</div>
-                <div style="display:flex; align-items:center; margin-top:5px; flex-wrap:wrap; gap:5px;">
-                    <h2 id="oppActiveName" style="margin:0; font-size:1.2rem;">未選択</h2>
-                    <div id="oppMegaContainer" class="mega-container"></div>
-                    
-                </div>
-                <div class="move-grid">
-                    <div class="move-cell"><select id="oppMove1"><option value="">技1</option></select><button onclick="triggerAttack('opp', 1)">💥 攻撃</button></div>
-                    <div class="move-cell"><select id="oppMove2"><option value="">技2</option></select><button onclick="triggerAttack('opp', 2)">💥 攻撃</button></div>
-                    <div class="move-cell"><select id="oppMove3"><option value="">技3</option></select><button onclick="triggerAttack('opp', 3)">💥 攻撃</button></div>
-                    <div class="move-cell"><select id="oppMove4"><option value="">技4</option></select><button onclick="triggerAttack('opp', 4)">💥 攻撃</button></div>
-                </div>
-
-                <div style="margin-top:5px;margin-bottom:5px;background:#fff;padding:4px 8px;border-radius:4px;border:1px solid #c0392b;display:flex;align-items:center;gap:5px;flex-wrap:wrap;"><label style="color:#c0392b;font-size:0.72rem;font-weight:bold;flex-shrink:0;">残HP</label><input type="range" id="oppCurrentHpSlider" value="100" min="1" max="100" style="flex:1;min-width:60px;background:linear-gradient(to right,#e74c3c 100%,#ddd 100%);" oninput="syncHpFromPercent('opp', event)"><input type="number" id="oppCurrentHpPct" value="100" min="1" max="100" style="width:50px;font-weight:bold;font-size:0.85rem;padding:2px 3px;min-height:22px;" oninput="syncHpFromPercent('opp', event)"><span style="font-size:0.75rem;">%</span><input type="number" id="oppCurrentHpReal" value="1" min="1" style="width:58px;font-weight:bold;font-size:0.85rem;padding:2px 3px;min-height:22px;" oninput="syncHpFromReal('opp')"><span style="font-size:0.7rem;color:#888;">実数</span></div>
-                <details class="stat-details"><summary>能力値・特性・持ち物・ランク</summary>
-                <div class="stat-grid">
+<div class="bdga" id="stateBadgeArea_my"></div>
+<div id="myActiveBox" style="display:none"></div>
+</div>
+    <div id="res-col" class="card">
+<div class="rhd">⚡ ダメージ計算</div>
+<div class="rbd">
+  <div class="attog">
+    <button class="atbtn my" id="attBtnMe"
+      onclick="document.querySelectorAll('input[name=attackerSide]')[0].click();this.className='atbtn my';document.getElementById('attBtnOp').className='atbtn'">🔵 自分が攻撃</button>
+    <button class="atbtn" id="attBtnOp"
+      onclick="document.querySelectorAll('input[name=attackerSide]')[1].click();this.className='atbtn op';document.getElementById('attBtnMe').className='atbtn'">🔴 相手が攻撃</button>
+  </div>
+  <div style="display:none">
+    <input type="radio" name="attackerSide" value="me" checked onchange="toggleDamageInput()">
+    <input type="radio" name="attackerSide" value="opp" onchange="toggleDamageInput()">
+  </div>
+  <span class="msl">よく使われる技を選択 / 手動入力</span>
+  <select id="moveSelect" onchange="applyMoveData()"></select>
+  <div class="mpg">
+    <div class="mpi"><label>威力</label><input type="number" id="movePower" value="90"></div>
+    <div class="mpi"><label>タイプ</label>
+      <select id="moveType">
+        <option value="ノーマル">ノ</option><option value="ほのお">炎</option>
+        <option value="みず">水</option><option value="でんき">電</option>
+        <option value="くさ">草</option><option value="こおり">氷</option>
+        <option value="かくとう">闘</option><option value="どく">毒</option>
+        <option value="じめん">地</option><option value="ひこう">飛</option>
+        <option value="エスパー">超</option><option value="むし">虫</option>
+        <option value="いわ">岩</option><option value="ゴースト">霊</option>
+        <option value="ドラゴン" selected>竜</option><option value="あく">悪</option>
+        <option value="はがね">鋼</option><option value="フェアリー">妖</option>
+      </select>
+    </div>
+    <div class="mpi"><label>分類</label>
+      <select id="moveCategory"><option value="物理">物理</option><option value="特殊">特殊</option></select>
+    </div>
+  </div>
+  <div id="moveConditionContainer"></div>
+  <div class="xrow">
+    <div id="multiHitContainer">ヒット数<select id="multiHitCount">
+      <option value="1">1発</option><option value="2">2発</option>
+      <option value="3" selected>3発</option><option value="4">4発</option>
+      <option value="5">5発</option><option value="10">10発</option>
+    </select></div>
+    <div id="stockCountContainer">たくわえ<select id="stockCount">
+      <option value="1">1回</option><option value="2">2回</option><option value="3">3回</option>
+    </select></div>
+  </div>
+  <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px">
+    <button class="state-badge" id="badge_protect"  onclick="toggleBadge(this,'condProtect','on')">まもる</button>
+    <button class="state-badge" id="badge_gravity"  onclick="toggleBadge(this,'gravityField','on')">じゅうりょく</button>
+    <button class="state-badge" id="badge_late"     onclick="toggleBadge(this,'lateAttack','on')">後攻攻撃</button>
+    <button class="state-badge" id="badge_hitfirst" onclick="toggleBadge(this,'hitFirstCheck','on')">先に被ダメ</button>
+  </div>
+  <div id="actualDamageBox">
+    <label>実際に受けたダメージ</label>
+    <input type="number" id="actualDamage" placeholder="空欄で予測のみ">
+  </div>
+  <button class="cbmain" onclick="executeCalculation()">⚡ 計算 ＆ 予測を実行</button>
+  <button class="cbsub"  onclick="executeAllMoves()">📋 全技ダメージ一覧</button>
+  <button class="cbsub"  onclick="executePartyDamage()">🎯 相手全選出への打点</button>
+  <div id="resultOutput" class="result-box"></div>
+  <div id="rollChartContainer">
+    <div style="font-size:.73rem;font-weight:700;color:var(--sub);margin-bottom:3px">📊 乱数分布（16ロール）</div>
+    <div id="rollChartSvg"></div>
+  </div>
+</div>
+</div>
+    <div id="opp-col" class="card">
+<div class="ptop">
+  <span class="stag op">🔴 相手</span>
+  <span class="aname" id="oppActiveName">未選択</span>
+  <div id="oppMegaContainer" class="mega-container"></div>
+</div>
+<div class="tacc-hd" onclick="(function(el){var b=document.getElementById('oppTeamDetails_bd');b.classList.toggle('cl');el.querySelector('.ta').style.transform=b.classList.contains('cl')?'':'rotate(180deg)';})(this)">
+  <span>📋 チーム選択</span><span class="ta" style="font-size:.68rem;color:var(--xs);transition:transform .2s">▼</span>
+</div>
+<div id="oppTeamDetails_bd" class="tacc-bd cl"><div id="oppTeamList"></div></div>
+<div class="hpw">
+  <label>残HP</label>
+  <input type="range" id="oppCurrentHpSlider" value="100" min="1" max="100" oninput="syncHpFromPercent('opp',event)">
+  <input type="number" class="hpn" id="oppCurrentHpPct" value="100" min="1" max="100" oninput="syncHpFromPercent('opp',event)">
+  <span style="font-size:.7rem;color:var(--sub)">%</span>
+  <input type="number" class="hpr" id="oppCurrentHpReal" value="1" min="1" oninput="syncHpFromReal('opp')">
+  <span style="font-size:.68rem;color:var(--xs)">実数</span>
+</div>
+<div class="mvw"><div class="mvg"><div class="mvr"><select id="oppMove1"><option value="">技1</option></select><button class="abtn op" onclick="triggerAttack('opp',1)">💥</button></div>
+<div class="mvr"><select id="oppMove2"><option value="">技2</option></select><button class="abtn op" onclick="triggerAttack('opp',2)">💥</button></div>
+<div class="mvr"><select id="oppMove3"><option value="">技3</option></select><button class="abtn op" onclick="triggerAttack('opp',3)">💥</button></div>
+<div class="mvr"><select id="oppMove4"><option value="">技4</option></select><button class="abtn op" onclick="triggerAttack('opp',4)">💥</button></div>
+</div></div>
+<div class="spdisp" id="oppSpeedDisplay"></div>
+<div class="palert" id="pointAlertOpp"></div>
+<div class="sacc-hd" onclick="(function(el){var b=document.getElementById('opp_sb');b.classList.toggle('cl');el.querySelector('.sar').style.transform=b.classList.contains('cl')?'':'rotate(180deg)';})(this)">
+  <span>⚙️ 能力値・特性・持ち物・ランク</span><span class="sar">▼</span>
+</div>
+<div id="opp_sb" class="sacc-bd cl"><div class="stat-grid">
                     <div class="stat-item"><label>HP 能力P</label><div class="ev-input-wrap"><input type="number" id="oppHP" value="0" min="0" max="32" oninput="updateRealStats('opp')"><button class="ev-btn" onclick="setEV('oppHP',event)">0</button><button class="ev-btn" onclick="setEV('oppHP',event,2)">2</button><button class="ev-btn" onclick="setEV('oppHP',event,32)">32</button></div><span class="real-stat" id="oppHPReal" style="margin-left:8px; font-weight:bold; color:#c0392b;">-</span></div>
                     <div class="stat-item"><label>攻撃 能力P</label><div class="ev-input-wrap"><input type="number" id="oppAtk" value="0" min="0" max="32" oninput="updateRealStats('opp')"><button class="ev-btn" onclick="setEV('oppAtk',event)">0</button><button class="ev-btn" onclick="setEV('oppAtk',event,2)">2</button><button class="ev-btn" onclick="setEV('oppAtk',event,32)">32</button></div><span class="real-stat" id="oppAtkReal" style="margin-left:8px; font-weight:bold; color:#c0392b;">-</span></div>
                     <div class="stat-item"><label>防御 能力P</label><div class="ev-input-wrap"><input type="number" id="oppDef" value="0" min="0" max="32" oninput="updateRealStats('opp')"><button class="ev-btn" onclick="setEV('oppDef',event)">0</button><button class="ev-btn" onclick="setEV('oppDef',event,2)">2</button><button class="ev-btn" onclick="setEV('oppDef',event,32)">32</button></div><span class="real-stat" id="oppDefReal" style="margin-left:8px; font-weight:bold; color:#c0392b;">-</span></div>
@@ -1300,73 +625,55 @@
                         onclick="toggleBadge(this,'minimizeOpp','on-purple')">ちいさくなる</button>
                     <button class="state-badge" id="badge_helping_opp"
                         onclick="toggleBadge(this,'helpingHandOpp','on')">てだすけ</button>
-                    <span class="item-auto-badge" id="itemBadge_lo_opp" style="display:none">🔮 珠ダメ</span>
-                    <span class="item-auto-badge" id="itemBadge_lefto_opp" style="display:none">🍃 たべのこし</span>
-                    <span class="item-auto-badge" id="itemBadge_shell_opp" style="display:none">🐚 かいがらのすず</span>
+                    <span class="item-auto-badge badge-lo" id="itemBadge_lo_opp" style="display:none">🔮 珠ダメ</span>
+                    <span class="item-auto-badge badge-lefto" id="itemBadge_lefto_opp" style="display:none">🍃 たべのこし</span>
+                    <span class="item-auto-badge badge-shell" id="itemBadge_shell_opp" style="display:none">🐚 かいがらのすず</span>
                 </div>
-                </details>
                 </div>
-            </div>
-        </div>
-        </div>
+<div class="bdga" id="stateBadgeArea_opp"></div>
+<div id="oppActiveBox" style="display:none"></div>
+</div>
+<div id="tools">
+<div class="tc">
+  <div class="thd" onclick="var b=document.getElementById('tt_team');b.classList.toggle('cl');this.classList.toggle('op2')">
+    <span>🗂️ チーム管理・保存</span><span class="tha">▼</span></div>
+  <div id="tt_team" class="tbd cl">
+<!-- ── チーム保存セクション ── -->
+                <div style="border-bottom:1px dashed #d8b4fe; padding-bottom:10px; margin-bottom:10px;">
+                    <p style="font-size:0.82rem; color:#555; margin-bottom:8px;">
+                        現在の自分・相手のチーム（6匹分）を名前を付けて保存できます。保存したチームは自分/相手どちらにも読み込めます。
+                    </p>
+                    <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-bottom:8px;">
+                        <input type="text" id="teamSaveName" placeholder="チーム名を入力..." style="flex:1; min-width:140px; padding:5px 8px; font-size:0.85rem;">
+                        <select id="teamSaveSide" style="padding:5px 8px; font-size:0.85rem;">
+                            <option value="my">自分のチーム</option>
+                            <option value="opp">相手のチーム</option>
+                            <option value="both">両チーム</option>
+                        </select>
+                        <button class="tm-btn tm-btn-save" onclick="saveTeamToStorage()">💾 保存</button>
+                    </div>
+                    <div id="teamSaveMsg" style="font-size:0.8rem; color:#27ae60; font-weight:bold; min-height:1.2em; margin-bottom:4px;"></div>
+                    <div style="font-weight:700; font-size:0.82rem; color:#805ad5; margin-bottom:4px;">保存済みチーム</div>
+                    <div id="savedTeamsList"></div>
+                </div>
 
-        
-        <!-- 天候・フィールド -->
-        <div class="action-panel" style="margin-top:10px; margin-bottom:10px; background:#fff3e0; border-color:#f39c12;">
-            <div class="action-header" style="color:#d35400; cursor:pointer; display:flex; justify-content:space-between; align-items:center;" onclick="const _e=document.getElementById('weatherFieldBody');const _o=_e.style.display==='none';_e.style.display=_o?'block':'none';this.querySelector('.tog-arrow').textContent=_o?'▲ 閉じる':'▼ クリックして開く';">
-            <span>🌤️ 場の状態 (天候・フィールド)</span>
-            <span class="tog-arrow" style="font-size:0.8rem;color:#888;font-weight:normal;">▼ クリックして開く</span>
-        </div>
-        <div id="weatherFieldBody" style="display:none;">
-            <div style="display:flex; gap:16px; padding:8px 10px 4px; flex-wrap:wrap; align-items:flex-end;">
-                <div class="stat-item" style="flex:1; min-width:120px;">
-                    <label style="color:#d35400; font-weight:bold; font-size:0.8rem;">天候</label>
-                    <select id="battleWeather" onchange="" style="width:100%;">
-                        <option value="none">なし</option>
-                        <option value="sun">にほんばれ (炎1.5倍 / 水0.5倍)</option>
-                        <option value="rain">あまごい (水1.5倍 / 炎0.5倍)</option>
-                        <option value="sand">すなあらし (岩の特防1.5倍)</option>
-                        <option value="snow">ゆき (氷の防御1.5倍)</option>
-                    </select>
+                <!-- ── テキスト出力・読み込みセクション ── -->
+                <div>
+                    <p style="font-size:0.85rem; color:#444; margin-bottom:8px;">📋 パーティ情報をテキストで出力・読み込みできます</p>
+                    <textarea id="saveLoadText" style="width:100%; height:70px; font-family:monospace; padding:5px; border-radius:4px; border:1px solid #ccc; font-size:0.8rem;"></textarea>
+                    <div style="display:flex; gap:10px; margin-top:8px;">
+                        <button onclick="exportData()" style="flex:1; background:#805ad5; color:#fff; border:none; padding:7px; border-radius:4px; font-weight:bold; cursor:pointer; font-size:0.85rem;">📤 出力（コピー）</button>
+                        <button onclick="importData()" style="flex:1; background:#2980b9; color:#fff; border:none; padding:7px; border-radius:4px; font-weight:bold; cursor:pointer; font-size:0.85rem;">📥 復元（読み込む）</button>
+                    </div>
+                    <p id="saveLoadMsg" style="font-size:0.8rem; color:#e74c3c; margin-top:6px; font-weight:bold;"></p>
                 </div>
-                <div class="stat-item" style="flex:1; min-width:120px;">
-                    <label style="color:#d35400; font-weight:bold; font-size:0.8rem;">フィールド</label>
-                    <select id="battleTerrain" onchange="" style="width:100%;">
-                        <option value="none">なし</option>
-                        <option value="electric">エレキ (電気1.3倍)</option>
-                        <option value="grassy">グラス (草1.3倍 / 地震等半減)</option>
-                        <option value="psychic">サイコ (エスパー1.3倍)</option>
-                        <option value="misty">ミスト (竜のダメージ半減)</option>
-                    </select>
-                </div>
-            </div>
-            <div class="state-badge-area" style="padding:6px 10px 10px; border-top:none; margin-top:0;">
-                <button class="state-badge" id="badge_double" onclick="toggleBadge(this,'doubleBattle','on')">ダブルバトル</button>
-                <button class="state-badge" id="badge_trickroom" onclick="toggleFieldBadge(this,'trickRoom','on')">トリックルーム</button>
-                <button class="state-badge" id="badge_gravity" onclick="toggleBadge(this,'gravityField','on')">じゅうりょく</button>
-                <button class="state-badge" id="badge_protect" onclick="toggleBadge(this,'condProtect','on')">相手が「まもる」</button>
-                <button class="state-badge" id="badge_late" onclick="toggleBadge(this,'lateAttack','on')">後攻で攻撃</button>
-                <button class="state-badge" id="badge_hitfirst" onclick="toggleBadge(this,'hitFirstCheck','on')">先に被ダメージ</button>
-            </div>
-            <!-- hidden inputs for 場の状態チェックボックス互換 -->
-            <input type="hidden" id="condProtect" value="0" data-was-checkbox="1">
-            <input type="hidden" id="lateAttack" value="0" data-was-checkbox="1">
-            <input type="hidden" id="hitFirstCheck" value="0" data-was-checkbox="1">
-            <input type="hidden" id="gravityField" value="0" data-was-checkbox="1">
-            <input type="hidden" id="doubleBattle" value="0" data-was-checkbox="1">
-            <input type="hidden" id="trickRoom" value="0" data-was-checkbox="1">
-        </div>
-        </div><!-- /weatherFieldBody -->
-
-    <!-- ⑤ ターン管理 -->
-    <div class="action-panel" style="border-left:5px solid #8e44ad; margin-top:10px;">
-        <div class="action-header" style="color:#8e44ad; cursor:pointer; display:flex; justify-content:space-between; align-items:center;"
-             onclick="const el=document.getElementById('turnMgrArea');el.style.display=el.style.display==='none'?'block':'none';">
-            <span>⏱️ ターン管理</span>
-            <span style="font-size:0.8rem;color:#888;font-weight:normal;">▼ クリックして開く</span>
-        </div>
-        <div id="turnMgrArea" style="display:none; margin-top:8px;">
-            <div style="display:flex; flex-wrap:wrap; gap:12px;">
+  </div>
+</div>
+<div class="tc">
+  <div class="thd" onclick="var b=document.getElementById('tt_turn');b.classList.toggle('cl');this.classList.toggle('op2')">
+    <span>⏱️ ターン管理</span><span class="tha">▼</span></div>
+  <div id="tt_turn" class="tbd cl">
+<div style="display:flex; flex-wrap:wrap; gap:12px;">
                 <div style="flex:1; min-width:140px; background:#fdf2f8; border:1px solid #d2b4de; border-radius:6px; padding:8px;">
                     <div style="font-weight:bold; color:#8e44ad; margin-bottom:4px;">🟣 もうどく</div>
                     <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
@@ -1401,62 +708,21 @@
                 </div>
             </div>
             <div id="turnMgrLog" style="margin-top:8px; font-size:0.82rem; color:#555; min-height:1em;"></div>
-        </div>
-    </div>
-
-        
-        
-        <!-- 定数ダメージ用 hidden inputs (計算互換性維持) -->
-        <input type="hidden" id="srOpp" data-was-checkbox="1">
-        <input type="hidden" id="srMy" data-was-checkbox="1">
-        <input type="hidden" id="spikesOpp" data-was-checkbox="1">
-        <input type="hidden" id="spikesOppCount" value="1">
-        <input type="hidden" id="spikesMy" data-was-checkbox="1">
-        <input type="hidden" id="spikesMyCount" value="1">
-        <input type="hidden" id="loMy" data-was-checkbox="1">
-        <input type="hidden" id="loOpp" data-was-checkbox="1">
-        <input type="hidden" id="shioMy" data-was-checkbox="1">
-        <input type="hidden" id="shioOpp" data-was-checkbox="1">
-        <input type="hidden" id="yadorigi_dmgMy" data-was-checkbox="1">
-        <input type="hidden" id="yadorigi_dmgOpp" data-was-checkbox="1">
-        <input type="hidden" id="noroiMy" data-was-checkbox="1">
-        <input type="hidden" id="noroiOpp" data-was-checkbox="1">
-        <input type="hidden" id="leftoMy" data-was-checkbox="1">
-        <input type="hidden" id="leftoOpp" data-was-checkbox="1">
-        <input type="hidden" id="neroMy" data-was-checkbox="1">
-        <input type="hidden" id="neroOpp" data-was-checkbox="1">
-        <input type="hidden" id="yadorigi_healOpp" data-was-checkbox="1">
-        <input type="hidden" id="yadorigi_healMy" data-was-checkbox="1">
-        <input type="hidden" id="tailwindMy" data-was-checkbox="1">
-        <input type="hidden" id="tailwindOpp" data-was-checkbox="1">
-        <input type="hidden" id="helpingHandMy" data-was-checkbox="1">
-        <input type="hidden" id="helpingHandOpp" data-was-checkbox="1">
-        <input type="hidden" id="chargedMy" data-was-checkbox="1">
-        <input type="hidden" id="chargedOpp" data-was-checkbox="1">
-        <input type="hidden" id="bindMy" data-was-checkbox="1">
-        <input type="hidden" id="bindOpp" data-was-checkbox="1">
-        <input type="hidden" id="aquaRingMy" data-was-checkbox="1">
-        <input type="hidden" id="aquaRingOpp" data-was-checkbox="1">
-        <input type="hidden" id="minimizeMy" data-was-checkbox="1">
-        <input type="hidden" id="minimizeOpp" data-was-checkbox="1">
-
-        <!-- 🏃 素早さライン (Sライン) -->
-        <div class="action-panel" style="border-left: 5px solid #3498db; margin-top: 10px;">
-            <div class="action-header" style="color: #3498db; cursor: pointer; display: flex; justify-content: space-between; align-items: center;" onclick="const el = document.getElementById('speedTierList'); el.style.display = el.style.display === 'none' ? 'block' : 'none'; if(el.style.display==='block') updateSpeedTiers();">
-                <span>🏃 素早さ関係（Sライン）の一覧表</span>
-                <span style="font-size:0.8rem; color:#888; font-weight:normal;">▼ クリックして開く</span>
-            </div>
-            <div id="speedTierList" style="display:none; background:#f9f9f9; padding:10px; border-radius:4px; max-height:250px; overflow-y:auto; font-size:0.85rem; border:1px solid #ddd; margin-top: 10px;">
-                ※「計算 ＆ 予測を実行」を押すと更新されます
-            </div>
-            <!-- 先制技圏内判定 -->
+  </div>
+</div>
+<div class="tc">
+  <div class="thd" onclick="var b=document.getElementById('tt_sline');b.classList.toggle('cl');this.classList.toggle('op2');if(!b.classList.contains('cl'))updateSpeedTiers()">
+    <span>🏃 素早さライン・先制技判定</span><span class="tha">▼</span></div>
+  <div id="tt_sline" class="tbd cl">
+<div id="speedTierList" style="background:#f9f9f9;padding:10px;border-radius:4px;max-height:250px;overflow-y:auto;font-size:0.85rem;border:1px solid #ddd;margin-top:10px;">※「計算 ＆ 予測を実行」を押すと更新されます</div>
+<!-- 先制技圏内判定 -->
             <div style="margin-top:10px; border-top:1px solid #ddd; padding-top:8px;">
               <div style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-weight:bold;color:#e67e22;"
                    onclick="const _e=document.getElementById('priorityBody');const _o=_e.style.display==='none';_e.style.display=_o?'block':'none';this.querySelector('.tog-arrow').textContent=_o?'▲ 閉じる':'▼ クリックして開く';">
                 <span>⚡ 先制技圏内判定</span>
                 <span class="tog-arrow" style="font-size:0.8rem;color:#888;font-weight:normal;">▼ クリックして開く</span>
               </div>
-              <div id="priorityBody" style="display:none;margin-top:6px;">
+              <div id="priorityBody" style="display:block;margin-top:6px;">
               <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
                 <span style="font-size:0.8rem; color:#555;">方向:</span>
                 <label style="font-size:0.8rem; cursor:pointer;">
@@ -1471,13 +737,13 @@
               </div>
             </div>
             <!-- 能力P素早さ調整補助 -->
-            <div id="speedCalcBox" style="margin-top:10px;border-top:1px solid #ddd;padding-top:8px;">
+<div id="speedCalcBox" style="margin-top:10px;border-top:1px solid #ddd;padding-top:8px;">
               <div style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-weight:bold;color:#2980b9;"
                    onclick="const _e=document.getElementById('speedAdjBody');const _o=_e.style.display==='none';_e.style.display=_o?'block':'none';this.querySelector('.tog-arrow').textContent=_o?'▲ 閉じる':'▼ クリックして開く';">
                 <span>🎯 素早さ調整補助</span>
                 <span class="tog-arrow" style="font-size:0.8rem;color:#888;font-weight:normal;">▼ クリックして開く</span>
               </div>
-              <div id="speedAdjBody" style="display:none;margin-top:6px;">
+              <div id="speedAdjBody" style="display:block;margin-top:6px;">
                 <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
                   <span style="font-size:0.8rem;color:#555;">相手より1速くなるのに必要な能力P</span>
                   <button style="font-size:0.75rem;padding:3px 12px;background:#2980b9;color:#fff;border:none;border-radius:4px;cursor:pointer;" onclick="updateSpeedAdj()">計算実行</button>
@@ -1485,19 +751,13 @@
                 <div id="speedAdjResult" style="margin-top:6px;"></div>
               </div>
             </div>
-        </div>
-
-        
-        <!-- 統合バトルアクション -->
-            <!-- ⑦ タイプ相性クイック参照表 -->
-    <div class="action-panel" style="border-left:5px solid #27ae60; margin-top:10px;">
-        <div class="action-header" style="color:#27ae60; cursor:pointer; display:flex; justify-content:space-between; align-items:center;"
-             onclick="const el=document.getElementById('typeChartWrap');el.style.display=el.style.display==='none'?'block':'none';this.querySelector('.tc-arrow').textContent=el.style.display==='none'?'▼':'▲';">
-            <span>🗺️ タイプ相性クイック参照</span>
-            <span class="tc-arrow" style="font-size:0.8rem;color:#888;">▼ クリックして開く</span>
-        </div>
-        <div id="typeChartWrap" style="display:none; margin-top:8px; overflow-x:auto;">
-            <div style="font-size:0.72rem;color:#666;margin-bottom:5px;">
+  </div>
+</div>
+<div class="tc">
+  <div class="thd" onclick="var b=document.getElementById('tt_type');b.classList.toggle('cl');this.classList.toggle('op2')">
+    <span>🗺️ タイプ相性クイック参照</span><span class="tha">▼</span></div>
+  <div id="tt_type" class="tbd cl">
+<div id="typeChartWrap" style="margin-top:8px;overflow-x:auto;"><div style="font-size:0.72rem;color:#666;margin-bottom:5px;">
                 縦=攻撃タイプ　横=防御タイプ　&nbsp;
                 <span style="color:#c0392b;font-weight:bold;">◎=2倍</span>&nbsp;
                 <span style="color:#2980b9;font-weight:bold;">△=0.5倍</span>&nbsp;
@@ -1530,115 +790,173 @@
                     <div id="consistencyResult" style="margin-top:6px;"></div>
                 </div>
             </div>
-            </div>
-        </div>
-    </div>
-
-<div class="action-panel">
-            <div class="action-header">⚔️ バトルシミュレーション＆予測</div>
-
-            <div class="flex-row" style="background:#f9f9f9; padding:10px; border-radius:6px; border:1px solid #ddd;">
-                <div class="stat-item" style="flex:1;">
-                    <label style="color:#8e44ad; font-size:0.9rem;">誰が攻撃する？</label>
-                    <div style="display:flex; gap:15px; margin-top:5px;">
-                        <label><input type="radio" name="attackerSide" value="me" checked onchange="toggleDamageInput()"> 自分が攻撃</label>
-                        <label><input type="radio" name="attackerSide" value="opp" onchange="toggleDamageInput()"> 相手が攻撃</label>
-                    </div>
-                </div>
-
-                <div class="stat-item">
-                    <label style="color:#2980b9;">よく使われる技を選択</label>
-                    <select id="moveSelect" onchange="applyMoveData()" style="border: 2px solid #2980b9; font-weight:bold;">
-                        <option value="">-- 技を手動で入力 --</option>
-                    </select>
-                </div>
-<div id="moveConditionContainer" style="margin-top: 5px; font-size: 0.9rem; color: #c0392b; background: #fadbd8; padding: 5px; border-radius: 4px; display: none;"></div>
-
-
-                <div class="stat-item"><label>技の威力</label><input type="number" id="movePower" value="90" style="width:70px;"></div>
-                <div class="stat-item"><label>タイプ</label>
-                    <select id="moveType">
-                        <option value="ノーマル">ノ</option><option value="ほのお">炎</option><option value="みず">水</option><option value="でんき">電</option><option value="くさ">草</option>
-                        <option value="こおり">氷</option><option value="かくとう">闘</option><option value="どく">毒</option><option value="じめん">地</option><option value="ひこう">飛</option>
-                        <option value="エスパー">超</option><option value="むし">虫</option><option value="いわ">岩</option><option value="ゴースト">霊</option><option value="ドラゴン" selected>竜</option>
-                        <option value="あく">悪</option><option value="はがね">鋼</option><option value="フェアリー">妖</option>
-                    </select>
-                </div>
-                <div class="stat-item"><label>分類</label><select id="moveCategory"><option value="物理">物理</option><option value="特殊">特殊</option></select></div>
-
-                <div class="stat-item" id="multiHitContainer" style="display:none;"><label>ヒット数</label><select id="multiHitCount" onchange=""><option value="1">1発</option><option value="2">2発</option><option value="3" selected>3発</option><option value="4">4発</option><option value="5">5発</option><option value="10">10発 (イカサマダイス等)</option></select></div>
-                <div class="stat-item" id="stockCountContainer" style="display:none;"><label>たくわえ回数</label><select id="stockCount" onchange=""><option value="1">1回</option><option value="2">2回</option><option value="3">3回</option></select></div>
-                <div class="stat-item" id="actualDamageBox" style="display:none; background:#ffe69c; padding:5px; border-radius:4px;">
-                    <label style="color:#b97a00;">実際に受けたダメージ</label>
-                    <input type="number" id="actualDamage" placeholder="空欄で予測のみ" style="width:100px; font-weight:bold; color:#e74c3c;">
-                </div>
-            </div>
-
-            <button class="btn-calc" style="margin-bottom:6px; background:#2980b9;" onclick="executeAllMoves()">⚡ 全技ダメージ一覧</button>
-        <button class="btn-calc" style="margin-bottom:6px; background:#16a085;" onclick="executePartyDamage()">📋 相手全選出への打点一覧</button>
-        <button class="btn-calc" onclick="executeCalculation()">計算 ＆ 予測を実行</button>
-            <div id="resultOutput" class="result-box"></div>
-        <!-- 乱数分布グラフ -->
-        <div id="rollChartContainer" style="display:none;margin-top:6px;border:1px solid #ddd;border-radius:6px;padding:6px;background:#fafafa;">
-            <div style="font-size:0.75rem;font-weight:bold;color:#555;margin-bottom:2px;">📊 乱数分布（16ロール）</div>
-            <div id="rollChartSvg"></div>
-        </div>
-        </div>
-    </div>
-    </div>
-        <!-- ダメージ履歴ログ -->
-        
-<!-- ===== 📋 ターンログ ===== -->
-<div class="card" style="margin-top:8px;">
-  <div class="action-header" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;"
-       onclick="const el=document.getElementById('turnLogWrap');const arr=document.getElementById('turnLogArr');el.style.display=el.style.display==='none'?'block':'none';arr.textContent=el.style.display==='none'?'▶ クリックして開く':'▼ クリックして閉じる';">
-    <span>📋 ターンログ <span id="turnCounter" style="font-size:0.82rem;color:#888;margin-left:6px;">ターン 0</span></span>
-    <span id="turnLogArr" style="font-size:0.8rem;color:#888;">▶ クリックして開く</span>
+            </div></div>
   </div>
-  <div id="turnLogWrap" style="display:none;margin-top:6px;">
-    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:8px;">
-      <button onclick="recordTurn()" style="background:#2980b9;color:#fff;border:none;padding:7px 16px;border-radius:6px;cursor:pointer;font-size:0.9rem;">📝 このターンを記録</button>
-      <button onclick="clearTurnLog()" style="background:#e74c3c;color:#fff;border:none;padding:7px 12px;border-radius:6px;cursor:pointer;font-size:0.85rem;">🗑 全削除</button>
+</div>
+<div class="tc">
+  <div class="thd" onclick="var b=document.getElementById('tt_battle');b.classList.toggle('cl');this.classList.toggle('op2')">
+    <span>📋 バトル記録</span><span class="tha">▼</span></div>
+  <div id="tt_battle" class="tbd cl">
+<!-- タブ -->
+    <div style="display:flex;gap:0;border-bottom:2px solid #ddd;margin-bottom:10px;">
+      <button id="tabBtnTurnLog" onclick="switchBattleTab('turnLog')"
+        style="padding:6px 16px;border:none;border-bottom:3px solid #2980b9;background:none;cursor:pointer;font-size:0.88rem;font-weight:bold;color:#2980b9;">📝 ターンログ</button>
+      <button id="tabBtnDmgLog" onclick="switchBattleTab('dmgLog')"
+        style="padding:6px 16px;border:none;border-bottom:3px solid transparent;background:none;cursor:pointer;font-size:0.88rem;color:#888;">📜 計算履歴</button>
     </div>
-    <div id="turnLogContainer" style="max-height:300px;overflow-y:auto;border:1px solid #ddd;border-radius:6px;background:#fafafa;padding:6px;">
-      <div style="color:#aaa;font-size:0.85rem;text-align:center;padding:16px;">まだログがありません</div>
+    <!-- ターンログ -->
+    <div id="tabTurnLog">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:8px;">
+        <button onclick="recordTurn()" style="background:#2980b9;color:#fff;border:none;padding:7px 16px;border-radius:6px;cursor:pointer;font-size:0.88rem;">📝 このターンを記録 <span id="turnCounter" style="font-size:0.82rem;opacity:0.85;">(ターン 0)</span></button>
+        <button onclick="clearTurnLog()" style="background:#e74c3c;color:#fff;border:none;padding:7px 12px;border-radius:6px;cursor:pointer;font-size:0.85rem;">🗑 全削除</button>
+      </div>
+      <div id="turnLogContainer" style="max-height:300px;overflow-y:auto;border:1px solid #ddd;border-radius:6px;background:#fafafa;padding:6px;">
+        <div style="color:#aaa;font-size:0.85rem;text-align:center;padding:16px;">まだログがありません</div>
+      </div>
+    </div>
+    <!-- 計算履歴 -->
+    <div id="tabDmgLog" style="display:none;">
+      <button id="logClearBtn" onclick="window._dmgLog=[];document.getElementById('damageLog').innerHTML='<span style=\'color:#888\'>履歴なし</span>';"
+        style="background:#e74c3c;color:#fff;border:none;padding:5px 12px;border-radius:6px;cursor:pointer;font-size:0.82rem;margin-bottom:6px;">🗑 クリア</button>
+      <div id="damageLog" style="max-height:300px;overflow-y:auto;"><span style="color:#888;">計算を実行すると履歴が表示されます</span></div>
     </div>
   </div>
 </div>
-
-<!-- ===== 🧠 アドバイザー ===== -->
-<div class="card" style="margin-top:8px;">
-  <div class="action-header" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;"
-       onclick="const el=document.getElementById('advisorWrap');const arr=document.getElementById('advisorArr');el.style.display=el.style.display==='none'?'block':'none';arr.textContent=el.style.display==='none'?'▶ クリックして開く':'▼ クリックして閉じる';">
-    <span>🧠 アドバイザー</span>
-    <span id="advisorArr" style="font-size:0.8rem;color:#888;">▶ クリックして開く</span>
-  </div>
-  <div id="advisorWrap" style="display:none;margin-top:6px;">
-    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
-      <button onclick="runAdvisor('best')" style="background:#27ae60;color:#fff;border:none;padding:7px 16px;border-radius:6px;cursor:pointer;font-size:0.9rem;">💡 今ターンの最善手</button>
-      <button onclick="runAdvisor('predict')" style="background:#8e44ad;color:#fff;border:none;padding:7px 16px;border-radius:6px;cursor:pointer;font-size:0.9rem;">🔮 相手行動予測</button>
-      <button onclick="runAdvisor('select')" style="background:#e67e22;color:#fff;border:none;padding:7px 16px;border-radius:6px;cursor:pointer;font-size:0.9rem;">🏆 選出アドバイス</button>
+<div class="tc">
+  <div class="thd" onclick="var b=document.getElementById('tt_analysis');b.classList.toggle('cl');this.classList.toggle('op2')">
+    <span>🔬 詳細分析ツール</span><span class="tha">▼</span></div>
+  <div id="tt_analysis" class="tbd cl">
+<!-- タブ -->
+    <div style="display:flex;gap:0;border-bottom:2px solid #ddd;margin-bottom:10px;flex-wrap:wrap;">
+      <button id="tabBtnAdvisor" onclick="switchAnalysisTab('advisor')"
+        style="padding:6px 14px;border:none;border-bottom:3px solid #27ae60;background:none;cursor:pointer;font-size:0.88rem;font-weight:bold;color:#27ae60;">🧠 アドバイザー</button>
+      <button id="tabBtnRanking" onclick="switchAnalysisTab('ranking')"
+        style="padding:6px 14px;border:none;border-bottom:3px solid transparent;background:none;cursor:pointer;font-size:0.88rem;color:#888;">📊 技ランキング</button>
+      <button id="tabBtnReverse" onclick="switchAnalysisTab('reverse')"
+        style="padding:6px 14px;border:none;border-bottom:3px solid transparent;background:none;cursor:pointer;font-size:0.88rem;color:#888;">🔍 被ダメ逆算</button>
     </div>
-    <div id="advisorOutput" style="background:#f8f9fa;border-radius:8px;border:1px solid #e0e0e0;padding:14px;min-height:60px;font-size:0.9rem;line-height:1.7;">
-      <span style="color:#aaa;">ボタンを押すとアドバイスが表示されます</span>
+    <!-- アドバイザー -->
+    <div id="tabAdvisor">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
+        <button onclick="runAdvisor('best')" style="background:#27ae60;color:#fff;border:none;padding:7px 16px;border-radius:6px;cursor:pointer;font-size:0.88rem;">💡 今ターンの最善手</button>
+        <button onclick="runAdvisor('predict')" style="background:#8e44ad;color:#fff;border:none;padding:7px 16px;border-radius:6px;cursor:pointer;font-size:0.88rem;">🔮 相手行動予測</button>
+        <button onclick="runAdvisor('select')" style="background:#e67e22;color:#fff;border:none;padding:7px 16px;border-radius:6px;cursor:pointer;font-size:0.88rem;">🏆 選出アドバイス</button>
+      </div>
+      <div id="advisorOutput" style="background:#f8f9fa;border-radius:8px;border:1px solid #e0e0e0;padding:14px;min-height:60px;font-size:0.9rem;line-height:1.7;">
+        <span style="color:#aaa;">ボタンを押すとアドバイスが表示されます</span>
+      </div>
+    </div>
+    <!-- 技ランキング -->
+    <div id="tabRanking" style="display:none;">
+      <div style="font-size:0.82rem;color:#666;margin-bottom:8px;">攻撃側の全技をダメージ順にランキング表示します。</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
+        <button onclick="executeMoveRanking('me')" style="background:#16a085;color:#fff;border:none;padding:6px 16px;border-radius:6px;cursor:pointer;font-size:0.88rem;">🏆 自分の技ランキング</button>
+        <button onclick="executeMoveRanking('opp')" style="background:#8e44ad;color:#fff;border:none;padding:6px 16px;border-radius:6px;cursor:pointer;font-size:0.88rem;">🏆 相手の技ランキング</button>
+      </div>
+      <div id="moveRankingResult" style="background:#f8f9fa;border-radius:6px;padding:10px;font-size:0.88rem;min-height:40px;border:1px solid #ddd;">
+        <span style="color:#aaa;">ボタンを押すとランキングが表示されます</span>
+      </div>
+    </div>
+    <!-- 被ダメ逆算 -->
+    <div id="tabReverse" style="display:none;">
+      <div style="font-size:0.82rem;color:#555;margin-bottom:8px;">受けたダメージ量から相手の攻撃実数値の範囲を推定します。</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;margin-bottom:8px;font-size:0.85rem;">
+        <label style="display:flex;flex-direction:column;gap:2px;">受けたダメージ(実数)<input type="number" id="rcActualDmg" style="width:100%;padding:4px;border:1px solid #ccc;border-radius:4px;" placeholder="例: 45" min="1"></label>
+        <label style="display:flex;flex-direction:column;gap:2px;">自分の現在HP(実数)<input type="number" id="rcMyHpReal" style="width:100%;padding:4px;border:1px solid #ccc;border-radius:4px;" placeholder="例: 167" min="1"></label>
+        <label style="display:flex;flex-direction:column;gap:2px;">技威力<input type="number" id="rcPower" style="width:100%;padding:4px;border:1px solid #ccc;border-radius:4px;" placeholder="例: 80" min="1" value="80"></label>
+        <label style="display:flex;flex-direction:column;gap:2px;">タイプ一致<select id="rcStab" style="width:100%;padding:4px;border:1px solid #ccc;border-radius:4px;font-size:0.85rem;"><option value="1.5">あり(×1.5)</option><option value="2.0">てきおうりょく(×2.0)</option><option value="1" selected>なし(×1.0)</option></select></label>
+        <label style="display:flex;flex-direction:column;gap:2px;">タイプ相性<select id="rcEff" style="width:100%;padding:4px;border:1px solid #ccc;border-radius:4px;font-size:0.85rem;"><option value="4">×4</option><option value="2">×2</option><option value="1" selected>×1</option><option value="0.5">×0.5</option><option value="0.25">×0.25</option></select></label>
+        <label style="display:flex;flex-direction:column;gap:2px;">その他補正<input type="number" id="rcModifier" style="width:100%;padding:4px;border:1px solid #ccc;border-radius:4px;" value="1.0" step="0.05"></label>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;font-size:0.85rem;">
+        <label><input type="checkbox" id="rcLifeOrb"> いのちのたま(×1.3)</label>
+        <button onclick="executeReverseCalc()" style="background:#e74c3c;color:#fff;border:none;padding:6px 16px;border-radius:6px;cursor:pointer;font-size:0.88rem;">🔍 逆算する</button>
+      </div>
+      <div id="reverseCalcResult" style="background:#fff5f5;border-radius:6px;padding:10px;font-size:0.9rem;min-height:40px;border:1px solid #f5c6c6;">
+        <span style="color:#aaa;">ダメージ量と威力・補正を入力してください</span>
+      </div>
     </div>
   </div>
 </div>
-
-<div class="card" style="margin-top:8px;">
-          <div class="action-header" style="cursor:pointer; display:flex; justify-content:space-between; align-items:center;"
-               onclick="const el=document.getElementById('damageLogWrap'); el.style.display=el.style.display==='none'?'block':'none';">
-            <span>📜 ダメージ計算履歴</span>
-            <span style="font-size:0.8rem;color:#888;">▼ クリックして開く</span>
-          </div>
-          <div id="damageLogWrap" style="display:none; margin-top:6px;">
-            <button id="logClearBtn" onclick="window._dmgLog=[];document.getElementById('damageLog').innerHTML='<span style=\'color:#888\'>履歴なし</span>';">🗑 クリア</button>
-            <div id="damageLog"><span style="color:#888;">計算を実行すると履歴が表示されます</span></div>
-          </div>
-        </div>
-
-
-    <script>
+<div class="tc">
+  <div class="thd" onclick="var b=document.getElementById('tt_field');b.classList.toggle('cl');this.classList.toggle('op2')">
+    <span>🗺️ フィールド情報</span><span class="tha">▼</span></div>
+  <div id="tt_field" class="tbd cl">
+<!-- タブ -->
+    <div style="display:flex;gap:0;border-bottom:2px solid #ddd;margin-bottom:10px;flex-wrap:wrap;">
+      <button id="tabBtnSpdCmp" onclick="switchFieldTab('spdCmp')"
+        style="padding:6px 14px;border:none;border-bottom:3px solid #2980b9;background:none;cursor:pointer;font-size:0.88rem;font-weight:bold;color:#2980b9;">⚡ 素早さ比較</button>
+      <button id="tabBtnHazard" onclick="switchFieldTab('hazard')"
+        style="padding:6px 14px;border:none;border-bottom:3px solid transparent;background:none;cursor:pointer;font-size:0.88rem;color:#888;">🪨 入場ダメージ</button>
+    </div>
+    <!-- 素早さ比較 -->
+    <div id="tabSpdCmp">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;font-size:0.84rem;">
+        <label><input type="checkbox" id="myScarf"> 自分スカーフ</label>
+        <label><input type="checkbox" id="oppScarf"> 相手スカーフ</label>
+        <label><input type="checkbox" id="myParalysis"> 自分麻痺</label>
+        <label><input type="checkbox" id="oppParalysis"> 相手麻痺</label>
+        <label><input type="checkbox" id="myTailwind"> 自分おいかぜ</label>
+        <label><input type="checkbox" id="oppTailwind"> 相手おいかぜ</label>
+      </div>
+      <button onclick="calcSpeedCompare()" style="background:#2980b9;color:#fff;border:none;padding:6px 16px;border-radius:6px;cursor:pointer;font-size:0.88rem;margin-bottom:8px;">⚡ 比較する</button>
+      <div id="speedCmpResult" style="background:#f8f9fa;border-radius:6px;padding:10px;font-size:0.88rem;min-height:40px;border:1px solid #ddd;">
+        <span style="color:#aaa;">「比較する」ボタンを押してください</span>
+      </div>
+    </div>
+    <!-- 入場ダメージ -->
+    <div id="tabHazard" style="display:none;">
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:8px;font-size:0.84rem;align-items:center;">
+        <label><input type="checkbox" id="hazardSR"> ステルスロック</label>
+        <label>まきびし: <select id="hazardSpike" style="font-size:0.84rem;padding:2px 4px;"><option value="0">なし</option><option value="1">1枚</option><option value="2">2枚</option><option value="3">3枚</option></select></label>
+        <label><input type="checkbox" id="hazardToxicSpike"> どくまきびし</label>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
+        <button onclick="calcHazardDamage('my')" style="background:#e67e22;color:#fff;border:none;padding:6px 14px;border-radius:6px;cursor:pointer;font-size:0.85rem;">🛡 自分が入場</button>
+        <button onclick="calcHazardDamage('opp')" style="background:#c0392b;color:#fff;border:none;padding:6px 14px;border-radius:6px;cursor:pointer;font-size:0.85rem;">⚔ 相手が入場</button>
+      </div>
+      <div id="hazardResult" style="background:#fff8f0;border-radius:6px;padding:10px;font-size:0.88rem;min-height:40px;border:1px solid #f0c080;">
+        <span style="color:#aaa;">設置物を選択してボタンを押してください</span>
+      </div>
+    </div>
+  </div>
+</div>
+<div style="display:none"><input type="hidden" id="srOpp" data-was-checkbox="1">
+<input type="hidden" id="srMy" data-was-checkbox="1">
+<input type="hidden" id="spikesOpp" data-was-checkbox="1">
+<input type="hidden" id="spikesOppCount" value="1">
+<input type="hidden" id="spikesMy" data-was-checkbox="1">
+<input type="hidden" id="spikesMyCount" value="1">
+<input type="hidden" id="loMy" data-was-checkbox="1">
+<input type="hidden" id="loOpp" data-was-checkbox="1">
+<input type="hidden" id="shioMy" data-was-checkbox="1">
+<input type="hidden" id="shioOpp" data-was-checkbox="1">
+<input type="hidden" id="yadorigi_dmgMy" data-was-checkbox="1">
+<input type="hidden" id="yadorigi_dmgOpp" data-was-checkbox="1">
+<input type="hidden" id="noroiMy" data-was-checkbox="1">
+<input type="hidden" id="noroiOpp" data-was-checkbox="1">
+<input type="hidden" id="leftoMy" data-was-checkbox="1">
+<input type="hidden" id="leftoOpp" data-was-checkbox="1">
+<input type="hidden" id="neroMy" data-was-checkbox="1">
+<input type="hidden" id="neroOpp" data-was-checkbox="1">
+<input type="hidden" id="yadorigi_healOpp" data-was-checkbox="1">
+<input type="hidden" id="yadorigi_healMy" data-was-checkbox="1">
+<input type="hidden" id="tailwindMy" data-was-checkbox="1">
+<input type="hidden" id="tailwindOpp" data-was-checkbox="1">
+<input type="hidden" id="helpingHandMy" data-was-checkbox="1">
+<input type="hidden" id="helpingHandOpp" data-was-checkbox="1">
+<input type="hidden" id="chargedMy" data-was-checkbox="1">
+<input type="hidden" id="chargedOpp" data-was-checkbox="1">
+<input type="hidden" id="bindMy" data-was-checkbox="1">
+<input type="hidden" id="bindOpp" data-was-checkbox="1">
+<input type="hidden" id="aquaRingMy" data-was-checkbox="1">
+<input type="hidden" id="aquaRingOpp" data-was-checkbox="1">
+<input type="hidden" id="minimizeMy" data-was-checkbox="1">
+<input type="hidden" id="minimizeOpp" data-was-checkbox="1"></div>
+</div>
+</div>
+</div>
+<script>
         function sanitizeHTML(str) {
             if (str === null || str === undefined) return '';
             return String(str)
@@ -5941,7 +5259,7 @@ window.onload = function() {
                 ['ハッサム','32-32-2-0-0-0','いじっぱり','テクニシャン','メガストーン',['バレットパンチ','つるぎのまい','インファイト','はたきおとす']],
                 ['ギルガルド','32-32-1-0-1-0','いじっぱり','バトルスイッチ','たべのこし',['かげうち','キングシールド','ポルターガイスト','せいなるつるぎ']],
                 ['マスカーニャ','2-32-0-0-0-32','ようき','へんげんじざい','こだわりスカーフ',['トリックフラワー','トリプルアクセル','はたきおとす','とんぼがえり']],
-                ['カイリュー','2-0-0-32-0-32','ひかえめ','マルチスケイル','メガストーン',['しんそく','りゅうせいぐん','10まんボルト','かえんほうしゃ']],
+                ['カイリュー','2-0-0-32-0-32','ひかえめ','マルチスケイル','メガストーン',['しんそく','りゅうせいぐん','１０まんボルト','かえんほうしゃ']],
                 ['ドドゲザン','2-32-0-0-0-32','いじっぱり','そうだいしょう','くろいメガネ',['ふいうち','ドゲザン','つるぎのまい','アイアンヘッド']],
             ]);
             seedTeamDefaults('opp', [
@@ -5949,7 +5267,7 @@ window.onload = function() {
                 ['アシレーヌ','32-0-0-32-0-2','ひかえめ','げきりゅう','オボンのみ',['ムーンフォース','うたかたのアリア','アクアジェット','クイックターン']],
                 ['リザードン','2-0-0-32-0-32','おくびょう','もうか','メガストーン',['ソーラービーム','ニトロチャージ','オーバーヒート','エアスラッシュ']],
                 ['アーマーガア','32-0-32-0-2-0','わんぱく','プレッシャー','たべのこし',['はねやすめ','ボディプレス','てっぺき','とんぼがえり']],
-                ['ブリジュラス','2-0-0-32-0-32','おくびょう','じきゅうりょく','たべのこし',['ラスターカノン','りゅうせいぐん','ステルスロック','10まんボルト']],
+                ['ブリジュラス','2-0-0-32-0-32','おくびょう','じきゅうりょく','たべのこし',['ラスターカノン','りゅうせいぐん','ステルスロック','１０まんボルト']],
                 ['ゲンガー','2-0-0-32-0-32','おくびょう','のろわれボディ','メガストーン',['シャドーボール','ヘドロウェーブ','みちづれ','きあいだま']],
             ]);
             // DOM生成完了後に初期化処理を実行
@@ -6022,15 +5340,17 @@ window.onload = function() {
         function renderTeam(side, defaultTeam) {
             // ヘッダー行
             let html = `<div style="display:flex;align-items:center;gap:4px;margin-bottom:2px;padding-left:2px;">
-                <span style="font-size:0.65rem;font-weight:bold;color:#888;width:18px;text-align:center;">出</span>
-                <span style="font-size:0.65rem;font-weight:bold;color:#888;width:18px;text-align:center;">場</span>
+                <span style="font-size:0.65rem;font-weight:bold;color:#888;width:18px;text-align:center;" title="選出">出</span>
+                <span style="font-size:0.65rem;font-weight:bold;color:#888;width:18px;text-align:center;" title="場に出ている">場</span>
+                <span style="font-size:0.65rem;font-weight:bold;color:#888;width:18px;text-align:center;" title="ひんし">💀</span>
                 <span style="font-size:0.65rem;font-weight:bold;color:#888;flex:1;min-width:80px;">ポケモン</span>
                 <span style="font-size:0.65rem;font-weight:bold;color:#888;flex:2;">情報</span>
             </div>`;
             for(let i=0; i<6; i++) {
                 html += `<div class="poke-row" style="display:flex;align-items:center;gap:4px;flex-wrap:nowrap;">` +
-                    `<input type="checkbox" title="選出" id="${side}Selected${i}" style="flex-shrink:0;width:18px;">` +
+                    `<input type="checkbox" title="選出" id="${side}Selected${i}" onchange="updateSelectedBadge('${side}')" style="flex-shrink:0;width:18px;">` +
                     `<input type="radio" name="${side}Active" value="${i}" ${i===0?'checked':''} onchange="updateActive('${side}')" style="flex-shrink:0;width:18px;">` +
+                    `<input type="checkbox" title="ひんし" id="${side}Fainted${i}" onchange="calcFaintedCount();updateSelectedBadge('${side}')" style="flex-shrink:0;width:18px;accent-color:#e74c3c;">` +
                     `<select id="${side}Poke${i}" onchange="if(document.querySelector('input[name=\'${side}Active\']:checked').value==='${i}') updateActive('${side}'); setTimeout(()=>updateTeamSummary('${side}'), 50);" style="flex:1;min-width:80px;max-width:110px;font-size:0.78rem;padding:2px 3px;min-height:26px;">`;
                 sortedPokeNames.forEach(p => { html += `<option value="${p}" ${p===defaultTeam[i]?'selected':''}>${p}</option>`; });
                 html += `</select>` +
@@ -6038,6 +5358,16 @@ window.onload = function() {
                     `</div>`;
             }
             document.getElementById(side + 'TeamList').innerHTML = html;
+            const listEl = document.getElementById(side + 'TeamList');
+            if (listEl) {
+                let badge = document.getElementById(side + 'SelectionBadge');
+                if (!badge) {
+                    badge = document.createElement('div');
+                    badge.id = side + 'SelectionBadge';
+                    badge.style.cssText = 'display:none;font-size:0.72rem;padding:2px 8px;border-radius:10px;background:#3498db;color:#fff;font-weight:600;margin:4px 0 2px;';
+                    listEl.parentNode.insertBefore(badge, listEl);
+                }
+            }
         }
 
         // --- メガシンカ UI 更新 ---
@@ -6516,12 +5846,12 @@ function applyMoveData() {
             const catEl = document.getElementById('moveCategory');
             const condContainer = document.getElementById('moveConditionContainer');
             if (typeEl) typeEl.value = (moveName === 'ソーラービーム' || moveName === 'ソーラーブレード') ? 'くさ' : moveInfo.type;
-            if (catEl) catEl.value = (moveName === 'ソーラービーム' || moveName === 'ソーラーブレード') ? '特殊' : moveInfo.category;
+            if (catEl) catEl.value = moveName === 'ソーラービーム' ? '特殊' : moveInfo.category;
             let p = moveInfo.power;
             if (moveName === 'ソーラービーム' || moveName === 'ソーラーブレード') {
                 p = weather === 'sun' ? 120 : 60;
                 if (typeEl) typeEl.value = 'くさ';
-                if (catEl) catEl.value = '特殊';
+                if (catEl) catEl.value = moveName === 'ソーラービーム' ? '特殊' : '物理';
             } else {
                 p = getMoveDisplayPower(moveName, weather, atkItem, atkStatus, defStatus, atkSpe, defSpe);
             }
@@ -6864,11 +6194,32 @@ if (document.getElementById('oppSpeedDisplay')) document.getElementById('oppSpee
         }
 
         function getKOStatus(minPct, maxPct, currentHpPct) {
-            if (minPct >= currentHpPct) return "<span class='ko-yes'>確定1発で倒せる！</span>";
-            if (maxPct >= currentHpPct) return "<span class='ko-maybe'>乱数1発 (運次第で倒せる)</span>";
-            if (minPct * 2 >= currentHpPct) return "<span class='ko-2hit'>確定2発で倒せる！</span>";
-            if (maxPct * 2 >= currentHpPct) return "<span class='ko-2maybe'>乱数2発 (運次第で2発KO)</span>";
-            return "<span class='ko-no'>耐えられる</span>";
+            // 何発で倒せるか計算
+            function koIn(n) { return minPct * n >= currentHpPct; }
+            function koMaybeIn(n) { return maxPct * n >= currentHpPct; }
+            // 16乱数のうち何発が倒せるか計算
+            function luckCount(dmgMin, dmgMax, hpPct) {
+                if (!dmgMax || dmgMax <= 0) return 0;
+                let cnt = 0;
+                for (let i = 0; i < 16; i++) {
+                    const roll = dmgMin + Math.round((dmgMax - dmgMin) * i / 15);
+                    if (roll / (dmgMax / maxPct) * 100 >= hpPct) cnt++;
+                }
+                return cnt;
+            }
+            if (koIn(1)) return "<span class='ko-yes' style='font-weight:bold;font-size:1.05em;'>✅ 確定1発</span>";
+            if (koMaybeIn(1)) {
+                // 乱数の確率を計算（大まかに）
+                const chance = Math.round((maxPct - currentHpPct) / (maxPct - minPct) * 16);
+                const c = Math.max(1, Math.min(15, chance));
+                return `<span class='ko-maybe' style='font-weight:bold;'>⚡ 乱数1発 (${c}/16)</span>`;
+            }
+            if (koIn(2)) return "<span class='ko-2hit' style='font-weight:bold;'>✅ 確定2発</span>";
+            if (koMaybeIn(2)) return "<span class='ko-2maybe'>⚡ 乱数2発</span>";
+            if (koIn(3)) return "<span class='ko-3hit' style='color:#e67e22;font-weight:bold;'>確定3発</span>";
+            if (koMaybeIn(3)) return "<span class='ko-3maybe' style='color:#e67e22;'>乱数3発</span>";
+            if (koIn(4)) return "<span class='ko-4hit' style='color:#95a5a6;'>確定4発</span>";
+            return "<span class='ko-no' style='color:#7f8c8d;'>耐えられる</span>";
         }
 
         
@@ -7464,6 +6815,12 @@ if (document.getElementById('oppSpeedDisplay')) document.getElementById('oppSpee
         return stock * 100;
     }
 
+    if (moveName === 'おんがえし') return 102;
+    if (moveName === 'きりふだ') return 102;
+    if (moveName === 'しぜんのめぐみ') {
+        const _nm = {'もくたん':60,'しんぴのしずく':60,'じしゃく':60,'きせきのタネ':60,'とけないこおり':60,'くろおび':60,'どくバリ':60,'やわらかいすな':60,'するどいくちばし':60,'まがったスプーン':60,'ぎんのこな':60,'かたいいし':60,'のろいのおふだ':60,'りゅうのキバ':60,'くろいメガネ':60,'メタルコート':60,'ようせいのハネ':60,'シルクのスカーフ':60};
+        return _nm[atkItem] || 0;
+    }
     return base;
 }
 
@@ -7573,6 +6930,32 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
         const defSpe = defSpeEl ? parseFloat(defSpeEl.value) || 1 : 1;
         const r = defSpe / Math.max(1, atkSpe);
         return r >= 4 ? 150 : r >= 3 ? 120 : r >= 2 ? 80 : 40;
+    }
+    // おんがえし: なつき度最大102固定
+    if (moveName === 'おんがえし') { return basePower > 0 ? basePower : 102; }
+    // きりふだ: なつき度最小→最大102
+    if (moveName === 'きりふだ') { return basePower > 0 ? basePower : 102; }
+    // しぜんのめぐみ: 持ち物依存
+    if (moveName === 'しぜんのめぐみ') {
+        const _nmP = {'もくたん':60,'しんぴのしずく':60,'じしゃく':60,'きせきのタネ':60,'とけないこおり':60,'くろおび':60,'どくバリ':60,'やわらかいすな':60,'するどいくちばし':60,'まがったスプーン':60,'ぎんのこな':60,'かたいいし':60,'のろいのおふだ':60,'りゅうのキバ':60,'くろいメガネ':60,'メタルコート':60,'ようせいのハネ':60,'シルクのスカーフ':60};
+        return _nmP[atkItem] || 0;
+    }
+    // おはかまいり: 攻撃側チームのひんし数×50+50（ひんし0体=50, 1体=100...）
+    if (moveName === 'おはかまいり') {
+        if (typeof calcFaintedCount === 'function') calcFaintedCount();
+        const atkRadio = document.querySelector('input[name="attackerSide"]:checked');
+        const atkSideRaw = atkRadio ? atkRadio.value : 'me';
+        const atkSide = atkSideRaw === 'me' ? 'my' : 'opp';
+        const fCnt = (window._faintedCount && window._faintedCount[atkSide]) || 0;
+        return 50 + fCnt * 50;
+    }
+    // おはかまいり: 攻撃側チームのひんし数×50+50
+    if (moveName === 'おはかまいり') {
+        if (typeof calcFaintedCount === 'function') calcFaintedCount();
+        const r = document.querySelector('input[name="attackerSide"]:checked');
+        const s = r ? (r.value==='me'?'my':'opp') : 'my';
+        const f = (window._faintedCount && window._faintedCount[s]) || 0;
+        return 50 + f * 50;
     }
     return basePower;
 }
@@ -7702,7 +7085,7 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
                     const _atkItem = document.getElementById(attackerSide === 'me'?'myItem':'oppItem')?.value || 'なし';
                     const _condResult = getConditionalPower(moveName, power, moveType, moveCat,
                         _atkPokeDex, _defPokeDex,
-                        myAbil, oppAbil, _atkItem, _atkStatus, _defStatus, weather, terrain,
+                        (attackerSide === 'me' ? myAbil : oppAbil), (attackerSide === 'me' ? oppAbil : myAbil), _atkItem, _atkStatus, _defStatus, weather, terrain,
                         _atkStat.spe || 1, _defStat.spe || 1);
                     if (_condResult.power !== power) {
                         power = _condResult.power;
@@ -7762,7 +7145,7 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
                 if (abil === 'かたいツメ' && moveCat === '物理') mPow = Math.floor(mPow * 1.3);
                 if (abil === 'てつのこぶし' && ['サンダーパンチ','ほのおのパンチ','れいとうパンチ','マッハパンチ','バレットパンチ','ドレインパンチ','インファイト','かわらわり','アームハンマー','きあいのパンチ','コメットパンチ','アイスハンマー'].includes(moveName)) mPow = Math.floor(mPow * 1.2);
                 if (abil === 'がんじょうあご' && ['かみくだく','かみつく','ほのおのキバ','かみなりのキバ','こおりのキバ','ドラゴンダイブ','サイコファング','ハイパーファング','ダストシュート'].includes(moveName)) mPow = Math.floor(mPow * 1.5);
-                if (abil === 'きれあじ' && ['つじぎり','みずのちかい','はさみギロチン','ふいうち','リーフブレード','シャドークロー','サイコカッター','クロスチョップ','はっぷうきり','かたきうち','なみのり','あんこくきょうだ','ドラゴンクロー','テクスチャーカット','はがねのつばさ','つめとぎ','とんぼがえり','アクアカッター','エアカッター','ギロチン','きょじゅうざん','こうそくいどう','シザークロス'].includes(moveName)) mPow = Math.floor(mPow * 1.5);
+                if (abil === 'きれあじ' && ['つじぎり','はさみギロチン','ふいうち','リーフブレード','シャドークロー','サイコカッター','クロスチョップ','はっぷうきり','かたきうち','あんこくきょうだ','ドラゴンクロー','テクスチャーカット','はがねのつばさ','とんぼがえり','アクアカッター','エアカッター','きょじゅうざん','シザークロス'].includes(moveName)) mPow = Math.floor(mPow * 1.5);
                 if (abil === 'いわはこび' && mType === 'いわ') mPow = Math.floor(mPow * 1.5);
                 if (abil === 'はがねつかい' && mType === 'はがね') mPow = Math.floor(mPow * 1.5);
                 if (abil === 'りゅうのあぎと' && mType === 'ドラゴン') mPow = Math.floor(mPow * 1.5);
@@ -7776,7 +7159,6 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
                 if (abil === 'フェアリーオーラ' && mType === 'フェアリー') mPow = Math.floor(mPow * 1.3333);
                 if (abil === 'ごりむちゅう' && moveCat === '物理') mPow = Math.floor(mPow * 1.5);
                 if (abil === 'すてみ' && moveCat === '物理') mPow = Math.floor(mPow * 1.2);
-                if (abil === 'はりきり' && moveCat === '物理') mPow = Math.floor(mPow * 1.5);
                 if (abil === 'ひひいろのこどう' && moveCat === '物理') mPow = Math.floor(mPow * 1.3333);
                 if (abil === 'しょうりのほし') mPow = Math.floor(mPow * 1.5);
                 if (abil === 'バッテリー' && moveCat === '特殊') mPow = Math.floor(mPow * 1.5);
@@ -7792,12 +7174,11 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
                 if (abil === 'げきりゅう' && mType === 'みず' && hpPct <= 33.3) mPow = Math.floor(mPow * 1.5);
                 if (abil === 'しんりょく' && mType === 'くさ' && hpPct <= 33.3) mPow = Math.floor(mPow * 1.5);
                 if (abil === 'むしのしらせ' && mType === 'むし' && hpPct <= 33.3) mPow = Math.floor(mPow * 1.5);
-                if (abil === 'もうか' && mType === 'ほのお' && hpPct <= 33.3) mPow = Math.floor(mPow * 1.5);
 
                 if (abil === 'サンパワー' && weather === 'sun' && moveCat === '特殊') mPow = Math.floor(mPow * 1.5);
                 if (abil === 'すいほう' && mType === 'みず') mPow = mPow * 2;
                 if (abil === 'トランジスタ' && mType === 'でんき') mPow = Math.floor(mPow * 1.5);
-                if (abil === 'りゅうのアギト' && mType === 'ドラゴン') mPow = Math.floor(mPow * 1.5);
+                if (abil === 'りゅうのあぎと' && mType === 'ドラゴン') mPow = Math.floor(mPow * 1.5);
                 if (abil === 'いろめがね' && eff < 1 && eff > 0) eff = 1.0;
 
                 return { newType: mType, newPow: mPow };
@@ -7808,9 +7189,11 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
                 let modMove = applyMoveAbilityModifiers(myAbil, moveType, power, myCurrentHpPct);
                 moveType = modMove.newType; power = modMove.newPow;
 
-                const baseA = moveCat === "物理" ? myPoke.atk : myPoke.spa;
-                const myAtkP = parseInt(document.getElementById(moveCat === "物理" ? 'myAtk' : 'mySpA', 10).value, 10) || 0;
-                const myNature = parseFloat(document.getElementById('myNature')?.value);
+                // ボディプレス: 防御実数値を攻撃値として使用
+                const isBodyPress = (moveName === 'ボディプレス');
+                const baseA = isBodyPress ? myPoke.def : (moveCat === "物理" ? myPoke.atk : myPoke.spa);
+                const myAtkP = parseInt(document.getElementById(isBodyPress ? 'myDef' : (moveCat === "物理" ? 'myAtk' : 'mySpA'), 10).value, 10) || 0;
+                const myNature = isBodyPress ? parseFloat(document.getElementById('myDefNature')?.value) : parseFloat(document.getElementById('myNature')?.value);
                 let atkReal = calcStat(baseA, myAtkP, myNature, false);
 
                 let aRank = parseInt(document.getElementById(moveCat === '物理' ? 'myRankA' : 'myRankC', 10).value, 10);
@@ -7833,7 +7216,6 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
                     if (moveName !== 'からげんき') atkReal = Math.floor(atkReal * 0.5);
                 }
 
-                if (myAbil === 'てきおうりょく' && myPoke.types.includes(moveType)) power = Math.floor(power * (2.0/1.5));
 
                 // [Bug5/6C/3C修正] atkItem/atkPokeDex使用(攻撃側判定済み変数)
                 if (atkItem === 'こだわりハチマキ' && moveCat === '物理' && !atkPokeDex.isMega) atkReal = Math.floor(atkReal * 1.5);
@@ -8210,7 +7592,9 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
                 if (oppAbil === 'わざわいのつるぎ' && moveCat === '物理') defReal = Math.floor(defReal * 0.75);
                 let myHpReal = calcStat(myPoke.hp, parseInt(document.getElementById('myHP', 10).value, 10) || 0, 1.0, true);
 
-                const baseA = moveCat === "物理" ? oppPoke.atk : oppPoke.spa;
+                // ボディプレス: 防御実数値を攻撃値として使用
+                const isBodyPressOpp = (moveName === 'ボディプレス');
+                const baseA = isBodyPressOpp ? oppPoke.def : (moveCat === "物理" ? oppPoke.atk : oppPoke.spa);
                 let aRank = parseInt(document.getElementById(moveCat === '物理' ? 'oppRankA' : 'oppRankC', 10).value, 10);
                 if (myAbil === 'いかく' && moveCat === '物理') aRank = Math.max(-6, aRank - 1);
 
@@ -8648,7 +8032,6 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
                 if (atkAbil==='トランジスタ' && _mTypeA==='でんき') power=Math.floor(power*1.3);
                 if (atkAbil==='りゅうのアギト' && _mTypeA==='ドラゴン') power=Math.floor(power*1.5);
                 if (atkAbil==='すいほう' && _mTypeA==='みず') power=power*2;
-                if (atkAbil==='てきおうりょく' && atkPoke.types.includes(_mTypeA)) power=Math.floor(power*(2.0/1.5));
                 if (atkAbil==='ちからもち' && moveCat==='物理') atkReal*=2;
                 if (atkAbil==='こんじょう' && moveCat==='物理') {
                     const _st=document.getElementById(attackerSide+'Status')?.value||'none';
@@ -10385,6 +9768,10 @@ function updatePriorityKO() {
   const atkRankC = parseInt((document.getElementById(atkSide==='my'?'myRankC':'oppRankC', 10)||{}).value)||0;
   const atkPtsA  = parseInt((document.getElementById(atkSide==='my'?'myAtk':'oppAtk', 10)||{}).value)||0;
   const atkPtsC  = parseInt((document.getElementById(atkSide==='my'?'mySpA':'oppSpA', 10)||{}).value)||0;
+  const atkPtsD  = parseInt((document.getElementById(atkSide==='my'?'myDef':'oppDef', 10)||{}).value)||0;
+  const atkNatD  = parseFloat((document.getElementById(atkSide==='my'?'myDefNature':'oppDefNature')||{}).value)||1.0;
+  const atkRankD_bp = parseInt((document.getElementById(atkSide==='my'?'myRankD':'oppRankD')||{}).value)||0;
+  let atkRealD_bp = Math.floor(calcStat(atkPoke.def, atkPtsD, atkNatD, false) * getRankMod(atkRankD_bp));
 
   // 実数値計算（物理）
   let atkRealA = Math.floor(calcStat(atkPoke.atk, atkPtsA, atkNat, false) * getRankMod(atkRankA));
@@ -10464,7 +9851,7 @@ function updatePriorityKO() {
 
     // カテゴリ別防御実数値
     const defStat = mv.cat === '物理' ? defRealD : defRealS;
-    const atkStat = mv.cat === '物理' ? atkRealA : atkRealC;
+    const atkStat = (mv.name === 'ボディプレス') ? atkRealD_bp : (mv.cat === '物理' ? atkRealA : atkRealC);
 
     const hits = mv.hits || 1;
     let totalMin = 0, totalMax = 0;
@@ -10486,7 +9873,7 @@ function updatePriorityKO() {
     const fieldMk  = fieldMod !== 1.0 ? '<span style="color:#27ae60" title="フィールド補正">F</span>' : '';
     const wMk      = weatherMod !== 1.0 ? '<span style="color:#2980b9" title="天気補正">W</span>' : '';
     const hitNote  = mv.hits > 1 ? ` <span style="color:#e67e22">${mv.hits}hit</span>` : '';
-    const infoNote = getMoveInfoBadge(mv.name, atkAbil, atkItem, document.getElementById('battleWeather')?.value||'none', document.getElementById('battleTerrain')?.value||'none', false, parseInt(document.getElementById(attackerSide+'RankAcc')?.value||0,10), parseInt(document.getElementById(defenderSide+'RankEva')?.value||0,10), document.getElementById(attackerSide+'Status')?.value||'none');
+    const infoNote = getMoveInfoBadge(mv.name, atkAbil, atkItem, document.getElementById('battleWeather')?.value||'none', document.getElementById('battleTerrain')?.value||'none', false, parseInt(document.getElementById(atkSide+'RankAcc')?.value||0,10), parseInt(document.getElementById(defSide+'RankEva')?.value||0,10), document.getElementById(atkSide+'Status')?.value||'none');
     const catMark  = mv.cat === '特殊' ? '<span style="color:#8e44ad;font-size:0.7rem">特</span>' : '<span style="color:#c0392b;font-size:0.7rem">物</span>';
 
     results.push({
@@ -10906,7 +10293,61 @@ window.addEventListener('load', () => {
 // ============================================================
 // 新機能①: ポケモン名オートコンプリート
 // ============================================================
-(function initPokeAutocomplete() {
+(
+        // ===== おはかまいり: ひんし数集計 =====
+        window._faintedCount = { my: 0, opp: 0 };
+        function calcFaintedCount() {
+            let mc = 0, oc = 0;
+            for (let i = 0; i < 6; i++) {
+                const m = document.getElementById('myFainted'  + i);
+                const o = document.getElementById('oppFainted' + i);
+                if (m && m.checked) mc++;
+                if (o && o.checked) oc++;
+            }
+            window._faintedCount = { my: mc, opp: oc };
+        }
+
+        
+        // ===== おはかまいり: ひんし数集計 + 選出バッジ =====
+        window._faintedCount = { my: 0, opp: 0 };
+        function calcFaintedCount() {
+            let mc = 0, oc = 0;
+            for (let i = 0; i < 6; i++) {
+                const mf = document.getElementById('myFainted'  + i);
+                const of_ = document.getElementById('oppFainted' + i);
+                if (mf && mf.checked) mc++;
+                if (of_ && of_.checked) oc++;
+            }
+            window._faintedCount = { my: mc, opp: oc };
+            updateSelectedBadge('my');
+            updateSelectedBadge('opp');
+        }
+        function updateSelectedBadge(side) {
+            let sel = 0, fnt = 0;
+            for (let i = 0; i < 6; i++) {
+                const sc = document.getElementById(side + 'Selected' + i);
+                const fc = document.getElementById(side + 'Fainted'  + i);
+                if (sc && sc.checked) sel++;
+                if (fc && fc.checked) fnt++;
+            }
+            const el = document.getElementById(side + 'SelectionBadge');
+            if (el) {
+                el.textContent = `選出 ${sel}/6` + (fnt > 0 ? ` 💀${fnt}` : '');
+                el.style.display = sel > 0 ? 'inline-block' : 'none';
+            }
+            for (let i = 0; i < 6; i++) {
+                const rows = document.querySelectorAll(`#${side}TeamList .poke-row`);
+                const row = rows[i];
+                const sc = document.getElementById(side + 'Selected' + i);
+                const fc = document.getElementById(side + 'Fainted'  + i);
+                if (row) {
+                    if (fc && fc.checked) row.style.opacity = '0.4';
+                    else if (sc && sc.checked) row.style.opacity = '1.0';
+                    else row.style.opacity = '0.7';
+                }
+            }
+        }
+        function initPokeAutocomplete() {
     function setupAC(inputEl) {
         if (!inputEl || inputEl.dataset.acInit) return;
         inputEl.dataset.acInit = '1';
@@ -10936,7 +10377,7 @@ window.addEventListener('load', () => {
                 d.addEventListener('mousedown', e => {
                     e.preventDefault();
                     inputEl.value = name;
-                    inputEl.dispatchEvent(new Event('change', { bubbles: true }));
+                    try{inputEl.dispatchEvent(new Event('change', { bubbles: true }));}catch(e){}
                     list.style.display = 'none';
                 });
                 list.appendChild(d);
@@ -10962,7 +10403,7 @@ window.addEventListener('load', () => {
             } else if ((e.key === 'Enter' || e.key === 'Tab') && activeIdx >= 0) {
                 e.preventDefault();
                 inputEl.value = items[activeIdx].textContent;
-                inputEl.dispatchEvent(new Event('change', { bubbles: true }));
+                try{inputEl.dispatchEvent(new Event('change', { bubbles: true }));}catch(e){}
                 list.style.display = 'none';
                 activeIdx = -1;
             } else if (e.key === 'Escape') {
@@ -11256,8 +10697,6 @@ window.addEventListener('load', () => {
 });
 </script>
 
-<button id="darkModeToggle" onclick="toggleDarkMode()" title="ダークモード切替">🌙</button>
-
 <script>
 (function() {
   const ABILITY_LIST = ["ＡＲシステム", "アイスフェイス", "アイスボディ", "あくしゅう", "あついしぼう", "あとだし", "アナライズ", "あまのじゃく", "あめうけざら", "あめふらし", "ありじごく", "アロマベール", "いかく", "いかりのこうら", "いかりのつぼ", "いしあたま", "いたずらごころ", "いやしのこころ", "イリュージョン", "いろめがね", "いわはこび", "うのミサイル", "うるおいボイス", "うるおいボディ", "エアロック", "エレキスキン", "エレキメイカー", "えんかく", "おうごんのからだ", "オーラブレイク", "おどりこ", "おみとおし", "おもかげやどし", "おもてなし", "おやこあい", "おわりのだいち", "カーリーヘアー", "かいりきバサミ", "かがくのちから", "かがくへんかガス", "かげふみ", "かぜのり", "かそく", "かたいツメ", "かたやぶり", "かちき", "カブトアーマー", "かるわざ", "かわりもの", "がんじょう", "がんじょうあご", "かんそうはだ", "ききかいひ", "きけんよち", "きずなへんげ", "ぎたい", "きみょうなくすり", "きもったま", "ぎゃくじょう", "きゅうばん", "きょううん", "きょうえん", "きょうせい", "ぎょぐん", "きよめのしお", "きれあじ", "きんしのちから", "きんちょうかん", "くいしんぼう", "クイックドロウ", "クォークチャージ", "くさのけがわ", "くだけるよろい", "グラスメイカー", "クリアボディ", "くろのいななき", "げきりゅう", "こおりのりんぷん", "こだいかっせい", "こぼれダネ", "ごりむちゅう", "こんがりボディ", "こんじょう", "サーフテール", "サイコメイカー", "さいせいりょく", "さまようたましい", "さめはだ", "サンパワー", "シェルアーマー", "じきゅうりょく", "じしんかじょう", "しぜんかいふく", "しめりけ", "しゅうかく", "じゅうなん", "じゅくせい", "じょうききかん", "しょうりのほし", "じょおうのいげん", "じりょく", "しれいとう", "しろいけむり", "しろのいななき", "しんがん", "シンクロ", "じんばいったい", "じんばいったい", "しんりょく", "スイートベール", "すいすい", "すいほう", "スカイスキン", "スキルリンク", "スクリューおびれ", "すじがねいり", "すてみ", "スナイパー", "すなおこし", "すなかき", "すながくれ", "すなのちから", "すなはき", "すりぬけ", "するどいめ", "スロースタート", "スワームチェンジ", "せいぎのこころ", "せいしんりょく", "せいでんき", "ぜったいねむり", "ゼロフォーミング", "そうしょく", "そうだいしょう", "ソウルハート", "ダークオーラ", "ターボブレイズ", "たいねつ", "ダウンロード", "だっぴ", "たまひろい", "ダルマモード", "たんじゅん", "ちからずく", "ちからもち", "ちくでん", "ちどりあし", "ちょすい", "テイルアーマー", "てきおうりょく", "テクニシャン", "てつのこぶし", "てつのトゲ", "テラスシェル", "テラスチェンジ", "テラボルテージ", "デルタストリーム", "テレパシー", "でんきエンジン", "でんきにかえる", "てんきや", "てんねん", "てんのめぐみ", "とうそうしん", "どくくぐつ", "どくげしょう", "どくしゅ", "どくのくさり", "どくのトゲ", "どくぼうそう", "どしょく", "とびだすなかみ", "トランジスタ", "トレース", "とれないにおい", "どんかん", "ナイトメア", "なまけ", "にげあし", "にげごし", "ぬめぬめ", "ねつこうかん", "ねつぼうそう", "ねんちゃく", "ノーガード", "ノーてんき", "ノーマルスキン", "のろわれボディ", "ハードロック", "はがねつかい", "はがねのせいしん", "ばけのかわ", "はじまりのうみ", "パステルベール", "はっこう", "バッテリー", "はとむね", "バトルスイッチ", "ハドロンエンジン", "はやあし", "はやおき", "はやてのつばさ", "はらぺこスイッチ", "バリアフリー", "はりきり", "はりこみ", "パワースポット", "パンクロック", "ばんけん", "はんすう", "ビーストブースト", "ヒーリングシフト", "ひでり", "ひとでなし", "ひひいろのこどう", "ビビッドボディ", "びびり", "ひらいしん", "びんじょう", "ファーコート", "ファントムガード", "フィルター", "ふうりょくでんき", "フェアリーオーラ", "フェアリースキン", "ふかしのこぶし", "ぶきよう", "ふくがん", "ふくつのこころ", "ふくつのたて", "ふしぎなうろこ", "ふしぎなまもり", "ふしょく", "ふとうのけん", "ふみん", "ふゆう", "プラス", "フラワーギフト", "フラワーベール", "フリーズスキン", "プリズムアーマー", "ブレインフォース", "プレッシャー", "フレンドガード", "ヘヴィメタル", "ヘドロえき", "へんげんじざい", "へんしょく", "ポイズンヒール", "ぼうおん", "ほうし", "ぼうじん", "ぼうだん", "ほおぶくろ", "ほのおのからだ", "ほろびのボディ", "マイティチェンジ", "マイナス", "マイペース", "マグマのよろい", "まけんき", "マジシャン", "マジックガード", "マジックミラー", "マルチスケイル", "マルチタイプ", "ミイラ", "みずがため", "ミストメイカー", "みずのベール", "みつあつめ", "ミラーアーマー", "ミラクルスキン", "むしのしらせ", "ムラっけ", "メガランチャー", "メタルプロテクト", "メロメロボディ", "めんえき", "もうか", "ものひろい", "もふもふ", "もらいび", "やるき", "ゆうばく", "ゆきかき", "ゆきがくれ", "ゆきふらし", "ようりょくそ", "ヨガパワー", "よちむ", "よびみず", "よわき", "ライトメタル", "リーフガード", "リベロ", "リミットシールド", "りゅうのあぎと", "りんぷん", "レシーバー", "わざわいのうつわ", "わざわいのおふだ", "わざわいのたま", "わざわいのつるぎ", "わたげ", "わるいてぐせ"];
@@ -11288,7 +10727,7 @@ window.addEventListener('load', () => {
             const el = document.getElementById(fieldId);
             if (!el) return;
             el.value = v;
-            el.dispatchEvent(new Event('input', { bubbles: true }));
+            try{el.dispatchEvent(new Event('input', { bubbles: true }));}catch(e){}
         }
 
         // ====================================================
@@ -11327,6 +10766,13 @@ window.addEventListener('load', () => {
                 return el.value || '';
             }
 
+            const fainted=[], selected=[];
+            for(let i=0;i<6;i++){
+                const f=document.getElementById(`${p}Fainted${i}`);
+                const s=document.getElementById(`${p}Selected${i}`);
+                fainted.push(f?f.checked:false);
+                selected.push(s?s.checked:false);
+            }
             return {
                 teamList,
                 HP:  gv(`${p}HP`), Atk: gv(`${p}Atk`), Def: gv(`${p}Def`),
@@ -11337,6 +10783,7 @@ window.addEventListener('load', () => {
                 status:  gv(`${p}Status`),
                 move1: gv(`${p}Move1`), move2: gv(`${p}Move2`),
                 move3: gv(`${p}Move3`), move4: gv(`${p}Move4`),
+                fainted, selected,
             };
         }
 
@@ -11348,42 +10795,68 @@ window.addEventListener('load', () => {
                 if (!el) return;
                 if (el.type === 'checkbox') { el.checked = !!val; }
                 else { el.value = val || ''; }
-                el.dispatchEvent(new Event('change', { bubbles: true }));
-                el.dispatchEvent(new Event('input',  { bubbles: true }));
+                try{el.dispatchEvent(new Event('change',{bubbles:true}));}catch(e){}
+                try{el.dispatchEvent(new Event('input', {bubbles:true}));}catch(e){}
             }
-
-            // チームリスト復元
+            function normalizeMoveName(n) {
+                if (!n) return n;
+                return n.replace(/[0-9]/g, c => '０１２３４５６７８９'[+c]);
+            }
+            function setMove(id, val) {
+                if (!val) return;
+                val = normalizeMoveName(val);
+                const el = document.getElementById(id);
+                if (!el) return;
+                if (!el.querySelector('option[value="' + val + '"]')) el.add(new Option(val, val));
+                el.value = val;
+            }
+            // チームリスト復元（dispatchEventなし）
             if (data.teamList && data.teamList.length > 0) {
                 const container = document.getElementById(side === 'my' ? 'myTeamList' : 'oppTeamList');
                 if (container) {
-                    // すべての poke-row の先頭 select に値をセット
                     const pokeRows = container.querySelectorAll('.poke-row');
                     data.teamList.forEach((name, i) => {
                         if (pokeRows[i]) {
                             const sel = pokeRows[i].querySelector('select');
                             if (sel) {
-                                sel.value = name;
-                                sel.dispatchEvent(new Event('change', { bubbles: true }));
+                                if (name && !sel.querySelector('option[value="' + name + '"]')) sel.add(new Option(name, name));
+                                sel.value = name || '';
                             }
                         }
                     });
                 }
             }
-
             sv(`${p}HP`, data.HP);  sv(`${p}Atk`, data.Atk); sv(`${p}Def`, data.Def);
             sv(`${p}SpA`, data.SpA); sv(`${p}SpD`, data.SpD); sv(`${p}Spe`, data.Spe);
             if (data.natureAll) sv(`${p}NatureAll`, data.natureAll);
             if (data.ability)   sv(`${p}Ability`, data.ability);
-            if (data.item)      sv(`${p}Item`, data.item);
-            if (data.status)    sv(`${p}Status`, data.status);
-            if (data.move1) sv(`${p}Move1`, data.move1);
-            if (data.move2) sv(`${p}Move2`, data.move2);
-            if (data.move3) sv(`${p}Move3`, data.move3);
-            if (data.move4) sv(`${p}Move4`, data.move4);
-            if (typeof updateSpeed === 'function') updateSpeed();
-            if (typeof checkPoints === 'function') checkPoints();
-            if (typeof updateRealStats === 'function') updateRealStats(p);
+            if (data.item) {
+                const itemEl = document.getElementById(`${p}Item`);
+                if (itemEl) { itemEl.value = data.item; if (typeof updateItemBadges==='function') updateItemBadges(p); }
+            }
+            if (data.status) sv(`${p}Status`, data.status);
+            setMove(`${p}Move1`, data.move1); setMove(`${p}Move2`, data.move2);
+            setMove(`${p}Move3`, data.move3); setMove(`${p}Move4`, data.move4);
+            // 選出復元
+            if (data.selected && Array.isArray(data.selected)) {
+                data.selected.forEach((val, i) => { const el=document.getElementById(`${p}Selected${i}`); if(el) el.checked=!!val; });
+            }
+            // ひんし復元
+            if (data.fainted && Array.isArray(data.fainted)) {
+                data.fainted.forEach((val, i) => { const el=document.getElementById(`${p}Fainted${i}`); if(el) el.checked=!!val; });
+                if (typeof calcFaintedCount === 'function') calcFaintedCount();
+            }
+            if (typeof applyNature      === 'function') applyNature(p);
+            if (typeof updateRealStats  === 'function') updateRealStats(p);
+            if (typeof updateSpeed      === 'function') updateSpeed();
+            if (typeof updateItemBadges === 'function') {
+                updateItemBadges(p);
+                setTimeout(() => updateItemBadges(p), 0);
+                setTimeout(() => updateItemBadges(p), 100);
+            }
+            if (typeof updateSelectedBadge === 'function') updateSelectedBadge(p);
         }
+
 
         function loadSavedTeams() {
             try { return JSON.parse(localStorage.getItem(TEAM_STORAGE_KEY) || '[]'); }
@@ -11508,7 +10981,7 @@ window.addEventListener('load', () => {
                 cb.checked = newVal;
             }
             btn.classList.toggle(colorClass, newVal);
-            cb.dispatchEvent(new Event('change', {bubbles:true}));
+            try{cb.dispatchEvent(new Event('change', {bubbles:true}));}catch(e){}
         }
 
         // まきびし専用: 0→1→2→3→0 サイクル
@@ -11531,7 +11004,7 @@ window.addEventListener('load', () => {
                 selEl.value = '1';
                 btn.classList.remove('on-orange');
                 btn.textContent = 'まきびし';
-                cb.dispatchEvent(new Event('change', {bubbles:true}));
+                try{cb.dispatchEvent(new Event('change', {bubbles:true}));}catch(e){}
                 return;
             } else {
                 selEl.value = String(cur);
@@ -11539,7 +11012,7 @@ window.addEventListener('load', () => {
             btn.classList.add('on-orange');
             const labels = {1:'まきびし×1', 2:'まきびし×2', 3:'まきびし×3'};
             btn.textContent = labels[parseInt(selEl.value, 10)] || 'まきびし';
-            cb.dispatchEvent(new Event('change', {bubbles:true}));
+            try{cb.dispatchEvent(new Event('change', {bubbles:true}));}catch(e){}
         }
 
         // まきびしの正しいサイクル（0→1→2→3→off）
@@ -11568,7 +11041,7 @@ window.addEventListener('load', () => {
                     btn.textContent = 'まきびし';
                 }
             }
-            cb.dispatchEvent(new Event('change', {bubbles:true}));
+            try{cb.dispatchEvent(new Event('change', {bubbles:true}));}catch(e){}
         }
 
         // 持ち物バッジ自動更新（珠ダメ・たべのこし）
@@ -11859,16 +11332,26 @@ function runAdvisor(mode) {
 }
 
 // ===== パーティ取得ヘルパー =====
+function isDoubleBattle() {
+    const cb = document.getElementById('doubleBattle');
+    if (!cb) return false;
+    if (cb.type === 'checkbox') return cb.checked;
+    return cb.value === '1' || cb.value === 'on' || cb._checked === true;
+}
 function getMyParty() {
     const party = [];
     const activeIdx = parseInt(document.querySelector('input[name="myActive"]:checked')?.value ?? -1);
+    const threshold = isDoubleBattle() ? 4 : 3;
+    const selectedCount = [0,1,2,3,4,5].filter(i => document.getElementById(`mySelected${i}`)?.checked).length;
+    const useSelection = selectedCount >= threshold;
     for (let i = 0; i < 6; i++) {
         const name = document.getElementById(`myPoke${i}`)?.value;
         if (!name || !pokedex[name]) continue;
         const isActive = activeIdx === i;
+        const isSelected = document.getElementById(`mySelected${i}`)?.checked ?? false;
+        if (useSelection && !isSelected && !isActive) continue;
         const st = window.teamSlotState?.['my']?.[i] || {};
         const hpPct = isActive ? parseFloat(document.getElementById('myCurrentHpPct')?.value)||100 : parseFloat(st['myCurrentHpPct'])||100;
-        const isSelected = document.getElementById(`mySelected${i}`)?.checked ?? false;
         const ability = isActive ? document.getElementById('myAbility')?.value||'' : st['myAbility']||'';
         const item    = isActive ? document.getElementById('myItem')?.value||''    : st['myItem']||'';
         const moves = [1,2,3,4].map(s => isActive ? document.getElementById(`myMove${s}`)?.value||'' : st[`myMove${s}`]||'').filter(m => m && m !== '--');
@@ -11881,7 +11364,8 @@ function getOppParty() {
     const party = [];
     const activeIdx = parseInt(document.querySelector('input[name="oppActive"]:checked')?.value ?? -1);
     const selectedCount = [0,1,2,3,4,5].filter(i => document.getElementById(`oppSelected${i}`)?.checked).length;
-    const useSelection = selectedCount >= 3; // 3体揃って初めて選出確定、2体以下は6体全員候補
+    const threshold = isDoubleBattle() ? 4 : 3;
+    const useSelection = selectedCount >= threshold; // シングル3体/ダブル4体で選出確定
     for (let i = 0; i < 6; i++) {
         const name = document.getElementById(`oppPoke${i}`)?.value;
         if (!name || !pokedex[name]) continue;
@@ -12372,7 +11856,317 @@ function advisorSelect() {
         ${tableRows}
     </table>`;
 }
+
+// ============================================================
+// 新機能: 素早さ比較
+// ============================================================
+function calcSpeedCompare() {
+    const myPoke = getEffectivePoke('my');
+    const oppPoke = getEffectivePoke('opp');
+    if (!myPoke || !oppPoke) {
+        document.getElementById('speedCmpResult').innerHTML = '<span style="color:#e74c3c;">ポケモンが選択されていません</span>';
+        return;
+    }
+    const myIdx = parseInt(document.querySelector('input[name="myActive"]:checked')?.value || 0);
+    const oppIdx = parseInt(document.querySelector('input[name="oppActive"]:checked')?.value || 0);
+    const myStat = getExactStats('my', myIdx, myPoke);
+    const oppStat = getExactStats('opp', oppIdx, oppPoke);
+
+    let myBase = myStat.spe || calcStat(myPoke.spe, parseInt(document.getElementById('mySpe')?.value||0), parseFloat(document.getElementById('mySpeNature')?.value||1.0), false);
+    let oppBase = oppStat.spe || calcStat(oppPoke.spe, parseInt(document.getElementById('oppSpe')?.value||0), parseFloat(document.getElementById('oppSpeNature')?.value||1.0), false);
+
+    const myScarf = document.getElementById('myScarf')?.checked;
+    const oppScarf = document.getElementById('oppScarf')?.checked;
+    const myPara = document.getElementById('myParalysis')?.checked;
+    const oppPara = document.getElementById('oppParalysis')?.checked;
+    const myTW = document.getElementById('myTailwind')?.checked;
+    const oppTW = document.getElementById('oppTailwind')?.checked;
+
+    let myFinal = myBase;
+    let oppFinal = oppBase;
+    if (myScarf) myFinal = Math.floor(myFinal * 1.5);
+    if (oppScarf) oppFinal = Math.floor(oppFinal * 1.5);
+    if (myPara) myFinal = Math.floor(myFinal * 0.5);
+    if (oppPara) oppFinal = Math.floor(oppFinal * 0.5);
+    if (myTW) myFinal = myFinal * 2;
+    if (oppTW) oppFinal = oppFinal * 2;
+
+    const myRankS = parseInt(document.getElementById('myRankS')?.value || 0);
+    const oppRankS = parseInt(document.getElementById('oppRankS')?.value || 0);
+    if (myRankS !== 0) myFinal = Math.floor(myFinal * getRankMod(myRankS));
+    if (oppRankS !== 0) oppFinal = Math.floor(oppFinal * getRankMod(oppRankS));
+
+    const myMods = [myScarf?'スカーフ':'', myPara?'麻痺':'', myTW?'おいかぜ':'', myRankS!==0?`S${myRankS>0?'+':''}${myRankS}`:''].filter(Boolean).join(', ');
+    const oppMods = [oppScarf?'スカーフ':'', oppPara?'麻痺':'', oppTW?'おいかぜ':'', oppRankS!==0?`S${oppRankS>0?'+':''}${oppRankS}`:''].filter(Boolean).join(', ');
+
+    let result = '';
+    const diff = myFinal - oppFinal;
+    if (myFinal > oppFinal) {
+        result = `<div style="font-size:1.1rem;font-weight:bold;color:#27ae60;margin-bottom:8px;">✅ 自分が先攻（+${diff}）</div>`;
+    } else if (myFinal < oppFinal) {
+        result = `<div style="font-size:1.1rem;font-weight:bold;color:#e74c3c;margin-bottom:8px;">❌ 相手が先攻（-${Math.abs(diff)}）</div>`;
+    } else {
+        result = `<div style="font-size:1.1rem;font-weight:bold;color:#e67e22;margin-bottom:8px;">⚡ 同速（じゃんけん）</div>`;
+    }
+
+    result += `<table style="border-collapse:collapse;font-size:0.88rem;width:100%;">
+        <tr style="background:#e8f4fd;"><th style="padding:4px 8px;text-align:left;"></th><th style="padding:4px 8px;">基礎素早さ</th><th style="padding:4px 8px;">実数値(補正前)</th><th style="padding:4px 8px;">補正内容</th><th style="padding:4px 8px;font-weight:bold;">補正後実数値</th></tr>
+        <tr><td style="padding:4px 8px;font-weight:bold;color:#2980b9;">自分 (${myPoke.name})</td><td style="padding:4px 8px;text-align:center;">${myPoke.spe}</td><td style="padding:4px 8px;text-align:center;">${myBase}</td><td style="padding:4px 8px;text-align:center;">${myMods || 'なし'}</td><td style="padding:4px 8px;text-align:center;font-weight:bold;font-size:1.05rem;">${myFinal}</td></tr>
+        <tr style="background:#f9f9f9;"><td style="padding:4px 8px;font-weight:bold;color:#8e44ad;">相手 (${oppPoke.name})</td><td style="padding:4px 8px;text-align:center;">${oppPoke.spe}</td><td style="padding:4px 8px;text-align:center;">${oppBase}</td><td style="padding:4px 8px;text-align:center;">${oppMods || 'なし'}</td><td style="padding:4px 8px;text-align:center;font-weight:bold;font-size:1.05rem;">${oppFinal}</td></tr>
+    </table>`;
+
+    document.getElementById('speedCmpResult').innerHTML = result;
+}
+
+// ============================================================
+// 新機能: ステルスロック・まきびし 入場ダメージ
+// ============================================================
+function calcHazardDamage(side) {
+    const poke = getEffectivePoke(side === 'my' ? 'my' : 'opp');
+    const label = side === 'my' ? '自分' : '相手';
+    if (!poke) {
+        document.getElementById('hazardResult').innerHTML = `<span style="color:#e74c3c;">${label}のポケモンが選択されていません</span>`;
+        return;
+    }
+    const idx = parseInt(document.querySelector(`input[name="${side}Active"]:checked`)?.value || 0);
+    const stat = getExactStats(side, idx, poke);
+    const maxHp = stat.hp || calcStat(poke.hp, parseInt(document.getElementById(side+'HP')?.value||0), 1.0, true);
+
+    const hasSR = document.getElementById('hazardSR')?.checked;
+    const spikes = parseInt(document.getElementById('hazardSpike')?.value || 0);
+    const toxicSpike = document.getElementById('hazardToxicSpike')?.checked;
+
+    // ステルスロック タイプ相性計算
+    let srDmg = 0, srPct = 0;
+    if (hasSR) {
+        const eff = calcTypeEffectiveness('いわ', poke.types, '', '');
+        srDmg = Math.floor(maxHp * eff / 8);
+        srPct = (srDmg / maxHp * 100).toFixed(1);
+    }
+
+    // まきびし ダメージ
+    const spikeDmgTable = [0, 1/8, 1/6, 1/4];
+    const isFlying = poke.types.includes('ひこう');
+    let spikeDmg = 0, spikePct = 0;
+    if (spikes > 0 && !isFlying) {
+        spikeDmg = Math.floor(maxHp * spikeDmgTable[spikes]);
+        spikePct = (spikeDmg / maxHp * 100).toFixed(1);
+    }
+
+    // 合計
+    const totalDmg = srDmg + spikeDmg;
+    const totalPct = (totalDmg / maxHp * 100).toFixed(1);
+
+    const srEff = hasSR ? calcTypeEffectiveness('いわ', poke.types, '', '') : 1;
+    const srEffLabel = srEff >= 4 ? '×4' : srEff >= 2 ? '×2' : srEff >= 1 ? '×1' : srEff >= 0.5 ? '×0.5' : '×0.25';
+
+    let html = `<div style="font-weight:bold;margin-bottom:6px;">${label}（${poke.name}）の入場ダメージ <span style="font-size:0.82rem;color:#888;">HP実数値: ${maxHp}</span></div>`;
+    html += `<table style="border-collapse:collapse;font-size:0.88rem;width:100%;">
+        <tr style="background:#fde8d0;"><th style="padding:3px 8px;text-align:left;">設置物</th><th style="padding:3px 8px;">補正</th><th style="padding:3px 8px;">ダメージ(実数)</th><th style="padding:3px 8px;">割合</th></tr>`;
+    if (hasSR) html += `<tr><td style="padding:3px 8px;">ステルスロック</td><td style="padding:3px 8px;text-align:center;">${srEffLabel}</td><td style="padding:3px 8px;text-align:center;">${srDmg}</td><td style="padding:3px 8px;text-align:center;">${srPct}%</td></tr>`;
+    if (spikes > 0) html += `<tr style="background:#f9f9f9;"><td style="padding:3px 8px;">まきびし(${spikes}枚)</td><td style="padding:3px 8px;text-align:center;">${isFlying?'飛行型無効':spikeDmgTable[spikes]*100+'%'}</td><td style="padding:3px 8px;text-align:center;">${isFlying?'-':spikeDmg}</td><td style="padding:3px 8px;text-align:center;">${isFlying?'-':spikePct+'%'}</td></tr>`;
+    if (toxicSpike) html += `<tr><td style="padding:3px 8px;">どくまきびし</td><td colspan="3" style="padding:3px 8px;color:#8e44ad;">入場時にどく/もうどく状態（ダメージは毎ターン発生）</td></tr>`;
+    if (totalDmg > 0) html += `<tr style="background:#ffe0d0;font-weight:bold;"><td style="padding:3px 8px;">合計</td><td style="padding:3px 8px;"></td><td style="padding:3px 8px;text-align:center;">${totalDmg}</td><td style="padding:3px 8px;text-align:center;">${totalPct}%</td></tr>`;
+    html += '</table>';
+    if (!hasSR && spikes === 0 && !toxicSpike) html = '<span style="color:#aaa;">設置物を選択してください</span>';
+    document.getElementById('hazardResult').innerHTML = html;
+}
+
+// ============================================================
+// 新機能: 技比較モード（ダメージランキング）
+// ============================================================
+function executeMoveRanking(attackerSideRaw) {
+    const attackerSide = attackerSideRaw === 'me' ? 'my' : attackerSideRaw;
+    const defenderSide = attackerSide === 'my' ? 'opp' : 'my';
+    const atkPoke = getEffectivePoke(attackerSide);
+    const defPoke = getEffectivePoke(defenderSide);
+    const resultEl = document.getElementById('moveRankingResult');
+    if (!atkPoke || !defPoke) { resultEl.innerHTML = '<span style="color:#e74c3c;">ポケモンが選択されていません</span>'; return; }
+
+    const atkAbil = document.getElementById(attackerSide+'Ability')?.value || '';
+    const defAbil = document.getElementById(defenderSide+'Ability')?.value || '';
+    const atkItem = document.getElementById(attackerSide+'Item')?.value || '';
+    const weather = document.getElementById('battleWeather')?.value || 'none';
+    const terrain = document.getElementById('battleTerrain')?.value || 'none';
+    const atkIdx = parseInt(document.querySelector(`input[name="${attackerSide}Active"]:checked`)?.value||0);
+    const defIdx = parseInt(document.querySelector(`input[name="${defenderSide}Active"]:checked`)?.value||0);
+    const atkStat = getExactStats(attackerSide, atkIdx, atkPoke);
+    const defStat = getExactStats(defenderSide, defIdx, defPoke);
+    const atkStatus = document.getElementById(attackerSide+'Status')?.value || 'none';
+    const defStatus = document.getElementById(defenderSide+'Status')?.value || 'none';
+
+    const atkRealA = Math.floor(calcStat(atkPoke.atk, parseInt(document.getElementById(attackerSide+'Atk')?.value||0), parseFloat(document.getElementById(attackerSide+'Nature')?.value||1.0), false));
+    const atkRealC = Math.floor(calcStat(atkPoke.spa, parseInt(document.getElementById(attackerSide+'SpA')?.value||0), parseFloat(document.getElementById(attackerSide+'SpaNature')?.value||1.0), false));
+    const atkRealD_bp = Math.floor(calcStat(atkPoke.def, parseInt(document.getElementById(attackerSide+'Def')?.value||0), parseFloat(document.getElementById(attackerSide+'DefNature')?.value||1.0), false));
+    const defRealD = Math.floor(calcStat(defPoke.def, parseInt(document.getElementById(defenderSide+'Def')?.value||0), parseFloat(document.getElementById(defenderSide+'DefNature')?.value||1.0), false));
+    const defRealS = Math.floor(calcStat(defPoke.spd, parseInt(document.getElementById(defenderSide+'SpD')?.value||0), parseFloat(document.getElementById(defenderSide+'SpdNature')?.value||1.0), false));
+    const defHpReal = defStat.hp || calcStat(defPoke.hp, parseInt(document.getElementById(defenderSide+'HP')?.value||0), 1.0, true);
+
+    // 対象技: スロット1〜4 + ポケモン全技
+    const slotMoves = [1,2,3,4].map(s => document.getElementById(attackerSide+'Move'+s)?.value).filter(m => m && m !== '' && m !== '－');
+    const allMoves = atkPoke.moves ? [...new Set([...slotMoves, ...atkPoke.moves])] : slotMoves;
+    const slotSet = new Set(slotMoves);
+
+    const results = [];
+    allMoves.forEach(mv => {
+        const md = moveDex[mv];
+        if (!md || md.category === '変化') return;
+        let power = md.power || 0;
+        if (mv === 'けたぐり' || mv === 'くさむすび') power = getMoveDisplayPower(mv, weather, atkItem, atkStatus, defStatus, atkStat.spe||1, defStat.spe||1, 0, defPoke ? (window.pokeWeights?.[defPoke.name]||50) : 50, 100, 100, 0);
+        else {
+            const cr = getConditionalPower(mv, power, md.type, md.category, atkPoke, defPoke, atkAbil, defAbil, atkItem, atkStatus, defStatus, weather, terrain, atkStat.spe||1, defStat.spe||1);
+            power = cr > 0 ? cr : getMoveDisplayPower(mv, weather, atkItem, atkStatus, defStatus, atkStat.spe||1, defStat.spe||1, 0, 50, 100, 100, 0);
+        }
+        if (power <= 0) return;
+        const eff = calcTypeEffectiveness(md.type, defPoke.types, atkAbil, defAbil);
+        if (eff === 0) return;
+        const stab = atkPoke.types.includes(md.type) ? (atkAbil === 'てきおうりょく' ? 2.0 : 1.5) : 1.0;
+        const atkReal = (mv === 'ボディプレス') ? atkRealD_bp : (md.category === '物理' ? atkRealA : atkRealC);
+        const defReal = md.category === '物理' ? defRealD : defRealS;
+        const dmg = getDamageRange(atkReal, defReal, power, stab, eff, 1.0, false, false, 1);
+        const maxPct = (dmg.max / defHpReal * 100);
+        const minPct = (dmg.min / defHpReal * 100);
+        results.push({ name: mv, type: md.type, cat: md.category, power, eff, stab, dmgMin: dmg.min, dmgMax: dmg.max, minPct, maxPct, isSlot: slotSet.has(mv) });
+    });
+
+    results.sort((a, b) => b.maxPct - a.maxPct);
+
+    if (results.length === 0) { resultEl.innerHTML = '<span style="color:#aaa;">計算できる攻撃技がありません</span>'; return; }
+
+    const medals = ['🥇','🥈','🥉'];
+    let html = `<div style="font-weight:bold;margin-bottom:6px;">${atkPoke.name} → ${defPoke.name} ダメージランキング</div>`;
+    html += `<table style="border-collapse:collapse;font-size:0.84rem;width:100%;">
+        <tr style="background:#d5f5e3;"><th style="padding:3px 6px;">順位</th><th style="padding:3px 6px;text-align:left;">技名</th><th style="padding:3px 6px;">タイプ</th><th style="padding:3px 6px;">威力</th><th style="padding:3px 6px;">ダメージ範囲</th><th style="padding:3px 6px;">割合(%)</th><th style="padding:3px 6px;">確定数</th></tr>`;
+    results.slice(0, 15).forEach((r, i) => {
+        const medal = medals[i] || `${i+1}`;
+        const ko = getKOStatus(r.minPct, r.maxPct, parseFloat(document.getElementById(defenderSide+'CurrentHpPct')?.value||100));
+        const slotMark = r.isSlot ? ' <span style="color:#2980b9;font-size:0.78rem;">★スロット</span>' : '';
+        const bg = i === 0 ? 'background:#fff9e6;' : (i % 2 === 0 ? '' : 'background:#f9f9f9;');
+        html += `<tr style="${bg}"><td style="padding:3px 6px;text-align:center;">${medal}</td><td style="padding:3px 6px;font-weight:${r.isSlot?'bold':'normal'};">${r.name}${slotMark}</td><td style="padding:3px 6px;">${r.type}</td><td style="padding:3px 6px;text-align:center;">${r.power}</td><td style="padding:3px 6px;text-align:center;">${r.dmgMin}〜${r.dmgMax}</td><td style="padding:3px 6px;text-align:center;">${r.minPct.toFixed(1)}〜${r.maxPct.toFixed(1)}%</td><td style="padding:3px 6px;">${ko}</td></tr>`;
+    });
+    html += '</table>';
+    resultEl.innerHTML = html;
+}
+
+// ============================================================
+// 新機能: 被ダメ逆算
+// ============================================================
+function executeReverseCalc() {
+    const actualDmg = parseInt(document.getElementById('rcActualDmg')?.value || 0);
+    const myHpReal = parseInt(document.getElementById('rcMyHpReal')?.value || 0);
+    const power = parseInt(document.getElementById('rcPower')?.value || 80);
+    const stab = parseFloat(document.getElementById('rcStab')?.value || 1.0);
+    const eff = parseFloat(document.getElementById('rcEff')?.value || 1.0);
+    const lifeOrb = document.getElementById('rcLifeOrb')?.checked;
+    const modifier = parseFloat(document.getElementById('rcModifier')?.value || 1.0);
+    const resultEl = document.getElementById('reverseCalcResult');
+
+    if (!actualDmg || actualDmg <= 0) { resultEl.innerHTML = '<span style="color:#e74c3c;">ダメージ量を入力してください</span>'; return; }
+
+    // 自分の防御実数値を取得
+    const myPoke = getEffectivePoke('my');
+    const attackerSideRaw = document.querySelector('input[name="attackerSide"]:checked')?.value || 'me';
+    // 被ダメ逆算なので自分が防御側
+    const moveCat = '物理'; // UIで選択可能だが今回は代表的な物理で
+    let defReal = 0;
+    if (myPoke) {
+        const myIdx = parseInt(document.querySelector('input[name="myActive"]:checked')?.value||0);
+        const myStat = getExactStats('my', myIdx, myPoke);
+        defReal = myStat.def || calcStat(myPoke.def, parseInt(document.getElementById('myDef')?.value||0), parseFloat(document.getElementById('myDefNature')?.value||1.0), false);
+    }
+
+    const loMod = lifeOrb ? 1.3 : 1.0;
+    const totalMod = stab * eff * modifier * loMod;
+
+    // ダメージ計算式の逆算:
+    // dmg = floor(floor(floor(atk * 2 / 5 + 2) * power / def / 50 + 2) * totalMod * roll)
+    // roll は 0.85〜1.00 (85/100 〜 100/100)
+    // actualDmg / roll = floor(floor(floor(atk*2/5+2)*power/def/50+2) * totalMod)
+    // atk を逆算する
+
+    const results = [];
+    for (let roll_i = 0; roll_i <= 15; roll_i++) {
+        const roll = (85 + roll_i) / 100;
+        // actualDmg = floor(baseDmg * totalMod * roll)
+        // baseDmg ≈ actualDmg / totalMod / roll
+        const baseDmg = actualDmg / totalMod / roll;
+        // baseDmg = floor(floor(atk*2/5+2)*power/def/50 + 2)
+        // floor(atk*2/5+2)*power/def/50 ≈ baseDmg - 2
+        if (defReal > 0) {
+            const inner = (baseDmg - 2) * defReal * 50 / power;
+            // inner = floor(atk*2/5+2)
+            // atk*2/5+2 ≈ inner → atk ≈ (inner-2)*5/2
+            const atkEst = Math.round((inner - 2) * 5 / 2);
+            if (atkEst > 0 && atkEst < 2000) results.push(atkEst);
+        }
+    }
+
+    if (results.length === 0) { resultEl.innerHTML = '<span style="color:#e74c3c;">防御側のポケモンを選択してください</span>'; return; }
+
+    const minAtk = Math.min(...results);
+    const maxAtk = Math.max(...results);
+    const pct = (actualDmg / (myHpReal || 1) * 100).toFixed(1);
+
+    let html = `<div style="font-weight:bold;margin-bottom:8px;">📊 逆算結果</div>`;
+    html += `<div style="background:#fff;border-radius:4px;padding:8px;margin-bottom:6px;border:1px solid #eee;font-size:0.88rem;">`;
+    html += `<div>受けたダメージ: <b>${actualDmg}</b>（HP比: <b style="color:#c0392b;">${pct}%</b>）</div>`;
+    if (defReal > 0) {
+        html += `<div style="margin-top:4px;">自分の防御実数値: <b>${defReal}</b>（${myPoke?.name || '-'}）</div>`;
+        html += `<div style="margin-top:8px;font-size:1.05rem;">相手の推定攻撃実数値: <b style="color:#2980b9;font-size:1.2rem;">${minAtk} 〜 ${maxAtk}</b></div>`;
+        // 努力値逆算（base stat から推定）
+        const oppPoke = getEffectivePoke('opp');
+        if (oppPoke) {
+            const baseAtk = oppPoke.atk;
+            const noEV = calcStat(baseAtk, 0, 1.0, false);
+            const maxEV = calcStat(baseAtk, 32, 1.1, false);
+            html += `<div style="margin-top:4px;font-size:0.82rem;color:#555;">相手(${oppPoke.name})の攻撃実数値参考: 無振り ${noEV} 〜 252振り+↑ ${maxEV}</div>`;
+        }
+    } else {
+        html += `<div style="color:#e67e22;margin-top:4px;">※ 防御実数値を取得するには自分のポケモンを選択してください</div>`;
+        const approxAtk = Math.round(actualDmg * 50 / power / totalMod / 0.925);
+        html += `<div style="margin-top:6px;">参考（防御実数値なし推定）: 相手攻撃実数値 ≈ <b>${approxAtk}</b></div>`;
+    }
+    html += '</div>';
+    resultEl.innerHTML = html;
+}
+
+
+// ============================================================
+// タブUI切り替え関数
+// ============================================================
+function switchBattleTab(tab) {
+    ['turnLog','dmgLog'].forEach(t => {
+        document.getElementById('tab'+t[0].toUpperCase()+t.slice(1)).style.display = t === tab ? 'block' : 'none';
+    });
+    document.getElementById('tabBtnTurnLog').style.cssText = 'padding:6px 16px;border:none;background:none;cursor:pointer;font-size:0.88rem;' + (tab==='turnLog' ? 'border-bottom:3px solid #2980b9;font-weight:bold;color:#2980b9;' : 'border-bottom:3px solid transparent;color:#888;');
+    document.getElementById('tabBtnDmgLog').style.cssText = 'padding:6px 16px;border:none;background:none;cursor:pointer;font-size:0.88rem;' + (tab==='dmgLog' ? 'border-bottom:3px solid #2980b9;font-weight:bold;color:#2980b9;' : 'border-bottom:3px solid transparent;color:#888;');
+}
+function switchAnalysisTab(tab) {
+    ['Advisor','Ranking','Reverse'].forEach(t => {
+        const el = document.getElementById('tab'+t);
+        if (el) el.style.display = t.toLowerCase() === tab ? 'block' : 'none';
+    });
+    ['Advisor','Ranking','Reverse'].forEach(t => {
+        const btn = document.getElementById('tabBtn'+t);
+        if (!btn) return;
+        const active = t.toLowerCase() === tab;
+        const color = t==='Advisor' ? '#27ae60' : t==='Ranking' ? '#16a085' : '#e74c3c';
+        btn.style.cssText = `padding:6px 14px;border:none;background:none;cursor:pointer;font-size:0.88rem;${active ? `border-bottom:3px solid ${color};font-weight:bold;color:${color};` : 'border-bottom:3px solid transparent;color:#888;'}`;
+    });
+}
+function switchFieldTab(tab) {
+    ['SpdCmp','Hazard'].forEach(t => {
+        const el = document.getElementById('tab'+t);
+        if (el) el.style.display = t.toLowerCase() === tab.toLowerCase() ? 'block' : 'none';
+    });
+    document.getElementById('tabBtnSpdCmp').style.cssText = 'padding:6px 14px;border:none;background:none;cursor:pointer;font-size:0.88rem;' + (tab==='spdCmp' ? 'border-bottom:3px solid #2980b9;font-weight:bold;color:#2980b9;' : 'border-bottom:3px solid transparent;color:#888;');
+    document.getElementById('tabBtnHazard').style.cssText = 'padding:6px 14px;border:none;background:none;cursor:pointer;font-size:0.88rem;' + (tab==='hazard' ? 'border-bottom:3px solid #e67e22;font-weight:bold;color:#e67e22;' : 'border-bottom:3px solid transparent;color:#888;');
+}
+
 </script>
+
+</body>
+</html>
 
 </body>
 </html>
