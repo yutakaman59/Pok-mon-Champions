@@ -97,7 +97,7 @@ body{font-family:'Hiragino Sans','Noto Sans JP',sans-serif;background:var(--bg);
 .speed-slower{color:var(--op)}
 .palert{font-size:.74rem;padding:3px 8px;border-radius:4px;margin:3px 12px;display:none}
 /* RESULT */
-#res-col{grid-area:res;position:sticky;top:10px;z-index:10;align-self:start}
+#res-col{grid-area:res;position:static;align-self:start}
 @media(max-width:920px){#res-col{position:static}}
 .rhd{padding:9px 12px;border-bottom:1px solid var(--bdr);font-weight:700;font-size:.86rem}
 .rbd{padding:10px 12px}
@@ -8037,7 +8037,7 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
                 if (atkAbil==='フェアリースキン' && _mTypeA==='ノーマル') { _mTypeA='フェアリー'; power=Math.floor(power*1.2); }
                 if (atkAbil==='フリーズスキン' && _mTypeA==='ノーマル') { _mTypeA='こおり'; power=Math.floor(power*1.2); }
                 if (atkAbil==='エレキスキン' && _mTypeA==='ノーマル') { _mTypeA='でんき'; power=Math.floor(power*1.2); }
-                if (atkAbil==='テクニシャン' && power<=60) power=Math.floor(power*1.5);
+                if (atkAbil==='テクニシャン' && power > 0 && power<=60) power=Math.floor(power*1.5);
                 if (atkAbil==='かたいツメ' && moveCat==='物理') power=Math.floor(power*1.3);
                 if (atkAbil==='トランジスタ' && _mTypeA==='でんき') power=Math.floor(power*1.3);
                 if (atkAbil==='りゅうのアギト' && _mTypeA==='ドラゴン') power=Math.floor(power*1.5);
@@ -8220,6 +8220,11 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
                     const _terrain2 = document.getElementById('battleTerrain')?.value || 'none';
                     const _cr2 = getConditionalPower(mv, _mvPow, md.type, moveCat, atkPoke, defPoke, atkAbil, defAbil, atkItem, _atkSt2, _defSt2, _weather2, _terrain2, _aSpe2, _dSpe2);
                     _mvPow = _cr2.power;
+                    // 特性による威力補正
+                    if (atkAbil === 'テクニシャン' && _mvPow > 0 && _mvPow <= 60) _mvPow = Math.floor(_mvPow * 1.5);
+                    if (atkAbil === 'かたいツメ' && moveCat === '物理') _mvPow = Math.floor(_mvPow * 1.3);
+                    if (atkAbil === 'てつのこぶし' && ['サンダーパンチ','ほのおのパンチ','れいとうパンチ','マッハパンチ','バレットパンチ','ドレインパンチ','インファイト','かわらわり','アームハンマー','きあいのパンチ','コメットパンチ','アイスハンマー'].includes(mv)) _mvPow = Math.floor(_mvPow * 1.2);
+                    if (atkAbil === 'ちからずく') _mvPow = Math.floor(_mvPow * 1.3);
                     // 天候・フィールド倍率
                     let _wMod2 = 1.0, _tMod2 = 1.0;
                     if (_weather2==='sun' && md.type==='ほのお') _wMod2=1.5;
