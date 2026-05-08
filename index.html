@@ -97,7 +97,7 @@ body{font-family:'Hiragino Sans','Noto Sans JP',sans-serif;background:var(--bg);
 .speed-slower{color:var(--op)}
 .palert{font-size:.74rem;padding:3px 8px;border-radius:4px;margin:3px 12px;display:none}
 /* RESULT */
-#res-col{grid-area:res;position:sticky;top:50px}
+#res-col{grid-area:res;position:sticky;top:10px;z-index:10;align-self:start}
 @media(max-width:920px){#res-col{position:static}}
 .rhd{padding:9px 12px;border-bottom:1px solid var(--bdr);font-weight:700;font-size:.86rem}
 .rbd{padding:10px 12px}
@@ -4878,7 +4878,7 @@ body.dark-mode .hs option{color:var(--tx)!important;background:var(--sur)!import
         "spd": 65,
         "spe": 75,
         "weight": 15.0,
-        "moves": ["いかりのまえば", "うっぷんばらし", "エナジーボール", "おにび", "オーバーヒート", "かえんほうしゃ", "かみくだく", "かみつく", "からげんき", "がむしゃら", "ギガインパクト", "ギガドレイン", "くさむすび", "くさわけ", "グラススライダー", "グラスフィールド", "こらえる", "こわいかお", "しっとのほのお", "しねんのずつき", "じだんだ", "すなあらし", "せいちょう", "ソーラービーム", "タネばくだん", "タネマシンガン", "だいもんじ", "てだすけ", "どろぼう", "なやみのタネ", "にほんばれ", "ねごと", "ねむる", "はかいこうせん", "ハバネロエキス", "ほのおのキバ", "まもる", "みがわり", "やけっぱち", "リーフストーム"],
+        "moves": ["いかりのまえば", "うっぷんばらし", "エナジーボール", "おにび", "オーバーヒート", "かえんほうしゃ", "かみくだく", "かみつく", "からげんき", "がむしゃら", "ギガインパクト", "ギガドレイン", "くさむすび", "くさわけ", "グラススライダー", "グラスフィールド", "こらえる", "こわいかお", "しっとのほのお", "しねんのずつき", "じだんだ", "すなあらし", "せいちょう", "ソーラービーム", "タネばくだん", "タネマシンガン", "だいもんじ", "てだすけ", "どろぼう", "なやみのタネ", "にほんばれ", "ねごと", "ねむる", "はかいこうせん", "ハバネロエキス", "ほのおのキバ", "まもる", "みがわり", "やどりぎのたね", "やけっぱち", "リーフストーム"],
         "abilities": ["ようりょくそ", "ふみん", "ムラっけ"],
         "megas": {
             "メガスコヴィラン": {
@@ -7193,7 +7193,11 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
                 const isBodyPress = (moveName === 'ボディプレス');
                 const baseA = isBodyPress ? myPoke.def : (moveCat === "物理" ? myPoke.atk : myPoke.spa);
                 const myAtkP = parseInt(document.getElementById(isBodyPress ? 'myDef' : (moveCat === "物理" ? 'myAtk' : 'mySpA'), 10).value, 10) || 0;
-                const myNature = isBodyPress ? parseFloat(document.getElementById('myDefNature')?.value) : parseFloat(document.getElementById('myNature')?.value);
+                const myNature = isBodyPress
+                    ? parseFloat(document.getElementById('myDefNature')?.value || '1.0')
+                    : moveCat === '物理'
+                        ? parseFloat(document.getElementById('myNature')?.value    || '1.0')
+                        : parseFloat(document.getElementById('mySpaNature')?.value || '1.0');
                 let atkReal = calcStat(baseA, myAtkP, myNature, false);
 
                 let aRank = parseInt(document.getElementById(moveCat === '物理' ? 'myRankA' : 'myRankC', 10).value, 10);
@@ -7578,7 +7582,10 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
 
                 const baseD = moveCat === "物理" ? myPoke.def : myPoke.spd;
                 const myDefP = parseInt(document.getElementById(moveCat === "物理" ? 'myDef' : 'mySpD', 10).value, 10) || 0;
-                let defReal = calcStat(baseD, myDefP, parseFloat(document.getElementById('myDefNature')?.value), false);
+                const _myDefNatRecv = moveCat === '物理'
+                    ? parseFloat(document.getElementById('myDefNature')?.value || '1.0')
+                    : parseFloat(document.getElementById('mySpdNature')?.value || '1.0');
+                let defReal = calcStat(baseD, myDefP, _myDefNatRecv, false);
                 defReal = Math.floor(defReal * getRankMod(applyUnawareD(parseInt(document.getElementById(moveCat === '物理' ? 'myRankD' : 'myRankD2', 10).value, 10), oppAbil)));
 
                 
@@ -7665,7 +7672,7 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
                 { const oppActiveIdx = parseInt(document.querySelector(`input[name="oppActive"]:checked`, 10)?.value, 10);
                 const oppStats = getExactStats('opp', oppActiveIdx, oppPoke);
 
-                let atkRealForMyTeam = Math.floor(calcStat(baseA, parseInt(document.getElementById(moveCat === "物理" ? 'oppAtk' : 'oppSpA', 10).value, 10) || 0, parseFloat(document.getElementById('oppNature')?.value) || 1.0, false));
+                let atkRealForMyTeam = Math.floor(calcStat(baseA, parseInt(document.getElementById(moveCat === "物理" ? 'oppAtk' : 'oppSpA', 10).value, 10) || 0, parseFloat(document.getElementById(moveCat === '物理' ? 'oppNature' : 'oppSpaNature')?.value) || 1.0, false));
                 if (oppStats.isConf) {
                     atkRealForMyTeam = moveCat === "物理" ? oppStats.atk : oppStats.spa;
                 }
@@ -7956,6 +7963,7 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
             const _defDefP  = parseInt(document.getElementById(defenderSide+'Def', 10)?.value||'0',10);
             const _defSpdP  = parseInt(document.getElementById(defenderSide+'SpD', 10)?.value||'0',10);
             const _defDefNat = parseFloat(document.getElementById(defenderSide+'DefNature')?.value||'1.0');
+            const _defSpdNat = parseFloat(document.getElementById(defenderSide+'SpdNature')?.value||'1.0');
             const defHp = calcStat(defPoke.hp, _defHpP, 1.0, true);
             const defCurrentHpPct = parseFloat(document.getElementById(defenderSide + 'CurrentHpPct')?.value) || 100;
             let dmgMod = (atkItem === 'いのちのたま' && !atkPoke.isMega) ? 1.3 : 1.0;
@@ -8016,7 +8024,9 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
                 if (eff === 0) { html += `<tr><td><b>${mv}</b></td><td>${moveType}</td><td>${power}</td><td colspan="3" style="color:#aaa;">無効</td></tr>`; return; }
                 const baseA = moveCat === '物理' ? atkPoke.atk : atkPoke.spa;
                 const atkPts = parseInt(document.getElementById(attackerSide + (moveCat === '物理' ? 'Atk' : 'SpA', 10))?.value || '0', 10);
-                const atkNat = parseFloat(document.getElementById(attackerSide + 'Nature')?.value || '1.0');
+                const atkNat = moveCat === '物理'
+                    ? parseFloat(document.getElementById(attackerSide + 'Nature')?.value    || '1.0')
+                    : parseFloat(document.getElementById(attackerSide + 'SpaNature')?.value || '1.0');
                 let atkReal = Math.floor(calcStat(baseA, atkPts, atkNat, false) * getRankMod(moveCat === '物理' ? aRankA : aRankC));
                 if (atkItem === 'こだわりハチマキ' && moveCat === '物理' && !atkPoke.isMega) atkReal = Math.floor(atkReal * 1.5);
                 if (atkItem === 'こだわりメガネ' && moveCat === '特殊' && !atkPoke.isMega) atkReal = Math.floor(atkReal * 1.5);
@@ -8042,7 +8052,7 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
                 const baseD = moveCat === '物理' ? defPoke.def : defPoke.spd;
                 let defReal = moveCat === '物理'
                     ? Math.floor(calcStat(defPoke.def, _defDefP, _defDefNat, false))
-                    : Math.floor(calcStat(defPoke.spd, _defSpdP, _defDefNat, false));
+                    : Math.floor(calcStat(defPoke.spd, _defSpdP, _defSpdNat, false));
                 if (!defReal || defReal === 0) defReal = 1;
                 if (document.getElementById(defenderSide+'Item')?.value === 'とつげきチョッキ' && moveCat === '特殊' && !defPoke.isMega) defReal = Math.floor(defReal * 1.5); // [Bug7A修正]
                 const isMS = defAbil === 'マルチスケイル' && defCurrentHpPct >= 100;
@@ -8173,7 +8183,8 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
                 const _hpP2  = parseInt(_st[defenderSide+'HP']  || '0', 10);
                 const _defP2 = parseInt(_st[defenderSide+'Def'] || '0', 10);
                 const _spdP2 = parseInt(_st[defenderSide+'SpD'] || '0', 10);
-                const _defNat2 = parseFloat(_st[defenderSide+'DefNature'] || '1.0');
+                const _defNat2    = parseFloat(_st[defenderSide+'DefNature'] || '1.0');
+                const _defSpdNat2 = parseFloat(_st[defenderSide+'SpdNature'] || '1.0');
                 const defHp = calcStat(defPoke.hp, _hpP2, 1.0, true);
                 let row = `<tr><td><b>${defName}</b><br><span style="font-size:0.78rem;color:#888;">${defPoke.types.join('/')}</span></td>`;
                 moves.forEach(mv => {
@@ -8185,7 +8196,9 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
                     const isParentalBond = (atkAbil === 'おやこあい' && moveCat !== '変化');
                     const baseA = moveCat === '物理' ? atkPoke.atk : atkPoke.spa;
                     const atkPts = parseInt(document.getElementById(attackerSide + (moveCat === '物理' ? 'Atk' : 'SpA', 10))?.value || '0', 10);
-                    const atkNat = parseFloat(document.getElementById(attackerSide + 'Nature')?.value || '1.0');
+                    const atkNat = moveCat === '物理'
+                        ? parseFloat(document.getElementById(attackerSide + 'Nature')?.value    || '1.0')
+                        : parseFloat(document.getElementById(attackerSide + 'SpaNature')?.value || '1.0');
                     let atkReal = Math.floor(calcStat(baseA, atkPts, atkNat, false) * getRankMod(moveCat === '物理' ? aRankA : aRankC));
                     if (atkItem === 'こだわりハチマキ' && moveCat === '物理' && !atkPoke.isMega) atkReal = Math.floor(atkReal * 1.5);
                     if (atkItem === 'こだわりメガネ' && moveCat === '特殊' && !atkPoke.isMega) atkReal = Math.floor(atkReal * 1.5);
@@ -8194,7 +8207,7 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
                     const baseD = moveCat === '物理' ? defPoke.def : defPoke.spd;
                     let defReal = moveCat === '物理'
                         ? Math.floor(calcStat(defPoke.def, _defP2, _defNat2, false))
-                        : Math.floor(calcStat(defPoke.spd, _spdP2, _defNat2, false));
+                        : Math.floor(calcStat(defPoke.spd, _spdP2, _defSpdNat2, false));
                     if (!defReal || defReal === 0) defReal = 1;
                     if (document.getElementById(defenderSide+'Item')?.value === 'とつげきチョッキ' && moveCat === '特殊' && !defPoke.isMega) defReal = Math.floor(defReal * 1.5); // [Bug7B修正]
                     // 条件変化技・天候・フィールド補正
@@ -11480,7 +11493,7 @@ function advisorBestMove() {
             const ot=oi.type||''; const oc=oi.category||'物理';
             const oBaseA=oc==='物理'?oppPoke.atk:oppPoke.spa;
             const oppAtkP=parseInt(document.getElementById(oc==='物理'?'oppAtk':'oppSpA')?.value)||0;
-            const oppNat=parseFloat(document.getElementById('oppNature')?.value)||1.0;
+            const oppNat=parseFloat(document.getElementById(oc==='物理'?'oppNature':'oppSpaNature')?.value)||1.0;
             const oppAtkRank=parseInt(document.getElementById(oc==='物理'?'oppRankA':'oppRankC')?.value)||0;
             let oAtk=Math.floor(calcStat(oBaseA,oppAtkP,oppNat,false)*getRankMod(oppAtkRank));
             if (oppItem==='こだわりハチマキ'&&oc==='物理') oAtk=Math.floor(oAtk*1.5);
