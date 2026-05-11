@@ -91,7 +91,21 @@ body{font-family:'Hiragino Sans','Noto Sans JP',sans-serif;background:var(--bg);
 .state-badge.on-green{border-color:var(--gr);background:var(--gr);color:#fff;font-weight:700}
 .state-badge.on-purple{border-color:var(--ac);background:var(--ac);color:#fff;font-weight:700}
 .state-badge.on-yellow{border-color:var(--ye);background:var(--ye);color:#fff;font-weight:700}
-.item-auto-badge{display:none;font-size:.68rem;padding:2px 7px;border-radius:12px;background:#888;border:1px solid #666;color:#fff;font-weight:600;cursor:default}.badge-lefto{background:#27ae60;border-color:#219a52}.badge-lo{background:#e74c3c;border-color:#c0392b}.badge-shell{background:#16a085;border-color:#1abc9c}
+/* カスタム定数バッジ */
+.state-badge.on-sr     {background:#8B5E3C;border-color:#8B5E3C;color:#fff;font-weight:700}
+.state-badge.on-maki   {background:#5C3A1E;border-color:#5C3A1E;color:#fff;font-weight:700}
+.state-badge.on-noroi  {background:#4B3A8C;border-color:#4B3A8C;color:#fff;font-weight:700}
+.state-badge.on-bind   {background:#555;border-color:#555;color:#fff;font-weight:700}
+.state-badge.on-shio   {background:#8B5E3C;border-color:#8B5E3C;color:#fff;font-weight:700}
+.state-badge.on-yado   {background:#27ae60;border-color:#27ae60;color:#fff!important;font-weight:700}
+.state-badge.on-yado-heal{background:transparent;border-color:#27ae60;border-width:2px;color:#111!important;font-weight:700}
+.state-badge.on-aqua   {background:transparent;border-color:#2980b9;border-width:2px;color:#111!important;font-weight:700}
+.state-badge.on-neru   {background:transparent;border-color:#27ae60;border-width:2px;color:#111!important;font-weight:700}
+.state-badge.on-kaze   {background:transparent;border-color:#5dade2;border-width:2px;border-style:dashed;color:#5dade2;font-weight:700}
+.state-badge.on-juden  {background:transparent;border-color:#b7950b;border-width:2px;border-style:dashed;color:#b7950b;font-weight:700}
+.state-badge.on-mini   {background:transparent;border-color:#666;border-width:2px;border-style:dashed;color:#555;font-weight:700}
+.state-badge.on-tedasuke{background:transparent;border-color:#666;border-width:2px;border-style:dashed;color:#555;font-weight:700}
+.item-auto-badge{display:none;font-size:.68rem;padding:2px 7px;border-radius:12px;background:transparent;border:1.5px solid #f4a7b9;color:#111!important;font-weight:600;cursor:default}.badge-lefto{background:#27ae60;border-color:#219a52}.badge-lo{background:#e74c3c;border-color:#c0392b}.badge-shell{background:#16a085;border-color:#1abc9c}
 .spdisp{font-size:.74rem;color:var(--sub);padding:3px 12px;border-bottom:1px solid var(--bdr)}
 .speed-faster{color:var(--gr);font-weight:700}
 .speed-slower{color:var(--op)}
@@ -179,6 +193,63 @@ body.dark-mode th{background:var(--sur2)!important;color:var(--sub)!important}
 body.dark-mode td{color:var(--tx)!important;border-color:var(--bdr)!important}
 body.dark-mode tr:nth-child(even){background:var(--sur2)!important}
 body.dark-mode .hs option{color:var(--tx)!important;background:var(--sur)!important}
+
+/* ===== predict-table (全技一覧 / 打点一覧) ===== */
+.predict-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: auto;
+}
+.predict-table th,
+.predict-table td {
+  border: 1px solid var(--bdr, #e2e8f0);
+  padding: 5px 8px;
+  vertical-align: middle;
+}
+.predict-table th {
+  background: var(--sur2, #f7f9fc);
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-align: center;
+  white-space: nowrap;
+}
+/* 削れる割合・倒せるか判定テーブル: 2・3列目を中央揃え */
+.predict-table:not(.moves-table):not(.party-table) td:nth-child(2),
+.predict-table:not(.moves-table):not(.party-table) td:nth-child(3) { text-align: center; }
+/* 全技一覧: 列幅の割り当て */
+.predict-table.moves-table th:nth-child(1),
+.predict-table.moves-table td:nth-child(1) { width: 38%; min-width: 120px; }
+.predict-table.moves-table th:nth-child(2),
+.predict-table.moves-table td:nth-child(2) { width: 15%; min-width: 60px; text-align: center; }
+.predict-table.moves-table th:nth-child(3),
+.predict-table.moves-table td:nth-child(3) { width: 8%;  min-width: 36px; text-align: center; }
+.predict-table.moves-table th:nth-child(4),
+.predict-table.moves-table td:nth-child(4) { width: 25%; min-width: 90px; text-align: center; }
+.predict-table.moves-table th:nth-child(5),
+.predict-table.moves-table td:nth-child(5) { width: 14%; min-width: 70px; text-align: center; }
+/* 打点一覧: 1列目は相手名、以降は技名（幅均等） */
+.predict-table.party-table th:nth-child(1),
+.predict-table.party-table td:nth-child(1) { width: 20%; min-width: 80px; }
+.predict-table.party-table th:not(:first-child),
+.predict-table.party-table td:not(:first-child) { text-align: center; }
+/* 偶数行のゼブラ */
+.predict-table tbody tr:nth-child(even) td { background: var(--sur2, #f7f9fc); }
+
+/* 持ち物バッジ専用 */
+.item-auto-badge.badge-lo {
+  background: #f4a7b9 !important;
+  border-color: #f4a7b9 !important;
+  color: #fff !important;
+}
+.item-auto-badge.badge-lefto,
+.item-auto-badge.badge-shell {
+  background: #fff !important;
+  border: 2px solid #f4a7b9 !important;
+  color: #111 !important;
+  font-size: .7rem !important;
+  padding: 2px 8px !important;
+  border-radius: 20px !important;
+}
 </style>
 </head>
 <body>
@@ -347,47 +418,47 @@ body.dark-mode .hs option{color:var(--tx)!important;background:var(--sur)!import
                         <input type="hidden" id="mySpdNature" value="1.0">
                         <input type="hidden" id="mySpeNature" value="1.0">
                     </div>
-                    <div class="stat-item"><label>攻撃ランク</label><select id="myRankA" onchange=""><option value="6">+6</option><option value="5">+5</option><option value="4">+4</option><option value="3">+3</option><option value="2">+2</option><option value="1">+1</option><option value="0" selected>0</option><option value="-1">-1</option><option value="-2">-2</option><option value="-3">-3</option><option value="-4">-4</option><option value="-5">-5</option><option value="-6">-6</option></select></div>
-                    <div class="stat-item"><label>防御ランク</label><select id="myRankD" onchange=""><option value="6">+6</option><option value="5">+5</option><option value="4">+4</option><option value="3">+3</option><option value="2">+2</option><option value="1">+1</option><option value="0" selected>0</option><option value="-1">-1</option><option value="-2">-2</option><option value="-3">-3</option><option value="-4">-4</option><option value="-5">-5</option><option value="-6">-6</option></select></div>
-                    <div class="stat-item"><label>特攻ランク</label><select id="myRankC" onchange=""><option value="6">+6</option><option value="5">+5</option><option value="4">+4</option><option value="3">+3</option><option value="2">+2</option><option value="1">+1</option><option value="0" selected>0</option><option value="-1">-1</option><option value="-2">-2</option><option value="-3">-3</option><option value="-4">-4</option><option value="-5">-5</option><option value="-6">-6</option></select></div>
-                    <div class="stat-item"><label>特防ランク</label><select id="myRankD2" onchange=""><option value="6">+6</option><option value="5">+5</option><option value="4">+4</option><option value="3">+3</option><option value="2">+2</option><option value="1">+1</option><option value="0" selected>0</option><option value="-1">-1</option><option value="-2">-2</option><option value="-3">-3</option><option value="-4">-4</option><option value="-5">-5</option><option value="-6">-6</option></select></div>
-                    <div class="stat-item"><label>素早ランク</label><select id="myRankS" onchange="updateSpeed()"><option value="6">+6</option><option value="5">+5</option><option value="4">+4</option><option value="3">+3</option><option value="2">+2</option><option value="1">+1</option><option value="0" selected>0</option><option value="-1">-1</option><option value="-2">-2</option><option value="-3">-3</option><option value="-4">-4</option><option value="-5">-5</option><option value="-6">-6</option></select></div>
-                    <div class="stat-item"><label>命中ランク</label><select id="myRankAcc" onchange="executeCalculation()"><option value="6">+6</option><option value="5">+5</option><option value="4">+4</option><option value="3">+3</option><option value="2">+2</option><option value="1">+1</option><option value="0" selected>0</option><option value="-1">-1</option><option value="-2">-2</option><option value="-3">-3</option><option value="-4">-4</option><option value="-5">-5</option><option value="-6">-6</option></select></div>
-                    <div class="stat-item"><label>回避ランク</label><select id="myRankEva" onchange="executeCalculation()"><option value="6">+6</option><option value="5">+5</option><option value="4">+4</option><option value="3">+3</option><option value="2">+2</option><option value="1">+1</option><option value="0" selected>0</option><option value="-1">-1</option><option value="-2">-2</option><option value="-3">-3</option><option value="-4">-4</option><option value="-5">-5</option><option value="-6">-6</option></select></div>
+                    <div class="stat-item"><label>攻撃ランク <span id="myRankA_mod" style="font-size:0.72rem;color:#888;margin-left:3px;"></span></label><select id="myRankA" onchange="updateRankLabel('myRankA','myRankA_mod');"><option value="6">+6</option><option value="5">+5</option><option value="4">+4</option><option value="3">+3</option><option value="2">+2</option><option value="1">+1</option><option value="0" selected>0</option><option value="-1">-1</option><option value="-2">-2</option><option value="-3">-3</option><option value="-4">-4</option><option value="-5">-5</option><option value="-6">-6</option></select></div>
+                    <div class="stat-item"><label>防御ランク <span id="myRankD_mod" style="font-size:0.72rem;color:#888;margin-left:3px;"></span></label><select id="myRankD" onchange="updateRankLabel('myRankD','myRankD_mod');"><option value="6">+6</option><option value="5">+5</option><option value="4">+4</option><option value="3">+3</option><option value="2">+2</option><option value="1">+1</option><option value="0" selected>0</option><option value="-1">-1</option><option value="-2">-2</option><option value="-3">-3</option><option value="-4">-4</option><option value="-5">-5</option><option value="-6">-6</option></select></div>
+                    <div class="stat-item"><label>特攻ランク <span id="myRankC_mod" style="font-size:0.72rem;color:#888;margin-left:3px;"></span></label><select id="myRankC" onchange="updateRankLabel('myRankC','myRankC_mod');"><option value="6">+6</option><option value="5">+5</option><option value="4">+4</option><option value="3">+3</option><option value="2">+2</option><option value="1">+1</option><option value="0" selected>0</option><option value="-1">-1</option><option value="-2">-2</option><option value="-3">-3</option><option value="-4">-4</option><option value="-5">-5</option><option value="-6">-6</option></select></div>
+                    <div class="stat-item"><label>特防ランク <span id="myRankD2_mod" style="font-size:0.72rem;color:#888;margin-left:3px;"></span></label><select id="myRankD2" onchange="updateRankLabel('myRankD2','myRankD2_mod');"><option value="6">+6</option><option value="5">+5</option><option value="4">+4</option><option value="3">+3</option><option value="2">+2</option><option value="1">+1</option><option value="0" selected>0</option><option value="-1">-1</option><option value="-2">-2</option><option value="-3">-3</option><option value="-4">-4</option><option value="-5">-5</option><option value="-6">-6</option></select></div>
+                    <div class="stat-item"><label>素早ランク <span id="myRankS_mod" style="font-size:0.72rem;color:#888;margin-left:3px;"></span></label><select id="myRankS" onchange="updateSpeed();updateRankLabel('myRankS','myRankS_mod');"><option value="6">+6</option><option value="5">+5</option><option value="4">+4</option><option value="3">+3</option><option value="2">+2</option><option value="1">+1</option><option value="0" selected>0</option><option value="-1">-1</option><option value="-2">-2</option><option value="-3">-3</option><option value="-4">-4</option><option value="-5">-5</option><option value="-6">-6</option></select></div>
+                    <div class="stat-item"><label>命中ランク <span id="myRankAcc_mod" style="font-size:0.72rem;color:#888;margin-left:3px;"></span></label><select id="myRankAcc" onchange="executeCalculation();updateRankLabel('myRankAcc','myRankAcc_mod');"><option value="6">+6</option><option value="5">+5</option><option value="4">+4</option><option value="3">+3</option><option value="2">+2</option><option value="1">+1</option><option value="0" selected>0</option><option value="-1">-1</option><option value="-2">-2</option><option value="-3">-3</option><option value="-4">-4</option><option value="-5">-5</option><option value="-6">-6</option></select></div>
+                    <div class="stat-item"><label>回避ランク <span id="myRankEva_mod" style="font-size:0.72rem;color:#888;margin-left:3px;"></span></label><select id="myRankEva" onchange="executeCalculation();updateRankLabel('myRankEva','myRankEva_mod');"><option value="6">+6</option><option value="5">+5</option><option value="4">+4</option><option value="3">+3</option><option value="2">+2</option><option value="1">+1</option><option value="0" selected>0</option><option value="-1">-1</option><option value="-2">-2</option><option value="-3">-3</option><option value="-4">-4</option><option value="-5">-5</option><option value="-6">-6</option></select></div>
                 </div>
                 <div class="state-badge-area" id="stateBadgeArea_my">
                     <button class="state-badge" id="badge_sr_my"
-                        onclick="toggleBadge(this,'srMy','on-red')">ステルスロック</button>
+                        onclick="toggleBadge(this,'srMy','on-sr')">ステルスロック</button>
                     <button class="state-badge" id="badge_spikes_my"
                         onclick="cycleMakibishi2(this,'My')">まきびし</button>
                     <button class="state-badge" id="badge_noroi_my"
-                        onclick="toggleBadge(this,'noroiMy','on-purple')">のろい</button>
+                        onclick="toggleBadge(this,'noroiMy','on-noroi')">のろい</button>
                     <button class="state-badge" id="badge_bind_my"
-                        onclick="toggleBadge(this,'bindMy','on-red')">バインド</button>
+                        onclick="toggleBadge(this,'bindMy','on-bind')">バインド</button>
                     <button class="state-badge" id="badge_shio_my"
-                        onclick="toggleBadge(this,'shioMy','on')">しおづけ</button>
+                        onclick="toggleBadge(this,'shioMy','on-shio')">しおづけ</button>
                     <button class="state-badge" id="badge_yadorigi_my"
-                        onclick="toggleBadge(this,'yadorigi_dmgMy','on-green')">やどりぎのタネ</button>
+                        onclick="toggleBadge(this,'yadorigi_dmgMy','on-yado')">やどりぎのタネ</button>
                     <button class="state-badge" id="badge_yadoheal_my"
-                        onclick="toggleBadge(this,'yadorigi_healMy','on-green')">やどりぎ回復</button>
+                        onclick="toggleBadge(this,'yadorigi_healMy','on-yado-heal')">やどりぎ回復</button>
                     <button class="state-badge" id="badge_aqua_my"
-                        onclick="toggleBadge(this,'aquaRingMy','on')">アクアリング</button>
+                        onclick="toggleBadge(this,'aquaRingMy','on-aqua')">アクアリング</button>
                     <button class="state-badge" id="badge_nero_my"
-                        onclick="toggleBadge(this,'neroMy','on-green')">ねをはる</button>
+                        onclick="toggleBadge(this,'neroMy','on-neru')">ねをはる</button>
                     <button class="state-badge" id="badge_tail_my"
-                        onclick="toggleBadge(this,'tailwindMy','on')">おいかぜ</button>
+                        onclick="toggleBadge(this,'tailwindMy','on-kaze')">おいかぜ</button>
                     <button class="state-badge" id="badge_charged_my"
-                        onclick="toggleBadge(this,'chargedMy','on-yellow')">じゅうでん</button>
+                        onclick="toggleBadge(this,'chargedMy','on-juden')">じゅうでん</button>
                     <button class="state-badge" id="badge_minimize_my"
-                        onclick="toggleBadge(this,'minimizeMy','on-purple')">ちいさくなる</button>
+                        onclick="toggleBadge(this,'minimizeMy','on-mini')">ちいさくなる</button>
                     <button class="state-badge" id="badge_helping_my"
-                        onclick="toggleBadge(this,'helpingHandMy','on')">てだすけ</button>
-                    <span class="item-auto-badge badge-lo" id="itemBadge_lo_my" style="display:none">🔮 珠ダメ</span>
-                    <span class="item-auto-badge badge-lefto" id="itemBadge_lefto_my" style="display:none">🍃 たべのこし</span>
-                    <span class="item-auto-badge badge-shell" id="itemBadge_shell_my" style="display:none">🐚 かいがらのすず</span>
+                        onclick="toggleBadge(this,'helpingHandMy','on-tedasuke')">てだすけ</button>
+                    <span class="item-auto-badge badge-lo" id="itemBadge_lo_my" style="display:none">いのちのたま</span>
+                    <span class="item-auto-badge badge-lefto" id="itemBadge_lefto_my" style="display:none">たべのこし</span>
+                    <span class="item-auto-badge badge-shell" id="itemBadge_shell_my" style="display:none">かいがらのすず</span>
                 </div>
                 </div>
-<div class="bdga" id="stateBadgeArea_my"></div>
+<div class="bdga"></div>
 <div id="myActiveBox" style="display:none"></div>
 </div>
     <div id="res-col" class="card">
@@ -590,47 +661,47 @@ body.dark-mode .hs option{color:var(--tx)!important;background:var(--sur)!import
                         <input type="hidden" id="oppSpdNature" value="1.0">
                         <input type="hidden" id="oppSpeNature" value="1.0">
                     </div>
-                    <div class="stat-item"><label>攻撃ランク</label><select id="oppRankA" onchange=""><option value="6">+6</option><option value="5">+5</option><option value="4">+4</option><option value="3">+3</option><option value="2">+2</option><option value="1">+1</option><option value="0" selected>0</option><option value="-1">-1</option><option value="-2">-2</option><option value="-3">-3</option><option value="-4">-4</option><option value="-5">-5</option><option value="-6">-6</option></select></div>
-                    <div class="stat-item"><label>防御ランク</label><select id="oppRankD" onchange=""><option value="6">+6</option><option value="5">+5</option><option value="4">+4</option><option value="3">+3</option><option value="2">+2</option><option value="1">+1</option><option value="0" selected>0</option><option value="-1">-1</option><option value="-2">-2</option><option value="-3">-3</option><option value="-4">-4</option><option value="-5">-5</option><option value="-6">-6</option></select></div>
-                    <div class="stat-item"><label>特攻ランク</label><select id="oppRankC" onchange=""><option value="6">+6</option><option value="5">+5</option><option value="4">+4</option><option value="3">+3</option><option value="2">+2</option><option value="1">+1</option><option value="0" selected>0</option><option value="-1">-1</option><option value="-2">-2</option><option value="-3">-3</option><option value="-4">-4</option><option value="-5">-5</option><option value="-6">-6</option></select></div>
-                    <div class="stat-item"><label>特防ランク</label><select id="oppRankD2" onchange=""><option value="6">+6</option><option value="5">+5</option><option value="4">+4</option><option value="3">+3</option><option value="2">+2</option><option value="1">+1</option><option value="0" selected>0</option><option value="-1">-1</option><option value="-2">-2</option><option value="-3">-3</option><option value="-4">-4</option><option value="-5">-5</option><option value="-6">-6</option></select></div>
-                    <div class="stat-item"><label>素早ランク</label><select id="oppRankS" onchange="updateSpeed()"><option value="6">+6</option><option value="5">+5</option><option value="4">+4</option><option value="3">+3</option><option value="2">+2</option><option value="1">+1</option><option value="0" selected>0</option><option value="-1">-1</option><option value="-2">-2</option><option value="-3">-3</option><option value="-4">-4</option><option value="-5">-5</option><option value="-6">-6</option></select></div>
-                    <div class="stat-item"><label>命中ランク</label><select id="oppRankAcc" onchange="executeCalculation()"><option value="6">+6</option><option value="5">+5</option><option value="4">+4</option><option value="3">+3</option><option value="2">+2</option><option value="1">+1</option><option value="0" selected>0</option><option value="-1">-1</option><option value="-2">-2</option><option value="-3">-3</option><option value="-4">-4</option><option value="-5">-5</option><option value="-6">-6</option></select></div>
-                    <div class="stat-item"><label>回避ランク</label><select id="oppRankEva" onchange="executeCalculation()"><option value="6">+6</option><option value="5">+5</option><option value="4">+4</option><option value="3">+3</option><option value="2">+2</option><option value="1">+1</option><option value="0" selected>0</option><option value="-1">-1</option><option value="-2">-2</option><option value="-3">-3</option><option value="-4">-4</option><option value="-5">-5</option><option value="-6">-6</option></select></div>
+                    <div class="stat-item"><label>攻撃ランク <span id="oppRankA_mod" style="font-size:0.72rem;color:#888;margin-left:3px;"></span></label><select id="oppRankA" onchange="updateRankLabel('oppRankA','oppRankA_mod');"><option value="6">+6</option><option value="5">+5</option><option value="4">+4</option><option value="3">+3</option><option value="2">+2</option><option value="1">+1</option><option value="0" selected>0</option><option value="-1">-1</option><option value="-2">-2</option><option value="-3">-3</option><option value="-4">-4</option><option value="-5">-5</option><option value="-6">-6</option></select></div>
+                    <div class="stat-item"><label>防御ランク <span id="oppRankD_mod" style="font-size:0.72rem;color:#888;margin-left:3px;"></span></label><select id="oppRankD" onchange="updateRankLabel('oppRankD','oppRankD_mod');"><option value="6">+6</option><option value="5">+5</option><option value="4">+4</option><option value="3">+3</option><option value="2">+2</option><option value="1">+1</option><option value="0" selected>0</option><option value="-1">-1</option><option value="-2">-2</option><option value="-3">-3</option><option value="-4">-4</option><option value="-5">-5</option><option value="-6">-6</option></select></div>
+                    <div class="stat-item"><label>特攻ランク <span id="oppRankC_mod" style="font-size:0.72rem;color:#888;margin-left:3px;"></span></label><select id="oppRankC" onchange="updateRankLabel('oppRankC','oppRankC_mod');"><option value="6">+6</option><option value="5">+5</option><option value="4">+4</option><option value="3">+3</option><option value="2">+2</option><option value="1">+1</option><option value="0" selected>0</option><option value="-1">-1</option><option value="-2">-2</option><option value="-3">-3</option><option value="-4">-4</option><option value="-5">-5</option><option value="-6">-6</option></select></div>
+                    <div class="stat-item"><label>特防ランク <span id="oppRankD2_mod" style="font-size:0.72rem;color:#888;margin-left:3px;"></span></label><select id="oppRankD2" onchange="updateRankLabel('oppRankD2','oppRankD2_mod');"><option value="6">+6</option><option value="5">+5</option><option value="4">+4</option><option value="3">+3</option><option value="2">+2</option><option value="1">+1</option><option value="0" selected>0</option><option value="-1">-1</option><option value="-2">-2</option><option value="-3">-3</option><option value="-4">-4</option><option value="-5">-5</option><option value="-6">-6</option></select></div>
+                    <div class="stat-item"><label>素早ランク <span id="oppRankS_mod" style="font-size:0.72rem;color:#888;margin-left:3px;"></span></label><select id="oppRankS" onchange="updateSpeed();updateRankLabel('oppRankS','oppRankS_mod');"><option value="6">+6</option><option value="5">+5</option><option value="4">+4</option><option value="3">+3</option><option value="2">+2</option><option value="1">+1</option><option value="0" selected>0</option><option value="-1">-1</option><option value="-2">-2</option><option value="-3">-3</option><option value="-4">-4</option><option value="-5">-5</option><option value="-6">-6</option></select></div>
+                    <div class="stat-item"><label>命中ランク <span id="oppRankAcc_mod" style="font-size:0.72rem;color:#888;margin-left:3px;"></span></label><select id="oppRankAcc" onchange="executeCalculation();updateRankLabel('oppRankAcc','oppRankAcc_mod');"><option value="6">+6</option><option value="5">+5</option><option value="4">+4</option><option value="3">+3</option><option value="2">+2</option><option value="1">+1</option><option value="0" selected>0</option><option value="-1">-1</option><option value="-2">-2</option><option value="-3">-3</option><option value="-4">-4</option><option value="-5">-5</option><option value="-6">-6</option></select></div>
+                    <div class="stat-item"><label>回避ランク <span id="oppRankEva_mod" style="font-size:0.72rem;color:#888;margin-left:3px;"></span></label><select id="oppRankEva" onchange="executeCalculation();updateRankLabel('oppRankEva','oppRankEva_mod');"><option value="6">+6</option><option value="5">+5</option><option value="4">+4</option><option value="3">+3</option><option value="2">+2</option><option value="1">+1</option><option value="0" selected>0</option><option value="-1">-1</option><option value="-2">-2</option><option value="-3">-3</option><option value="-4">-4</option><option value="-5">-5</option><option value="-6">-6</option></select></div>
                 </div>
                 <div class="state-badge-area" id="stateBadgeArea_opp">
                     <button class="state-badge" id="badge_sr_opp"
-                        onclick="toggleBadge(this,'srOpp','on-red')">ステルスロック</button>
+                        onclick="toggleBadge(this,'srOpp','on-sr')">ステルスロック</button>
                     <button class="state-badge" id="badge_spikes_opp"
                         onclick="cycleMakibishi2(this,'Opp')">まきびし</button>
                     <button class="state-badge" id="badge_noroi_opp"
-                        onclick="toggleBadge(this,'noroiOpp','on-purple')">のろい</button>
+                        onclick="toggleBadge(this,'noroiOpp','on-noroi')">のろい</button>
                     <button class="state-badge" id="badge_bind_opp"
-                        onclick="toggleBadge(this,'bindOpp','on-red')">バインド</button>
+                        onclick="toggleBadge(this,'bindOpp','on-bind')">バインド</button>
                     <button class="state-badge" id="badge_shio_opp"
-                        onclick="toggleBadge(this,'shioOpp','on')">しおづけ</button>
+                        onclick="toggleBadge(this,'shioOpp','on-shio')">しおづけ</button>
                     <button class="state-badge" id="badge_yadorigi_opp"
-                        onclick="toggleBadge(this,'yadorigi_dmgOpp','on-green')">やどりぎのタネ</button>
+                        onclick="toggleBadge(this,'yadorigi_dmgOpp','on-yado')">やどりぎのタネ</button>
                     <button class="state-badge" id="badge_yadoheal_opp"
-                        onclick="toggleBadge(this,'yadorigi_healOpp','on-green')">やどりぎ回復</button>
+                        onclick="toggleBadge(this,'yadorigi_healOpp','on-yado-heal')">やどりぎ回復</button>
                     <button class="state-badge" id="badge_aqua_opp"
-                        onclick="toggleBadge(this,'aquaRingOpp','on')">アクアリング</button>
+                        onclick="toggleBadge(this,'aquaRingOpp','on-aqua')">アクアリング</button>
                     <button class="state-badge" id="badge_nero_opp"
-                        onclick="toggleBadge(this,'neroOpp','on-green')">ねをはる</button>
+                        onclick="toggleBadge(this,'neroOpp','on-neru')">ねをはる</button>
                     <button class="state-badge" id="badge_tail_opp"
-                        onclick="toggleBadge(this,'tailwindOpp','on')">おいかぜ</button>
+                        onclick="toggleBadge(this,'tailwindOpp','on-kaze')">おいかぜ</button>
                     <button class="state-badge" id="badge_charged_opp"
-                        onclick="toggleBadge(this,'chargedOpp','on-yellow')">じゅうでん</button>
+                        onclick="toggleBadge(this,'chargedOpp','on-juden')">じゅうでん</button>
                     <button class="state-badge" id="badge_minimize_opp"
-                        onclick="toggleBadge(this,'minimizeOpp','on-purple')">ちいさくなる</button>
+                        onclick="toggleBadge(this,'minimizeOpp','on-mini')">ちいさくなる</button>
                     <button class="state-badge" id="badge_helping_opp"
-                        onclick="toggleBadge(this,'helpingHandOpp','on')">てだすけ</button>
-                    <span class="item-auto-badge badge-lo" id="itemBadge_lo_opp" style="display:none">🔮 珠ダメ</span>
-                    <span class="item-auto-badge badge-lefto" id="itemBadge_lefto_opp" style="display:none">🍃 たべのこし</span>
-                    <span class="item-auto-badge badge-shell" id="itemBadge_shell_opp" style="display:none">🐚 かいがらのすず</span>
+                        onclick="toggleBadge(this,'helpingHandOpp','on-tedasuke')">てだすけ</button>
+                    <span class="item-auto-badge badge-lo" id="itemBadge_lo_opp" style="display:none">いのちのたま</span>
+                    <span class="item-auto-badge badge-lefto" id="itemBadge_lefto_opp" style="display:none">たべのこし</span>
+                    <span class="item-auto-badge badge-shell" id="itemBadge_shell_opp" style="display:none">かいがらのすず</span>
                 </div>
                 </div>
-<div class="bdga" id="stateBadgeArea_opp"></div>
+<div class="bdga"></div>
 <div id="oppActiveBox" style="display:none"></div>
 </div>
 <div id="tools">
@@ -714,15 +785,15 @@ body.dark-mode .hs option{color:var(--tx)!important;background:var(--sur)!import
   <div class="thd" onclick="var b=document.getElementById('tt_sline');b.classList.toggle('cl');this.classList.toggle('op2');if(!b.classList.contains('cl'))updateSpeedTiers()">
     <span>🏃 素早さライン・先制技判定</span><span class="tha">▼</span></div>
   <div id="tt_sline" class="tbd cl">
-<div id="speedTierList" style="background:#f9f9f9;padding:10px;border-radius:4px;max-height:250px;overflow-y:auto;font-size:0.85rem;border:1px solid #ddd;margin-top:10px;">※「計算 ＆ 予測を実行」を押すと更新されます</div>
+<div id="speedTierList" style="background:#f9f9f9;padding:10px;border-radius:4px;font-size:0.85rem;border:1px solid #ddd;margin-top:10px;">※「計算 ＆ 予測を実行」を押すと更新されます</div>
 <!-- 先制技圏内判定 -->
             <div style="margin-top:10px; border-top:1px solid #ddd; padding-top:8px;">
               <div style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-weight:bold;color:#e67e22;"
-                   onclick="const _e=document.getElementById('priorityBody');const _o=_e.style.display==='none';_e.style.display=_o?'block':'none';this.querySelector('.tog-arrow').textContent=_o?'▲ 閉じる':'▼ クリックして開く';">
+                   onclick="const _e=document.getElementById('priorityBody');const _o=_e.style.display==='none';_e.style.display=_o?'block':'none';this.querySelector('.tog-arrow').textContent=_o?'▲':'▼';if(_o&&typeof updatePriorityKO==='function')updatePriorityKO();">
                 <span>⚡ 先制技圏内判定</span>
-                <span class="tog-arrow" style="font-size:0.8rem;color:#888;font-weight:normal;">▼ クリックして開く</span>
+                <span class="tog-arrow" style="font-size:0.8rem;color:#888;font-weight:normal;">▼</span>
               </div>
-              <div id="priorityBody" style="display:block;margin-top:6px;">
+              <div id="priorityBody" style="display:none;margin-top:6px;">
               <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
                 <span style="font-size:0.8rem; color:#555;">方向:</span>
                 <label style="font-size:0.8rem; cursor:pointer;">
@@ -731,7 +802,6 @@ body.dark-mode .hs option{color:var(--tx)!important;background:var(--sur)!import
                 <label style="font-size:0.8rem; cursor:pointer;">
                   <input type="radio" name="priorityDir" value="oppToMy" onchange="updatePriorityKO()"> 相手 → 自分
                 </label>
-                <button style="font-size:0.75rem; padding:2px 10px; background:#e67e22; color:#fff; border:none; border-radius:4px; cursor:pointer;" onclick="updatePriorityKO()">判定実行</button>
               </div>
               <div id="priorityMoveResult" style="margin-top:6px; font-size:0.82rem;"></div>
               </div>
@@ -739,14 +809,13 @@ body.dark-mode .hs option{color:var(--tx)!important;background:var(--sur)!import
             <!-- 能力P素早さ調整補助 -->
 <div id="speedCalcBox" style="margin-top:10px;border-top:1px solid #ddd;padding-top:8px;">
               <div style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-weight:bold;color:#2980b9;"
-                   onclick="const _e=document.getElementById('speedAdjBody');const _o=_e.style.display==='none';_e.style.display=_o?'block':'none';this.querySelector('.tog-arrow').textContent=_o?'▲ 閉じる':'▼ クリックして開く';">
+                   onclick="const _e=document.getElementById('speedAdjBody');const _o=_e.style.display==='none';_e.style.display=_o?'block':'none';this.querySelector('.tog-arrow').textContent=_o?'▲':'▼';if(_o&&typeof updateSpeedAdj==='function')updateSpeedAdj();">
                 <span>🎯 素早さ調整補助</span>
-                <span class="tog-arrow" style="font-size:0.8rem;color:#888;font-weight:normal;">▼ クリックして開く</span>
+                <span class="tog-arrow" style="font-size:0.8rem;color:#888;font-weight:normal;">▼</span>
               </div>
-              <div id="speedAdjBody" style="display:block;margin-top:6px;">
+              <div id="speedAdjBody" style="display:none;margin-top:6px;">
                 <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
                   <span style="font-size:0.8rem;color:#555;">相手より1速くなるのに必要な能力P</span>
-                  <button style="font-size:0.75rem;padding:3px 12px;background:#2980b9;color:#fff;border:none;border-radius:4px;cursor:pointer;" onclick="updateSpeedAdj()">計算実行</button>
                 </div>
                 <div id="speedAdjResult" style="margin-top:6px;"></div>
               </div>
@@ -781,12 +850,11 @@ body.dark-mode .hs option{color:var(--tx)!important;background:var(--sur)!import
             <!-- 技の一貫性チェック -->
             <div style="margin-top:10px; padding:8px; background:#fdf3fd; border:1px solid #d6b0e0; border-radius:6px;">
                 <div style="cursor:pointer; display:flex; justify-content:space-between; align-items:center; font-weight:bold; font-size:0.85rem; color:#8e44ad;"
-                     onclick="const cd=document.getElementById('consistencyBody');cd.style.display=cd.style.display==='none'?'block':'none';this.querySelector('.cc-arrow').textContent=cd.style.display==='none'?'▶':'▼';">
+                     onclick="const cd=document.getElementById('consistencyBody');const _open=cd.style.display==='none';cd.style.display=_open?'block':'none';this.querySelector('.cc-arrow').textContent=_open?'▲':'▶';if(_open&&typeof executeConsistencyCheck==='function')executeConsistencyCheck();if(!_open){const r=document.getElementById('consistencyResult');if(r)r.innerHTML=''}">
                     <span>⚠️ 技の一貫性チェック</span>
                     <span class="cc-arrow" style="font-size:0.8rem;">▶</span>
                 </div>
                 <div id="consistencyBody" style="display:none; margin-top:8px;">
-                    <button onclick="executeConsistencyCheck()" style="background:#8e44ad;color:#fff;border:none;border-radius:4px;padding:5px 12px;cursor:pointer;font-size:0.82rem;">チェック実行</button>
                     <div id="consistencyResult" style="margin-top:6px;"></div>
                 </div>
             </div>
@@ -5210,40 +5278,49 @@ body.dark-mode .hs option{color:var(--tx)!important;background:var(--sur)!import
 
         
         function seedTeamDefaults(side, teamData) {
+            const natMap = {
+                'わんぱく' :'1.0,1.0,1.1,0.9,1.0', 'ずぶとい' :'1.0,1.0,1.1,0.9,1.0',
+                'いじっぱり':'1.1,0.9,1.0,1.0,1.0', 'さみしがり':'1.1,0.9,1.0,1.0,1.0',
+                'やんちゃ' :'1.1,0.9,1.0,1.0,1.0', 'ゆうかん' :'1.1,0.9,1.0,1.0,1.0',
+                'ようき'   :'1.0,0.9,1.0,1.0,1.1', 'おくびょう':'0.9,1.0,1.0,1.0,1.1',
+                'せっかち' :'0.9,1.0,1.0,1.0,1.1', 'むじゃき' :'1.1,0.9,1.0,1.0,1.1',
+                'ひかえめ' :'0.9,1.1,1.0,1.0,1.0', 'おだやか' :'0.9,1.0,1.0,1.1,1.0',
+                'しんちょう':'0.9,1.0,1.0,1.1,1.0', 'なまいき' :'0.9,1.0,1.0,1.1,0.9',
+                'おとなしい':'0.9,1.1,1.0,1.0,1.0', 'ひかえめ' :'0.9,1.1,1.0,1.0,1.0',
+                'れいせい'  :'0.9,1.1,1.0,1.0,0.9', 'のんき'   :'1.0,1.0,1.1,0.9,0.9',
+                'なまいき'  :'0.9,1.0,1.0,1.1,0.9', 'ずぶとい' :'1.0,0.9,1.1,1.0,1.0',
+                'わんぱく'  :'1.0,0.9,1.1,1.0,1.0', 'のうてんき':'1.0,1.0,1.0,1.0,1.0',
+                'まじめ'    :'1.0,1.0,1.0,1.0,1.0',
+            };
+            // atk,spa,def,spd,spe の補正値に分解するヘルパー
+            function parseNat(natureStr) {
+                const v = natMap[natureStr] || '1.0,1.0,1.0,1.0,1.0';
+                const [atk,spa,df,spd,spe] = v.split(',').map(Number);
+                return { natAll: v, atk, spa, def: df, spd, spe };
+            }
             for (let i = 0; i < teamData.length; i++) {
                 const [name, ev, nature, ability, item, moves] = teamData[i];
-                const poke = document.getElementById(`${side}Poke${i}`);
-                const evs = ev.split('-');
-                if (poke) poke.value = name;
+                const evs = ev.split('-').map(v => parseInt(v,10) || 0);
                 const ids = ['HP','Atk','Def','SpA','SpD','Spe'];
-                ids.forEach((st, idx) => {
-                    const el = document.getElementById(`${side}${st}`);
-                    if (el && evs[idx] !== undefined) el.value = evs[idx];
-                });
-                const nat = document.getElementById(`${side}NatureAll`);
-                const natMap = {
-                    'わんぱく':'1.0,1.0,1.1,0.9,1.0', 'いじっぱり':'1.1,0.9,1.0,1.0,1.0', 'ようき':'1.0,0.9,1.0,1.0,1.1', 'ひかえめ':'0.9,1.1,1.0,1.0,1.0', 'おくびょう':'0.9,1.0,1.0,1.0,1.1'
-                };
-                if (nat && natMap[nature]) nat.value = natMap[nature];
-                applyNature(side);
-                const ab = document.getElementById(`${side}Ability`);
-                if (ab) { ab.value = ability; }
-                const it = document.getElementById(`${side}Item`);
-                if (it) {
-                    const found = Array.from(it.options).some(o => o.value === item);
-                    it.value = found ? item : '';
-                }
-                for (let m = 1; m <= 4; m++) {
-                    const mv = document.getElementById(`${side}Move${m}`);
-                    if (mv) mv.value = moves[m-1] || '';
-                }
-                const idx = i;
-                window.teamSlotState[side][idx] = window.teamSlotState[side][idx] || {};
-                window.teamSlotState[side][idx].name = name;
-                window.teamSlotState[side][idx][`${side}CurrentHpPct`] = 100;
-                for (let m = 1; m <= 4; m++) window.teamSlotState[side][idx][`${side}Move${m}`] = moves[m-1] || '';
-                window.teamSlotState[side][idx][`${side}Ability`] = ability;
-                window.teamSlotState[side][idx][`${side}Item`] = item;
+                const nat = parseNat(nature);
+                // teamSlotState に全情報を保存（DOM依存なし）
+                const st = window.teamSlotState[side][i] || {};
+                st.name = name;
+                st[`${side}CurrentHpPct`] = 100;
+                st[`${side}Ability`] = ability;
+                st[`${side}Item`]    = item;
+                st[`${side}NatureAll`]  = nat.natAll;
+                st[`${side}Nature`]     = String(nat.atk);
+                st[`${side}SpaNature`]  = String(nat.spa);
+                st[`${side}DefNature`]  = String(nat.def);
+                st[`${side}SpdNature`]  = String(nat.spd);
+                st[`${side}SpeNature`]  = String(nat.spe);
+                ids.forEach((s, idx) => { st[`${side}${s}`] = String(evs[idx] !== undefined ? evs[idx] : 0); });
+                for (let m = 1; m <= 4; m++) st[`${side}Move${m}`] = moves[m-1] || '';
+                window.teamSlotState[side][i] = st;
+                // ポケモン名selectだけDOMに反映
+                const poke = document.getElementById(`${side}Poke${i}`);
+                if (poke) poke.value = name;
             }
         }
 window.onload = function() {
@@ -5627,6 +5704,7 @@ window.onload = function() {
             if (side === "my" && typeof checkPoints === 'function') checkPoints();
             updateRealStats(side);
             updateTeamSummary(side);
+            if (typeof updateItemBadges === 'function') updateItemBadges(side);
         }
 
         
@@ -5639,7 +5717,7 @@ window.onload = function() {
             if (activeName) activeName.innerText = baseName;
 
             // 状態の復元準備
-            const activeIdx = document.querySelector(`input[name="${side}Active"]:checked`).value;
+            const activeIdx = document.querySelector(`input[name="${side}Active"]:checked`)?.value ?? "0";
             let savedState = window.teamSlotState[side][activeIdx];
             if (!savedState || savedState.name !== baseName) {
                 savedState = { name: baseName };
@@ -5675,9 +5753,19 @@ window.onload = function() {
                 const defMy = {
                     myHP: 0, myAtk: 0, myDef: 0, mySpA: 0, mySpD: 0, mySpe: 0,
                     myNatureAll: '1.0,1.0,1.0,1.0,1.0', myNature: '1.0', mySpaNature: '1.0', myDefNature: '1.0', mySpdNature: '1.0', mySpeNature: '1.0',
-                    myItem: 'なし', myRankA: 0, myRankD: 0, myRankS: 0, myRankC: 0, myRankD2: 0,
+                    myItem: 'なし',
+                    myRankA: 0, myRankC: 0, myRankD: 0, myRankD2: 0, myRankS: 0, myRankAcc: 0, myRankEva: 0,
                     myCurrentHpSlider: 100, myCurrentHpPct: 100
                 };
+                // 状態異常もリセット（引き継ぎなし）
+                { const e=document.getElementById('myStatus'); if(e) e.value='none'; }
+                // 定数バッジをリセット（のろい/バインド/しおづけ/やどりぎのタネ/ねをはる/じゅうでん/ちいさくなる/てだすけ）
+                ['noroiMy','bindMy','shioMy','yadorigi_dmgMy','neroMy','chargedMy','minimizeMy','helpingHandMy'].forEach(id => {
+                    const el = document.getElementById(id); if (el) { el.value = '0'; el.checked = false; }
+                    const btn = document.querySelector(`[onclick*="${id}"]`);
+                    if (btn) ['on','on-red','on-green','on-purple','on-yellow','on-sr','on-maki','on-noroi','on-bind','on-shio','on-yado','on-yado-heal','on-aqua','on-neru','on-kaze','on-juden','on-mini','on-tedasuke'].forEach(c => btn.classList.remove(c));
+                });
+
                 Object.keys(defMy).forEach(k => {
                     const el = document.getElementById(k);
                     if (el) el.value = defMy[k];
@@ -5686,9 +5774,19 @@ window.onload = function() {
                 const defOpp = {
                     oppHP: 0, oppAtk: 0, oppDef: 0, oppSpA: 0, oppSpD: 0, oppSpe: 0,
                     oppNatureAll: '1.0,1.0,1.0,1.0,1.0', oppNature: '1.0', oppSpaNature: '1.0', oppDefNature: '1.0', oppSpdNature: '1.0', oppSpeNature: '1.0',
-                    oppItem: 'なし', oppRankA: 0, oppRankD: 0, oppRankS: 0, oppRankC: 0, oppRankD2: 0,
+                    oppItem: 'なし',
+                    oppRankA: 0, oppRankC: 0, oppRankD: 0, oppRankD2: 0, oppRankS: 0, oppRankAcc: 0, oppRankEva: 0,
                     oppCurrentHpSlider: 100, oppCurrentHpPct: 100
                 };
+                // 状態異常もリセット（引き継ぎなし）
+                { const e=document.getElementById('oppStatus'); if(e) e.value='none'; }
+                // 定数バッジをリセット
+                ['noroiOpp','bindOpp','shioOpp','yadorigi_dmgOpp','neroOpp','chargedOpp','minimizeOpp','helpingHandOpp'].forEach(id => {
+                    const el = document.getElementById(id); if (el) { el.value = '0'; el.checked = false; }
+                    const btn = document.querySelector(`[onclick*="${id}"]`);
+                    if (btn) ['on','on-red','on-green','on-purple','on-yellow','on-sr','on-maki','on-noroi','on-bind','on-shio','on-yado','on-yado-heal','on-aqua','on-neru','on-kaze','on-juden','on-mini','on-tedasuke'].forEach(c => btn.classList.remove(c));
+                });
+
                 Object.keys(defOpp).forEach(k => {
                     const el = document.getElementById(k);
                     if (el) el.value = defOpp[k];
@@ -5741,11 +5839,14 @@ window.onload = function() {
             const _out = document.getElementById('resultOutput');
             if (_out) _out.innerHTML = '';
             if (typeof updateRankBadges === 'function') updateRankBadges();
+            if (typeof updateAllRankLabels === 'function') updateAllRankLabels();
             const _pa = document.getElementById(side === 'my' ? 'pointAlert' : 'pointAlertOpp');
             if (_pa) _pa.remove();
             // 再計算
             if (side === 'my' && typeof checkPoints === 'function') checkPoints();
             if (side === 'opp' && typeof checkOppSpeed === 'function') checkOppSpeed();
+            // 持ち物バッジをsavedState復元後に再評価
+            if (typeof updateItemBadges === 'function') updateItemBadges(side);
             updateRealStats(side);
             updateTeamSummary(side);
         }
@@ -5785,12 +5886,12 @@ function getSpecialMoveAdjustments(moveName, basePower, ctx) {
     power = w >= 200 ? 120 : w >= 100 ? 100 : w >= 50 ? 80 : w >= 25 ? 60 : w >= 10 ? 40 : 20;
     note = `weight:${w}`;
   } else if (moveName === 'しおふき' || moveName === 'ふんか') {
-    const hpPct = attackerSide === 'me' ? (parseInt(document.getElementById('myCurrentHpPct', 10)?.value || 100, 10)) : (parseInt(document.getElementById('oppCurrentHpPct', 10)?.value || 100, 10));
+    const hpPct = attackerSide === 'me' ? (parseInt(document.getElementById('myCurrentHpPct')?.value || 100, 10)) : (parseInt(document.getElementById('oppCurrentHpPct')?.value || 100, 10));
     power = Math.max(1, Math.floor(basePower * hpPct / 100));
     note = `hp:${hpPct}`;
   } else if (moveName === 'ハードプレス') {
-    const def = getExactStats(defPoke?.side || 'opp', parseInt(document.querySelector('input[name="oppActive"]:checked', 10)?.value || 0, 10), defPoke?.def || 1);
-    const atk = getExactStats(atkPoke?.side || 'me', parseInt(document.querySelector('input[name="myActive"]:checked', 10)?.value || 0, 10), atkPoke?.atk || 1);
+    const def = getExactStats(defPoke?.side || 'opp', parseInt(document.querySelector('input[name="oppActive"]:checked')?.value || 0, 10), defPoke?.def || 1);
+    const atk = getExactStats(atkPoke?.side || 'me', parseInt(document.querySelector('input[name="myActive"]:checked')?.value || 0, 10), atkPoke?.atk || 1);
     power = Math.max(1, Math.floor(100 * def / Math.max(1, atk)));
     note = `def/atk`;
   } else if (moveName === 'ヘビーボンバー' || moveName === 'ヒートスタンプ') {
@@ -5822,7 +5923,7 @@ function applyMoveData() {
             const moveName = document.getElementById('moveSelect')?.value;
             // 技未設定・未選択の場合は計算を実行しない
             if (!moveName || moveName === '' || moveName === '-- 技を手動で入力 --') return;
-            const attackerSideRaw = document.querySelector(`input[name="attackerSide"]:checked`).value;
+            const attackerSideRaw = document.querySelector(`input[name="attackerSide"]:checked`)?.value ?? "me";
             const attackerSide = attackerSideRaw === "me" ? "my" : "opp";
             const defenderSide = attackerSide === "my" ? "opp" : "my";
             const atkPoke = getEffectivePoke(attackerSide);
@@ -5836,8 +5937,8 @@ function applyMoveData() {
             const defStatus = document.getElementById(`${defenderSide}Status`)?.value || 'none';
             const weather = document.getElementById('battleWeather')?.value || 'none';
             let power = (moveName === 'ソーラービーム' || moveName === 'ソーラーブレード') ? (weather === 'sun' ? 120 : 60) : (moveInfo.power || 0);
-            const atkIdx = parseInt(document.querySelector(`input[name="${attackerSide}Active"]:checked`, 10)?.value || '0', 10);
-            const defIdx = parseInt(document.querySelector(`input[name="${defenderSide}Active"]:checked`, 10)?.value || '0', 10);
+            const atkIdx = parseInt(document.querySelector(`input[name="${attackerSide}Active"]:checked`)?.value || '0', 10);
+            const defIdx = parseInt(document.querySelector(`input[name="${defenderSide}Active"]:checked`)?.value || '0', 10);
             const defPoke = getEffectivePoke(defenderSide);
             const atkSpe = getExactStats(attackerSide, atkIdx, atkPoke).spe || 1;
             const defSpe = getExactStats(defenderSide, defIdx, defPoke).spe || 1;
@@ -5868,7 +5969,7 @@ function applyMoveData() {
         }
 
 function toggleDamageInput() {
-            const side = document.querySelector(`input[name="attackerSide"]:checked`).value;
+            const side = document.querySelector(`input[name="attackerSide"]:checked`)?.value ?? "me";
             document.getElementById('actualDamageBox').style.display = (side === 'opp') ? 'block' : 'none';
             updateMoveDropdown();
         }
@@ -5915,6 +6016,36 @@ function toggleDamageInput() {
 
         window.getRankMod = getRankMod;
 
+        // ===== ランク倍率ラベル =====
+        function updateRankLabel(selectId, labelId) {
+            const sel = document.getElementById(selectId);
+            const lbl = document.getElementById(labelId);
+            if (!sel || !lbl) return;
+            const rank = parseInt(sel.value, 10);
+            if (rank === 0) {
+                lbl.textContent = '';
+                return;
+            }
+            // 命中・回避ランクは getAccRankMod、素早さ・攻防特特はgetRankMod
+            const isAccEva = selectId.includes('Acc') || selectId.includes('Eva');
+            let mod;
+            if (isAccEva) {
+                mod = typeof getAccRankMod === 'function' ? getAccRankMod(rank) : (rank >= 0 ? (3+rank)/3 : 3/(3-rank));
+            } else {
+                mod = typeof getRankMod === 'function' ? getRankMod(rank) : (rank >= 0 ? (2+rank)/2 : 2/(2-rank));
+            }
+            const sign = rank > 0 ? '+' : '';
+            const color = rank > 0 ? '#2980b9' : '#e74c3c';
+            lbl.innerHTML = `<span style="color:${color};font-weight:bold;">×${mod.toFixed(2)}</span>`;
+        }
+        function updateAllRankLabels() {
+            const ids = ['myRankA','myRankC','myRankD','myRankD2','myRankS','myRankAcc','myRankEva',
+                         'oppRankA','oppRankC','oppRankD','oppRankD2','oppRankS','oppRankAcc','oppRankEva'];
+            ids.forEach(id => updateRankLabel(id, id+'_mod'));
+        }
+        window.updateAllRankLabels = updateAllRankLabels;
+
+
 // [AccEva修正] 命中・回避ランク補正
 function getAccRankMod(rank) {
     rank = Math.max(-6, Math.min(6, rank));
@@ -5938,7 +6069,7 @@ function getAccRankMod(rank) {
         function getCurrentHpMax(side) {
             const poke = getEffectivePoke(side);
             if (!poke) return 1;
-            const hpPts = parseInt(document.getElementById(`${side}HP`, 10)?.value, 10) || 0;
+            const hpPts = parseInt(document.getElementById(`${side}HP`)?.value, 10) || 0;
             return calcStat(poke.hp, hpPts, 1.0, true);
         }
 
@@ -5948,7 +6079,7 @@ function getAccRankMod(rank) {
             if (!poke) return;
 
             // HP
-            const maxHp = calcStat(poke.hp, parseInt(document.getElementById(`${side}HP`, 10)?.value || 0, 10) || 0, 1.0, true);
+            const maxHp = calcStat(poke.hp, parseInt(document.getElementById(`${side}HP`)?.value || 0, 10) || 0, 1.0, true);
             const hpSpan = document.getElementById(`${side}HPReal`);
             if (hpSpan) hpSpan.textContent = maxHp;
 
@@ -5963,27 +6094,27 @@ function getAccRankMod(rank) {
             const speNature  = parseFloat(document.getElementById(`${side}SpeNature`)?.value) || 1.0;
 
             // Atk
-            let atk = calcStat(poke.atk, parseInt(document.getElementById(`${side}Atk`, 10)?.value, 10) || 0, atkNature, false);
+            let atk = calcStat(poke.atk, parseInt(document.getElementById(`${side}Atk`)?.value, 10) || 0, atkNature, false);
             let atkSpan = document.getElementById(`${side}AtkReal`);
             if (atkSpan) atkSpan.textContent = atk;
 
             // Def
-            let def = calcStat(poke.def, parseInt(document.getElementById(`${side}Def`, 10)?.value, 10) || 0, defNature, false);
+            let def = calcStat(poke.def, parseInt(document.getElementById(`${side}Def`)?.value, 10) || 0, defNature, false);
             let defSpan = document.getElementById(`${side}DefReal`);
             if (defSpan) defSpan.textContent = def;
 
             // SpA
-            let spa = calcStat(poke.spa, parseInt(document.getElementById(`${side}SpA`, 10)?.value, 10) || 0, spaNature, false); // 特攻専用性格を適用（修正）
+            let spa = calcStat(poke.spa, parseInt(document.getElementById(`${side}SpA`)?.value, 10) || 0, spaNature, false); // 特攻専用性格を適用（修正）
             let spaSpan = document.getElementById(`${side}SpAReal`);
             if (spaSpan) spaSpan.textContent = spa;
 
             // SpD
-            let spd = calcStat(poke.spd, parseInt(document.getElementById(`${side}SpD`, 10)?.value, 10) || 0, spdNature, false); // 特防専用性格を適用（修正）
+            let spd = calcStat(poke.spd, parseInt(document.getElementById(`${side}SpD`)?.value, 10) || 0, spdNature, false); // 特防専用性格を適用（修正）
             let spdSpan = document.getElementById(`${side}SpDReal`);
             if (spdSpan) spdSpan.textContent = spd;
 
             // Spe
-            let spe = calcStat(poke.spe, parseInt(document.getElementById(`${side}Spe`, 10)?.value, 10) || 0, speNature, false);
+            let spe = calcStat(poke.spe, parseInt(document.getElementById(`${side}Spe`)?.value, 10) || 0, speNature, false);
             let speSpan = document.getElementById(`${side}SpeReal`);
             if (speSpan) speSpan.textContent = spe;
         }
@@ -6061,8 +6192,8 @@ function getAccRankMod(rank) {
         function updateSpeed() {
             const myPoke = getEffectivePoke('my');
             if (myPoke) {
-                let mySp = calcStat(myPoke.spe, parseInt(document.getElementById('mySpe', 10).value, 10)||0, parseFloat(document.getElementById('mySpeNature')?.value), false);
-                mySp = Math.floor(mySp * getRankMod(parseInt(document.getElementById('myRankS', 10).value, 10)));
+                let mySp = calcStat(myPoke.spe, parseInt(document.getElementById('mySpe')?.value, 10)||0, parseFloat(document.getElementById('mySpeNature')?.value), false);
+                mySp = Math.floor(mySp * getRankMod(parseInt(document.getElementById('myRankS')?.value, 10)));
                 if(document.getElementById('myItem').value === 'こだわりスカーフ' && !myPoke.isMega) mySp = Math.floor(mySp * 1.5);
                 
             if (document.getElementById('myStatus') && document.getElementById('myStatus').value === 'paralysis') mySp = Math.floor(mySp * 0.5);
@@ -6071,8 +6202,8 @@ if (document.getElementById('mySpeedDisplay')) document.getElementById('mySpeedD
 
             const oppPoke = getEffectivePoke('opp');
             if (oppPoke) {
-                let oppRank = parseInt(document.getElementById('oppRankS', 10).value, 10);
-                let oppSpBase = calcStat(oppPoke.spe, parseInt(document.getElementById('oppSpe', 10).value, 10)||0, parseFloat(document.getElementById('oppSpeNature')?.value)||1.0, false); 
+                let oppRank = parseInt(document.getElementById('oppRankS')?.value, 10);
+                let oppSpBase = calcStat(oppPoke.spe, parseInt(document.getElementById('oppSpe')?.value, 10)||0, parseFloat(document.getElementById('oppSpeNature')?.value)||1.0, false); 
                 let oppSp = Math.floor(oppSpBase * getRankMod(oppRank));
                 if(document.getElementById('oppItem').value === 'こだわりスカーフ' && !oppPoke.isMega) oppSp = Math.floor(oppSp * 1.5);
 
@@ -6093,7 +6224,7 @@ if (document.getElementById('oppSpeedDisplay')) document.getElementById('oppSpee
 
         function checkPoints() {
             const out = document.getElementById('resultOutput');
-            const safeInt = (id) => Math.min(32, Math.max(0, parseInt(document.getElementById(id, 10)?.value, 10) || 0)); /* 1ステータスあたり最大32、合計上限66 */
+            const safeInt = (id) => Math.min(32, Math.max(0, parseInt(document.getElementById(id)?.value, 10) || 0)); /* 1ステータスあたり最大32、合計上限66 */
             const myTotalPts = safeInt('myHP') + safeInt('myAtk') + safeInt('myDef') +
                                safeInt('mySpA') + safeInt('mySpD') + safeInt('mySpe');
             const oppTotalPts = safeInt('oppHP') + safeInt('oppAtk') + safeInt('oppDef') +
@@ -6284,7 +6415,7 @@ if (document.getElementById('oppSpeedDisplay')) document.getElementById('oppSpee
             /* BUG FIX: 旧IVの名残「45」を除去。能力Pのデフォルト値は0 */
             if (!window.teamSlotState || !window.teamSlotState[side]) return { isConf:false, hp:calcStat(pDex.hp,0,1.0,true), atk:calcStat(pDex.atk,0,1.0,false), def:calcStat(pDex.def,0,1.0,false), spa:calcStat(pDex.spa,0,1.0,false), spd:calcStat(pDex.spd,0,1.0,false), spe:calcStat(pDex.spe,0,1.0,false) };
             const state = (window.teamSlotState[side] && window.teamSlotState[side][idx]) ? window.teamSlotState[side][idx] : {};
-            const getV = (st) => isActive ? (parseInt(document.getElementById(`${side}${st}`, 10)?.value, 10) || 0) : (parseInt(state[`${side}${st}`], 10) || 0);
+            const getV = (st) => isActive ? (parseInt(document.getElementById(`${side}${st}`)?.value, 10) || 0) : (parseInt(state[`${side}${st}`], 10) || 0);
             // 非アクティブ時: NatureAll が保存されていれば分解して使用
             const _getNatureFromState = (st) => {
                 const allVal = state[`${side}NatureAll`];
@@ -6563,7 +6694,7 @@ if (document.getElementById('oppSpeedDisplay')) document.getElementById('oppSpee
             let spikes = isOpp ? isChecked('spikesOpp') : isChecked('spikesMy');
             if (spikes && isGrounded(pDex, pAbil, isOpp ? 'opp' : 'my')) {
                 const countId = isOpp ? 'spikesOppCount' : 'spikesMyCount';
-                const cnt = parseInt(document.getElementById(countId, 10)?.value, 10) || 1;
+                const cnt = parseInt(document.getElementById(countId)?.value, 10) || 1;
                 const spikeDmgTable = { 1: 12.5, 2: (100/6), 3: 25.0 }; // [Bug2修正] 1枚=12.5%, 2枚≈16.67%, 3枚=25%
                 dmg += spikeDmgTable[cnt] ?? 12.5;
             }
@@ -6614,9 +6745,9 @@ if (document.getElementById('oppSpeedDisplay')) document.getElementById('oppSpee
                     let isAct = (document.querySelector(`input[name="${side}Active"]:checked`)?.value === String(i));
                     let state = window.teamSlotState[side][i] || {};
 
-                    let pts    = isAct ? parseInt(document.getElementById(`${side}Spe`, 10)?.value  || 0, 10) : (parseInt(state[`${side}Spe`],    10) || 0);
+                    let pts    = isAct ? parseInt(document.getElementById(`${side}Spe`)?.value  || 0, 10) : (parseInt(state[`${side}Spe`],    10) || 0);
                     let nat    = isAct ? parseFloat(document.getElementById(`${side}SpeNature`)?.value || 1.0) : (parseFloat(state[`${side}SpeNature`]) || 1.0);
-                    let rank   = isAct ? parseInt(document.getElementById(`${side}RankS`, 10)?.value || 0, 10) : (parseInt(state[`${side}RankS`], 10) || 0);
+                    let rank   = isAct ? parseInt(document.getElementById(`${side}RankS`)?.value || 0, 10) : (parseInt(state[`${side}RankS`], 10) || 0);
                     let item   = isAct ? document.getElementById(`${side}Item`)?.value     : (state[`${side}Item`]    || '');
                     let status = isAct ? document.getElementById(`${side}Status`)?.value   : (state[`${side}Status`]  || 'none');
                     let abil   = isAct ? document.getElementById(`${side}Ability`)?.value  : (state[`${side}Ability`] || '');
@@ -6964,9 +7095,9 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
             const applyUnawareA = (rank, defAbil) => defAbil === 'てんねん' ? 0 : rank;
             const applyUnawareD = (rank, atkAbil) => atkAbil === 'てんねん' ? 0 : rank;
 
-            const hits = parseInt(document.getElementById('multiHitCount', 10)?.value, 10) || 1;
+            const hits = parseInt(document.getElementById('multiHitCount')?.value, 10) || 1;
 
-            const attackerSide = document.querySelector(`input[name="attackerSide"]:checked`).value;
+            const attackerSide = document.querySelector(`input[name="attackerSide"]:checked`)?.value ?? "me";
             const myPoke = getEffectivePoke('my');
             const oppPoke = getEffectivePoke('opp');
 
@@ -6992,8 +7123,8 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
             const moveInfo = moveDex[moveName] || { power: 0, type: '', category: '物理' };
                 var isParentalBond = false; // おやこあいフラグ（全ブロック共通）
 
-            const _myIdx  = parseInt(document.querySelector('input[name="myActive"]:checked', 10)?.value  || '0', 10);
-            const _oppIdx = parseInt(document.querySelector('input[name="oppActive"]:checked', 10)?.value || '0', 10);
+            const _myIdx  = parseInt(document.querySelector('input[name="myActive"]:checked')?.value  || '0', 10);
+            const _oppIdx = parseInt(document.querySelector('input[name="oppActive"]:checked')?.value || '0', 10);
             const _myStats4power  = myPoke  ? getExactStats('my',  _myIdx,  myPoke)  : null;
             const _oppStats4power = oppPoke ? getExactStats('opp', _oppIdx, oppPoke) : null;
             let power = getMoveDisplayPower(moveName,
@@ -7048,9 +7179,9 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
                         <b>${moveName}</b>（${moveType} / 変化技）はダメージを与えません。<br>
                         <span style="font-size:0.82rem; color:#888;">定数ダメージ・回復の予測は下の生存シミュレーションをご参照ください。</span>
                     </div>`;
-                const _predOpp = predictTotalSurvival(defSideForPred, 0, 0);
+                const _predOpp = typeof predictTotalSurvival === 'function' ? predictTotalSurvival(defSideForPred, 0, 0) : '';
                 if (_predOpp) out.innerHTML += `<div style="margin-top:4px;"><b>相手の場合:</b>${_predOpp}</div>`;
-                const _predMy  = predictTotalSurvival(mySideForPred, 0, 0);
+                const _predMy  = typeof predictTotalSurvival === 'function' ? predictTotalSurvival(mySideForPred, 0, 0) : '';
                 if (_predMy)  out.innerHTML += `<div style="margin-top:4px;"><b>自分の場合:</b>${_predMy}</div>`;
                 return;
             }
@@ -7072,9 +7203,9 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
 
             // === 条件変化技の威力補正 ===
             {
-                const _atkIdx = parseInt(document.querySelector(`input[name="${attackerSide}Active"]:checked`, 10)?.value||'0',10);
+                const _atkIdx = parseInt(document.querySelector(`input[name="${attackerSide}Active"]:checked`)?.value||'0',10);
                 const _defSide = attackerSide === 'me'?'opp':'my';
-                const _defIdx = parseInt(document.querySelector(`input[name="${_defSide}Active"]:checked`, 10)?.value||'0',10);
+                const _defIdx = parseInt(document.querySelector(`input[name="${_defSide}Active"]:checked`)?.value||'0',10);
                 const _atkPokeDex = attackerSide === 'me'?myPoke:oppPoke;
                 const _defPokeDex = attackerSide === 'me'?oppPoke:myPoke;
                 if (_atkPokeDex && _defPokeDex && window.teamSlotState[attackerSide] && window.teamSlotState[_defSide]) {
@@ -7140,6 +7271,8 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
                 if (abil === 'フェアリースキン' && mType === 'ノーマル') { mType = 'フェアリー'; mPow = Math.floor(mPow * 1.2); }
                 if (abil === 'フリーズスキン' && mType === 'ノーマル') { mType = 'こおり'; mPow = Math.floor(mPow * 1.2); }
                 if (abil === 'エレキスキン' && mType === 'ノーマル') { mType = 'でんき'; mPow = Math.floor(mPow * 1.2); }
+if (abil === 'ノーマルスキン') { mType = 'ノーマル'; } // 全技→ノーマルタイプ
+if (abil === 'ドラゴンスキン' && mType === 'ノーマル') { mType = 'ドラゴン'; mPow = Math.floor(mPow * 1.2); }
 
                 if (abil === 'テクニシャン' && mPow > 0 && mPow <= 60) mPow = Math.floor(mPow * 1.5);
                 if (abil === 'かたいツメ' && moveCat === '物理') mPow = Math.floor(mPow * 1.3);
@@ -7200,10 +7333,15 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
                         : parseFloat(document.getElementById('mySpaNature')?.value || '1.0');
                 let atkReal = calcStat(baseA, myAtkP, myNature, false);
 
-                let aRank = parseInt(document.getElementById(moveCat === '物理' ? 'myRankA' : 'myRankC', 10).value, 10);
+                let aRank = parseInt(document.getElementById(moveCat === '物理' ? 'myRankA' : 'myRankC')?.value ?? '0', 10);
                 if (oppAbil === 'いかく' && moveCat === '物理') aRank = Math.max(-6, aRank - 1);
                 atkReal = Math.floor(atkReal * getRankMod(applyUnawareA(aRank, oppAbil)));
 
+                if (myAbil === 'そうだいしょう') {
+                    if (typeof calcFaintedCount === 'function') calcFaintedCount();
+                    const _fc = (window._faintedCount && window._faintedCount['my']) || 0;
+                    if (_fc > 0) atkReal = Math.floor(atkReal * (1 + _fc * 0.1));
+                }
                 if (myAbil === 'ちからもち' && moveCat === '物理') atkReal *= 2;
                 if (myAbil === 'ヨガパワー' && moveCat === '物理') atkReal *= 2;
                 if (myAbil === 'こんじょう' && moveCat === '物理' && document.getElementById('myStatus') && document.getElementById('myStatus').value !== 'none') atkReal = Math.floor(atkReal * 1.5);
@@ -7266,11 +7404,11 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
                 if (isChecked('helpingHandMy')) dmgMod *= 1.5;
                 if (isChecked('chargedMy') && moveType === 'でんき') dmgMod *= 2.0;
                 if (moveCat === '物理') {
-                    const rfT = parseInt(document.getElementById('reflectTurnOpp', 10)?.value || '0', 10);
+                    const rfT = parseInt(document.getElementById('reflectTurnOpp')?.value || '0', 10);
                     if (rfT > 0) dmgMod *= isChecked('doubleBattle') ? (2/3) : 0.5;
                 }
                 if (moveCat === '特殊') {
-                    const lwT = parseInt(document.getElementById('lightWallTurnOpp', 10)?.value || '0', 10);
+                    const lwT = parseInt(document.getElementById('lightWallTurnOpp')?.value || '0', 10);
                     if (lwT > 0) dmgMod *= isChecked('doubleBattle') ? (2/3) : 0.5;
                 }
                 // ちいさくなる中(相手): 特定技で被ダメ2倍
@@ -7279,9 +7417,9 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
 
                 const baseD = moveCat === "物理" ? oppPoke.def : oppPoke.spd;
                 // 【修正1】相手の防御EV・性格を実際の入力値から取得
-                const oppDefP   = parseInt(document.getElementById(moveCat === '物理' ? 'oppDef' : 'oppSpD', 10).value, 10) || 0;
+                const oppDefP   = parseInt(document.getElementById(moveCat === '物理' ? 'oppDef' : 'oppSpD')?.value ?? '0', 10) || 0;
                 const oppDefNat = parseFloat(document.getElementById('oppDefNature')?.value) || 1.0;
-                const _defRankMod = getRankMod(applyUnawareD(parseInt(document.getElementById(moveCat === '物理' ? 'oppRankD' : 'oppRankD2', 10).value, 10), myAbil));
+                const _defRankMod = getRankMod(applyUnawareD(parseInt(document.getElementById(moveCat === '物理' ? 'oppRankD' : 'oppRankD2')?.value ?? '0', 10), myAbil));
                 // 耐久無振り: P=0,性格なし / 耐久特化: P=32,性格1.1 (ランク補正は0想定)
                 const _noRankMod = getRankMod(0);
                 let defReal_min = Math.floor(calcStat(baseD, 0, 1.0, false) * _noRankMod);
@@ -7314,9 +7452,9 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
 
                 // 固定ダメージ技の早期リターン処理
                 {
-                    const _myHpMaxM   = _myStats4power ? _myStats4power.hp : (myPoke ? calcStat(myPoke.hp, parseInt(document.getElementById('myHP', 10)?.value||0,10)||0, 1.0, true) : 1);
+                    const _myHpMaxM   = _myStats4power ? _myStats4power.hp : (myPoke ? calcStat(myPoke.hp, parseInt(document.getElementById('myHP')?.value||0,10)||0, 1.0, true) : 1);
                     const _myHpRealM  = Math.max(1, Math.round(_myHpMaxM * (parseFloat(document.getElementById('myCurrentHpPct')?.value||100)/100)));
-                    const _oppHpMaxM  = oppPoke ? calcStat(oppPoke.hp, parseInt(document.getElementById('oppHP', 10)?.value||0,10)||0, 1.0, true) : 1;
+                    const _oppHpMaxM  = oppPoke ? calcStat(oppPoke.hp, parseInt(document.getElementById('oppHP')?.value||0,10)||0, 1.0, true) : 1;
                     const _oppHpRealM = Math.max(1, Math.round(_oppHpMaxM * (oppCurrentHpPct/100)));
                     let _fixedDmgM = null;
                     if (moveName === 'ソニックブーム') _fixedDmgM = 20;
@@ -7425,7 +7563,7 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
                     let addHtml = '';
 
                     // 固定ダメージ技の処理
-                    const _myHpReal  = Math.max(1, Math.round(getExactStats('my', parseInt(document.querySelector('input[name="myActive"]:checked', 10)?.value||'0',10), myPoke).hp * (parseFloat(document.getElementById('myCurrentHpPct')?.value||100)/100)));
+                    const _myHpReal  = Math.max(1, Math.round(getExactStats('my', parseInt(document.querySelector('input[name="myActive"]:checked')?.value||'0',10), myPoke).hp * (parseFloat(document.getElementById('myCurrentHpPct')?.value||100)/100)));
                     const _oppHpReal = Math.max(1, Math.round(hExact * (parseFloat(document.getElementById('oppCurrentHpPct')?.value||100)/100)));
                     let fixedDmg = null;
                     if (moveName === 'ソニックブーム') fixedDmg = 20;
@@ -7457,10 +7595,7 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
                         else if (pDmg.max / hExact * 100 >= pReqHp) koStat = '乱1';
 
                         let koColor = koStat === '確1' ? '#c0392b' : (koStat === '乱1' ? '#d35400' : '#27ae60');
-                        addHtml = `<div style="margin-top:2px; font-size:0.68rem; color:#444;">
-                            <span style="display:inline-block; width:16px; font-weight:bold; color:#e67e22;">${eSym}</span> 
-                            <span>確定: <b>${minP}%〜${maxP}%</b> (<span style="color:${koColor};">${koStat}</span>)</span> 
-                        </div>`;
+                        addHtml = '';
                     } else {
                         let pDmgMin, pDmgMax, oyakoNoteP = '';
                         if (isParentalBond) {
@@ -7489,17 +7624,12 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
 
                         let koColor0 = koStat === '確1' ? '#c0392b' : (koStat === '乱1' ? '#d35400' : '#27ae60');
                         let koColor32 = koStat32 === '確1' ? '#c0392b' : (koStat32 === '乱1' ? '#d35400' : '#27ae60');
-                        addHtml = `<div style="margin-top:2px; font-size:0.68rem; color:#444;">
-                            <span style="display:inline-block; width:16px; font-weight:bold; color:#e67e22;">${eSym}</span> 
-                            <span>無振り: <b>${minP_0}%〜${maxP_0}%</b> (<span style="color:${koColor0};">${koStat}</span>)</span> 
-                            <span style="color:#ccc; margin:0 4px;">|</span> 
-                            <span>特化: <b>${minP_32}%〜${maxP_32}%</b> (<span style="color:${koColor32};">${koStat32}</span>)</span>
-                        </div>`;
+                        addHtml = '';
                     }
                     sumEl.innerHTML = existingText + addHtml;
                 }
 
-                const activeOppIdx = parseInt(document.querySelector(`input[name="oppActive"]:checked`, 10)?.value || 0, 10);
+                const activeOppIdx = parseInt(document.querySelector(`input[name="oppActive"]:checked`)?.value || 0, 10);
                 const activeOppStats = getExactStats('opp', activeOppIdx, oppPoke);
                 let tblHtml = '';
                 if (activeOppStats.isConf) {
@@ -7518,10 +7648,10 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
                     const _defStatLabel = moveCat === '物理' ? 'B' : 'D';
 
                     // 入力値での計算
-                    const _oppHpP   = parseInt(document.getElementById('oppHP', 10)?.value, 10) || 0;
-                    const _oppDefP  = parseInt(document.getElementById(moveCat === '物理' ? 'oppDef' : 'oppSpD', 10)?.value, 10) || 0;
+                    const _oppHpP   = parseInt(document.getElementById('oppHP')?.value, 10) || 0;
+                    const _oppDefP  = parseInt(document.getElementById(moveCat === '物理' ? 'oppDef' : 'oppSpD')?.value, 10) || 0;
                     const _oppDefNat = parseFloat(document.getElementById('oppDefNature')?.value) || 1.0;
-                    const _oppDefRank = parseInt(document.getElementById(moveCat === '物理' ? 'oppRankD' : 'oppRankS', 10)?.value, 10) || 0;
+                    const _oppDefRank = parseInt(document.getElementById(moveCat === '物理' ? 'oppRankD' : 'oppRankS')?.value, 10) || 0;
                     let _hpInput  = calcStat(oppPoke.hp, _oppHpP, 1.0, true);
                     let _defInput = Math.floor(calcStat(moveCat === '物理' ? oppPoke.def : oppPoke.spd, _oppDefP, _oppDefNat, false) * getRankMod(_oppDefRank));
                     if (weather === 'sand' && oppPoke.types.includes('いわ') && moveCat === '特殊') _defInput = Math.floor(_defInput * 1.5);
@@ -7546,7 +7676,7 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
                     </table>
                     <p style="font-size:0.85rem; margin-top:5px; color:#666;">※自分の実数値: ${atkReal} (${moveType}技威力${power}) で計算</p>
                     ${(()=>{
-                        const _hMin = calcStat(oppPoke.hp, parseInt(document.getElementById('oppHP', 10).value,10)||0, 1.0, true);
+                        const _hMin = calcStat(oppPoke.hp, parseInt(document.getElementById('oppHP')?.value ?? 0,10)||0, 1.0, true);
                         const _hMax = calcStat(oppPoke.hp, 32, 1.0, true);
                         const _dMin = Math.floor(calcStat(moveCat==='物理'?oppPoke.def:oppPoke.spd, 0, 1.0, false));
                         const _dMax = Math.floor(calcStat(moveCat==='物理'?oppPoke.def:oppPoke.spd, 32, 1.1, false));
@@ -7568,7 +7698,7 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
                         return '<div style="margin-top:8px;padding:6px 10px;background:#f0f8ff;border:1px solid #3498db;border-radius:4px;font-size:0.88rem;">🛡️ 相手の<b>身代わりHP</b>: <b>' + subHpShow + '</b> &nbsp;|&nbsp; この技: <b>' + Math.min(refDmgMin, refDmgMax) + '〜' + Math.max(refDmgMin, refDmgMax) + '</b> &nbsp;→&nbsp; <span style="color:' + subColor + ';font-weight:bold;">' + subLabel + '</span></div>';
                     })()}
                     ${(()=>{
-                        const survMsg = calcSurvivalTurns('opp', oppPoke, oppAbil, oppCurrentHpPct, calcStat(oppPoke.hp, parseInt(document.getElementById('oppHP', 10).value,10)||0, 1.0, true));
+                        const survMsg = calcSurvivalTurns('opp', oppPoke, oppAbil, oppCurrentHpPct, calcStat(oppPoke.hp, parseInt(document.getElementById('oppHP')?.value ?? 0,10)||0, 1.0, true));
                         if (!survMsg) return '';
                         return '<div style="margin-top:6px;padding:6px 10px;background:#fef9e7;border:1px solid #f39c12;border-radius:4px;font-size:0.88rem;">⏱️ 相手の蓄積ダメ残ターン: ' + (isParentalBond ? '<span style="color:#8e44ad;">👶 2発合算</span> ' : '') + survMsg + '</div>';
                     })()}
@@ -7581,12 +7711,12 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
                 moveType = modMove.newType; power = modMove.newPow;
 
                 const baseD = moveCat === "物理" ? myPoke.def : myPoke.spd;
-                const myDefP = parseInt(document.getElementById(moveCat === "物理" ? 'myDef' : 'mySpD', 10).value, 10) || 0;
+                const myDefP = parseInt(document.getElementById(moveCat === "物理" ? 'myDef' : 'mySpD')?.value ?? '0', 10) || 0;
                 const _myDefNatRecv = moveCat === '物理'
                     ? parseFloat(document.getElementById('myDefNature')?.value || '1.0')
                     : parseFloat(document.getElementById('mySpdNature')?.value || '1.0');
                 let defReal = calcStat(baseD, myDefP, _myDefNatRecv, false);
-                defReal = Math.floor(defReal * getRankMod(applyUnawareD(parseInt(document.getElementById(moveCat === '物理' ? 'myRankD' : 'myRankD2', 10).value, 10), oppAbil)));
+                defReal = Math.floor(defReal * getRankMod(applyUnawareD(parseInt(document.getElementById(moveCat === '物理' ? 'myRankD' : 'myRankD2')?.value ?? '0', 10), oppAbil)));
 
                 
                 if (weather === 'sand' && myPoke.types.includes('いわ') && moveCat === '特殊') {
@@ -7597,12 +7727,12 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
                 }
 
                 if (oppAbil === 'わざわいのつるぎ' && moveCat === '物理') defReal = Math.floor(defReal * 0.75);
-                let myHpReal = calcStat(myPoke.hp, parseInt(document.getElementById('myHP', 10).value, 10) || 0, 1.0, true);
+                let myHpReal = calcStat(myPoke.hp, parseInt(document.getElementById('myHP')?.value ?? 0, 10) || 0, 1.0, true);
 
                 // ボディプレス: 防御実数値を攻撃値として使用
                 const isBodyPressOpp = (moveName === 'ボディプレス');
                 const baseA = isBodyPressOpp ? oppPoke.def : (moveCat === "物理" ? oppPoke.atk : oppPoke.spa);
-                let aRank = parseInt(document.getElementById(moveCat === '物理' ? 'oppRankA' : 'oppRankC', 10).value, 10);
+                let aRank = parseInt(document.getElementById(moveCat === '物理' ? 'oppRankA' : 'oppRankC')?.value ?? '0', 10);
                 if (myAbil === 'いかく' && moveCat === '物理') aRank = Math.max(-6, aRank - 1);
 
                 let stab = oppPoke.types.includes(moveType) ? (oppAbil === 'てきおうりょく' ? 2.0 : 1.5) : 1.0;
@@ -7637,18 +7767,18 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
                 if (isChecked('helpingHandOpp')) dmgMod *= 1.5;
                 if (isChecked('chargedOpp') && moveType === 'でんき') dmgMod *= 2.0;
                 if (moveCat === '物理') {
-                    const rfTm = parseInt(document.getElementById('reflectTurnMy', 10)?.value || '0', 10);
+                    const rfTm = parseInt(document.getElementById('reflectTurnMy')?.value || '0', 10);
                     if (rfTm > 0) dmgMod *= isChecked('doubleBattle') ? (2/3) : 0.5;
                 }
                 if (moveCat === '特殊') {
-                    const lwTm = parseInt(document.getElementById('lightWallTurnMy', 10)?.value || '0', 10);
+                    const lwTm = parseInt(document.getElementById('lightWallTurnMy')?.value || '0', 10);
                     if (lwTm > 0) dmgMod *= isChecked('doubleBattle') ? (2/3) : 0.5;
                 }
                 // ちいさくなる中(自分): 特定技で被ダメ2倍
                 if (isChecked('minimizeMy') && ['たいあたり','なみのり','じしん','じならし','マグニチュード','ロールアウト','ヘビーボンバー','ヒートスタンプ'].includes(moveName)) dmgMod *= 2.0;
                 // =====================================================
 
-                let myCurrentHpPct = parseInt(document.getElementById('myCurrentHpPct', 10).value, 10) || 100;
+                let myCurrentHpPct = parseInt(document.getElementById('myCurrentHpPct')?.value ?? 100, 10) || 100;
                 let isMS = myAbil === 'マルチスケイル' && myCurrentHpPct === 100;
                 let hasBerry = document.getElementById('myItem').value === '半減きのみ';
 
@@ -7669,15 +7799,15 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
                 // --- 相手からの攻撃に対する自分チーム全員の予測を一覧に表示 ---
                 // 技が未設定(power=0)の場合はサマリーを更新しない
                 if (power <= 0) { /* スキップ */ } else
-                { const oppActiveIdx = parseInt(document.querySelector(`input[name="oppActive"]:checked`, 10)?.value, 10);
+                { const oppActiveIdx = parseInt(document.querySelector(`input[name="oppActive"]:checked`)?.value, 10);
                 const oppStats = getExactStats('opp', oppActiveIdx, oppPoke);
 
-                let atkRealForMyTeam = Math.floor(calcStat(baseA, parseInt(document.getElementById(moveCat === "物理" ? 'oppAtk' : 'oppSpA', 10).value, 10) || 0, parseFloat(document.getElementById(moveCat === '物理' ? 'oppNature' : 'oppSpaNature')?.value) || 1.0, false));
+                let atkRealForMyTeam = Math.floor(calcStat(baseA, parseInt(document.getElementById(moveCat === "物理" ? 'oppAtk' : 'oppSpA')?.value ?? '0', 10) || 0, parseFloat(document.getElementById(moveCat === '物理' ? 'oppNature' : 'oppSpaNature')?.value) || 1.0, false));
                 if (oppStats.isConf) {
                     atkRealForMyTeam = moveCat === "物理" ? oppStats.atk : oppStats.spa;
                 }
 
-                let aRankForMyTeam = parseInt(document.getElementById(moveCat === '物理' ? 'oppRankA' : 'oppRankC', 10).value, 10);
+                let aRankForMyTeam = parseInt(document.getElementById(moveCat === '物理' ? 'oppRankA' : 'oppRankC')?.value ?? '0', 10);
 
                 for (let i = 0; i < 6; i++) {
                     const pokeName = document.getElementById(`myPoke${i}`).value;
@@ -7754,9 +7884,9 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
                     let addHtml = '';
 
                     // 固定ダメージ技の処理（相手→自分）
-                    const _myHpRealB  = Math.max(1, Math.round(getExactStats('my', parseInt(document.querySelector('input[name="myActive"]:checked', 10)?.value||'0',10), myPoke).hp * (parseFloat(document.getElementById('myCurrentHpPct')?.value||100)/100)));
-                    const _oppHpRealB = Math.max(1, Math.round(getExactStats('opp', parseInt(document.querySelector('input[name="oppActive"]:checked', 10)?.value||'0',10), oppPoke).hp * (parseFloat(document.getElementById('oppCurrentHpPct')?.value||100)/100)));
-                    const _myHpMax = getExactStats('my', parseInt(document.querySelector('input[name="myActive"]:checked', 10)?.value||'0',10), myPoke).hp;
+                    const _myHpRealB  = Math.max(1, Math.round(getExactStats('my', parseInt(document.querySelector('input[name="myActive"]:checked')?.value||'0',10), myPoke).hp * (parseFloat(document.getElementById('myCurrentHpPct')?.value||100)/100)));
+                    const _oppHpRealB = Math.max(1, Math.round(getExactStats('opp', parseInt(document.querySelector('input[name="oppActive"]:checked')?.value||'0',10), oppPoke).hp * (parseFloat(document.getElementById('oppCurrentHpPct')?.value||100)/100)));
+                    const _myHpMax = getExactStats('my', parseInt(document.querySelector('input[name="myActive"]:checked')?.value||'0',10), myPoke).hp;
                     let fixedDmgB = null;
                     if (moveName === 'ソニックブーム') fixedDmgB = 20;
                     else if (moveName === 'りゅうのいかり') fixedDmgB = 40;
@@ -7786,10 +7916,7 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
                         else if (pDmg.max / hExact * 100 >= pReqHp) koStat = '乱1';
 
                         let koColor = koStat === '確1' ? '#c0392b' : (koStat === '乱1' ? '#d35400' : '#27ae60');
-                        addHtml = `<div style="margin-top:2px; font-size:0.68rem; color:#444;">
-                            <span style="display:inline-block; width:16px; font-weight:bold; color:#e67e22;">${eSym}</span> 
-                            <span>確定: <b>${minP}%〜${maxP}%</b> (<span style="color:${koColor};">${koStat}</span>)</span> 
-                        </div>`;
+                        addHtml = '';
                     } else {
                         // If either attacker or defender is not configured, we might want to still show min/max.
                         // Actually, if opponent (attacker) is not configured, they want min/max.
@@ -7813,12 +7940,7 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
 
                         let koColor0 = koStat === '確1' ? '#c0392b' : (koStat === '乱1' ? '#d35400' : '#27ae60');
                         let koColor32 = koStat32 === '確1' ? '#c0392b' : (koStat32 === '乱1' ? '#d35400' : '#27ae60');
-                        addHtml = `<div style="margin-top:2px; font-size:0.68rem; color:#444;">
-                            <span style="display:inline-block; width:16px; font-weight:bold; color:#e67e22;">${eSym}</span> 
-                            <span>無振り: <b>${minP_0}%〜${maxP_0}%</b> (<span style="color:${koColor0};">${koStat}</span>)</span> 
-                            <span style="color:#ccc; margin:0 4px;">|</span> 
-                            <span>特化: <b>${minP_32}%〜${maxP_32}%</b> (<span style="color:${koColor32};">${koStat32}</span>)</span>
-                        </div>`;
+                        addHtml = '';
                     }
                     sumEl.innerHTML = existingText + addHtml;
                 }
@@ -7843,7 +7965,7 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
                     
 
                     
-                    const activeOppIdx = parseInt(document.querySelector(`input[name="oppActive"]:checked`, 10)?.value || 0, 10);
+                    const activeOppIdx = parseInt(document.querySelector(`input[name="oppActive"]:checked`)?.value || 0, 10);
                     const activeOppStats = getExactStats('opp', activeOppIdx, oppPoke);
 
                     let tblHtml = '';
@@ -7954,14 +8076,14 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
             const atkAbil = document.getElementById(attackerSide + 'Ability')?.value || '';
             const defAbil = document.getElementById(defenderSide + 'Ability')?.value || '';
             const atkItem = document.getElementById(attackerSide + 'Item')?.value || '';
-            const aRankA = parseInt(document.getElementById(attackerSide + 'RankA', 10)?.value || '0', 10);
-            const aRankC = parseInt(document.getElementById(attackerSide + 'RankC', 10)?.value || '0', 10);
-            const defActiveIdx = parseInt(document.querySelector(`input[name="${defenderSide}Active"]:checked`, 10)?.value || '0', 10);
+            const aRankA = parseInt(document.getElementById(attackerSide + 'RankA')?.value || '0', 10);
+            const aRankC = parseInt(document.getElementById(attackerSide + 'RankC')?.value || '0', 10);
+            const defActiveIdx = parseInt(document.querySelector(`input[name="${defenderSide}Active"]:checked`)?.value || '0', 10);
             const defStats = getExactStats(defenderSide, defActiveIdx, defPoke);
             // 能力Pを直接読んで実数値計算（isConf不要）
-            const _defHpP   = parseInt(document.getElementById(defenderSide+'HP', 10)?.value||'0',10);
-            const _defDefP  = parseInt(document.getElementById(defenderSide+'Def', 10)?.value||'0',10);
-            const _defSpdP  = parseInt(document.getElementById(defenderSide+'SpD', 10)?.value||'0',10);
+            const _defHpP   = parseInt(document.getElementById(defenderSide+'HP')?.value||'0',10);
+            const _defDefP  = parseInt(document.getElementById(defenderSide+'Def')?.value||'0',10);
+            const _defSpdP  = parseInt(document.getElementById(defenderSide+'SpD')?.value||'0',10);
             const _defDefNat = parseFloat(document.getElementById(defenderSide+'DefNature')?.value||'1.0');
             const _defSpdNat = parseFloat(document.getElementById(defenderSide+'SpdNature')?.value||'1.0');
             const defHp = calcStat(defPoke.hp, _defHpP, 1.0, true);
@@ -7997,13 +8119,25 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
             }
 
             let html = `<div class="result-title">⚡ 全技ダメージ一覧 (${atkPoke.name} → ${defPoke.name})</div>
-                <table class="predict-table">
-                <tr><th>技名</th><th>タイプ</th><th>威力</th><th>ダメージ</th><th>割合(%)</th><th>判定</th></tr>`;
+                <table class="predict-table moves-table">
+                <tr><th>技名</th><th>タイプ</th><th>威力</th><th>ダメージ</th><th>判定</th></tr>`;
 
             moves.forEach(mv => {
                 const md = moveDex[mv];
-                if (!md) { html += `<tr><td><b>${mv}</b></td><td>-</td><td>-</td><td colspan="3" style="color:#888;">データなし</td></tr>`; return; }
-                if (md.category === '変化') { html += `<tr><td><b>${mv}</b></td><td>${md.type}</td><td>-</td><td colspan="3" style="color:#888;">変化技</td></tr>`; return; }
+                if (!md) { html += `<tr><td><b>${mv}</b></td><td>-</td><td>-</td><td colspan="2" style="color:#888;">データなし</td></tr>`; return; }
+                if (md.category === '変化') {
+                    const _vBadge = getMoveInfoBadge(mv, atkAbil||'', atkItem||'', weather||'none', document.getElementById('battleTerrain')?.value||'none',
+                        (getExactStats(attackerSide, parseInt(document.querySelector('input[name="'+attackerSide+'Active"]')?.value||'0',10), atkPoke).spe <
+                         getExactStats(defenderSide, parseInt(document.querySelector('input[name="'+defenderSide+'Active"]')?.value||'0',10), defPoke).spe),
+                        parseInt(document.getElementById(attackerSide+'RankAcc')?.value||0,10),
+                        parseInt(document.getElementById(defenderSide+'RankEva')?.value||0,10),
+                        document.getElementById(attackerSide+'Status')?.value||'none',
+                        !!(document.getElementById('gravityField')?.value==='1'),
+                        document.getElementById(defenderSide+'Item')?.value||'',
+                        document.getElementById(defenderSide+'Ability')?.value||'');
+                    html += `<tr><td><b>${mv}</b>${_vBadge}</td><td>${md.type}</td><td>-</td><td colspan="2" style="color:#888;">変化技</td></tr>`;
+                    return;
+                }
                 let power = md.power || 0;
                 const moveType = md.type;
                 // くさむすび/けたぐり の重さ補正
@@ -8012,36 +8146,44 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
                 {
                     const _atkSt = document.getElementById(attackerSide+'Status')?.value || 'none';
                     const _defSt = document.getElementById(defenderSide+'Status')?.value || 'none';
-                    const _aSpe = getExactStats(attackerSide, parseInt(document.querySelector(`input[name="${attackerSide}Active"]:checked`, 10)?.value||'0',10), atkPoke).spe || 1;
-                    const _dSpe = getExactStats(defenderSide, parseInt(document.querySelector(`input[name="${defenderSide}Active"]:checked`, 10)?.value||'0',10), defPoke).spe || 1;
+                    const _aSpe = getExactStats(attackerSide, parseInt(document.querySelector(`input[name="${attackerSide}Active"]:checked`)?.value||'0',10), atkPoke).spe || 1;
+                    const _dSpe = getExactStats(defenderSide, parseInt(document.querySelector(`input[name="${defenderSide}Active"]:checked`)?.value||'0',10), defPoke).spe || 1;
                     const _cr = getConditionalPower(mv, power, md.type, md.category, atkPoke, defPoke, atkAbil, defAbil, atkItem, _atkSt, _defSt, weather, terrain, _aSpe, _dSpe);
                     power = _cr.power;
                 }
                 const moveCat = md.category;
                 const isParentalBond = (atkAbil === 'おやこあい' && moveCat !== '変化');
-                if (power === 0) { html += `<tr><td><b>${mv}</b></td><td>${moveType}</td><td>0</td><td colspan="3" style="color:#888;">威力0</td></tr>`; return; }
-                const eff = calcTypeEffectiveness(moveType, defPoke.types, atkAbil, defAbil);
-                if (eff === 0) { html += `<tr><td><b>${mv}</b></td><td>${moveType}</td><td>${power}</td><td colspan="3" style="color:#aaa;">無効</td></tr>`; return; }
+                if (power === 0) { html += `<tr><td><b>${mv}</b></td><td>${moveType}</td><td>0</td><td colspan="2" style="color:#888;">威力0</td></tr>`; return; }
+                let _mTypeA = moveType;
+                if (atkAbil==='スカイスキン'    && _mTypeA==='ノーマル') { _mTypeA='ひこう';    power=Math.floor(power*1.2); }
+                if (atkAbil==='フェアリースキン' && _mTypeA==='ノーマル') { _mTypeA='フェアリー'; power=Math.floor(power*1.2); }
+                if (atkAbil==='フリーズスキン'   && _mTypeA==='ノーマル') { _mTypeA='こおり';    power=Math.floor(power*1.2); }
+                if (atkAbil==='エレキスキン'     && _mTypeA==='ノーマル') { _mTypeA='でんき';    power=Math.floor(power*1.2); }
+                if (atkAbil==='ノーマルスキン') { _mTypeA='ノーマル'; }
+                if (atkAbil==='ドラゴンスキン'   && _mTypeA==='ノーマル') { _mTypeA='ドラゴン'; power=Math.floor(power*1.2); }
+                const eff = calcTypeEffectiveness(_mTypeA, defPoke.types, atkAbil, defAbil);
+                if (eff === 0) { html += `<tr><td><b>${mv}</b></td><td>${_mTypeA}</td><td>${power}</td><td colspan="2" style="color:#aaa;">無効</td></tr>`; return; }
                 const baseA = moveCat === '物理' ? atkPoke.atk : atkPoke.spa;
-                const atkPts = parseInt(document.getElementById(attackerSide + (moveCat === '物理' ? 'Atk' : 'SpA', 10))?.value || '0', 10);
+                const atkPts = parseInt(document.getElementById(attackerSide + (moveCat === '物理' ? 'Atk' : 'SpA'))?.value || '0', 10);
                 const atkNat = moveCat === '物理'
                     ? parseFloat(document.getElementById(attackerSide + 'Nature')?.value    || '1.0')
                     : parseFloat(document.getElementById(attackerSide + 'SpaNature')?.value || '1.0');
-                let atkReal = Math.floor(calcStat(baseA, atkPts, atkNat, false) * getRankMod(moveCat === '物理' ? aRankA : aRankC));
+                const _aRankEff = (defAbil === 'てんねん') ? 0 : (moveCat === '物理' ? aRankA : aRankC);
+                let atkReal = Math.floor(calcStat(baseA, atkPts, atkNat, false) * getRankMod(_aRankEff));
                 if (atkItem === 'こだわりハチマキ' && moveCat === '物理' && !atkPoke.isMega) atkReal = Math.floor(atkReal * 1.5);
                 if (atkItem === 'こだわりメガネ' && moveCat === '特殊' && !atkPoke.isMega) atkReal = Math.floor(atkReal * 1.5);
                 if (atkItem === 'でんきだま' && atkPoke.name === 'ピカチュウ') atkReal = Math.floor(atkReal * 2); // [Bug6A修正]
-                // 攻撃側特性による威力・タイプ変換補正
-                let _mTypeA = moveType;
-                if (atkAbil==='スカイスキン' && _mTypeA==='ノーマル') { _mTypeA='ひこう'; power=Math.floor(power*1.2); }
-                if (atkAbil==='フェアリースキン' && _mTypeA==='ノーマル') { _mTypeA='フェアリー'; power=Math.floor(power*1.2); }
-                if (atkAbil==='フリーズスキン' && _mTypeA==='ノーマル') { _mTypeA='こおり'; power=Math.floor(power*1.2); }
-                if (atkAbil==='エレキスキン' && _mTypeA==='ノーマル') { _mTypeA='でんき'; power=Math.floor(power*1.2); }
+                // 攻撃側特性による威力・タイプ変換補正（eff計算前に移動済み）
                 if (atkAbil==='テクニシャン' && power > 0 && power<=60) power=Math.floor(power*1.5);
                 if (atkAbil==='かたいツメ' && moveCat==='物理') power=Math.floor(power*1.3);
                 if (atkAbil==='トランジスタ' && _mTypeA==='でんき') power=Math.floor(power*1.3);
                 if (atkAbil==='りゅうのアギト' && _mTypeA==='ドラゴン') power=Math.floor(power*1.5);
                 if (atkAbil==='すいほう' && _mTypeA==='みず') power=power*2;
+                if (atkAbil==='そうだいしょう') {
+                    if (typeof calcFaintedCount === 'function') calcFaintedCount();
+                    const _fc2 = (window._faintedCount && window._faintedCount[attackerSide]) || 0;
+                    if (_fc2 > 0) atkReal = Math.floor(atkReal * (1 + _fc2 * 0.1));
+                }
                 if (atkAbil==='ちからもち' && moveCat==='物理') atkReal*=2;
                 if (atkAbil==='こんじょう' && moveCat==='物理') {
                     const _st=document.getElementById(attackerSide+'Status')?.value||'none';
@@ -8054,6 +8196,11 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
                     ? Math.floor(calcStat(defPoke.def, _defDefP, _defDefNat, false))
                     : Math.floor(calcStat(defPoke.spd, _defSpdP, _defSpdNat, false));
                 if (!defReal || defReal === 0) defReal = 1;
+                // 防御ランク補正（てんねん: 防御ランク無視）
+                { const _defRankKey = moveCat === '物理' ? defenderSide+'RankD' : defenderSide+'RankD2';
+                  const _defRankRaw = parseInt(document.getElementById(_defRankKey)?.value || '0', 10);
+                  const _defRankEff = (atkAbil === 'てんねん') ? 0 : _defRankRaw;
+                  if (_defRankEff !== 0) defReal = Math.floor(defReal * getRankMod(_defRankEff)); }
                 if (document.getElementById(defenderSide+'Item')?.value === 'とつげきチョッキ' && moveCat === '特殊' && !defPoke.isMega) defReal = Math.floor(defReal * 1.5); // [Bug7A修正]
                 const isMS = defAbil === 'マルチスケイル' && defCurrentHpPct >= 100;
                 const hasBerry = document.getElementById(defenderSide + 'Item')?.value === '半減きのみ';
@@ -8124,14 +8271,14 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
                         const probLabel = prob < 100
                             ? `<span style="font-size:0.7rem;color:#8e44ad;font-weight:bold;margin-left:4px;">${prob}%</span>`
                             : '';
-                        hitRows += `<tr style="font-size:0.82rem;${hBg}"><td style="padding-left:16px;color:#555;">└ ${h}hit${probLabel}</td><td></td><td></td><td>${hDmgMin}〜${hDmgMax}</td><td>${hMinPct}〜${hMaxPct}%</td><td>${hKo}</td></tr>`;
+                        hitRows += `<tr style="font-size:0.82rem;${hBg}"><td style="padding-left:16px;color:#555;">└ ${h}hit${probLabel}</td><td></td><td></td><td style="line-height:1.6;text-align:center;"><span style="font-size:0.82rem;font-weight:bold;">${hMinPct}〜${hMaxPct}%</span><br><span style="font-size:0.74rem;color:#666;">${hDmgMin}〜${hDmgMax}</span></td><td>${hKo}</td></tr>`;
                     }
                     multiRows = hitRows;
                 }
                 const _mhMin = (atkAbil==='スキルリンク'&&mhData)?mhData.max:(atkItem==='いかさまダイス'&&mhData&&mhData.max>=4)?4:mhData?.min;
                 const _mhMax = (atkAbil==='スキルリンク'&&mhData)?mhData.max:(atkItem==='いかさまダイス'&&mhData&&mhData.max>=4)?5:mhData?.max;
                 const multiLabel = (mhData && _mhMax > 1) ? ' <span style="font-size:0.75rem;color:#8e44ad;">×'+_mhMin+(_mhMax>_mhMin?'〜'+_mhMax:'')+'hit</span>' : '';
-                html += `<tr><td><b>${mv}</b>${multiLabel}${isParentalBond ? ' <span style="color:#8e44ad;font-size:0.72rem;">👶 2発合算</span>' : ''}${getMoveInfoBadge(mv, atkAbil||'', atkItem||'', weather||'none', '', false, parseInt(document.getElementById(attackerSide+'RankAcc')?.value||0,10), parseInt(document.getElementById(defenderSide+'RankEva')?.value||0,10), document.getElementById(attackerSide+'Status')?.value||'none')}</td><td>${moveType}${effMark}</td><td>${power}</td><td><b>${dmg.min}〜${dmg.max}</b></td><td>${minPct}〜${maxPct}%</td><td>${koStat}</td></tr>` + multiRows;
+                html += `<tr><td><b>${mv}</b>${multiLabel}${isParentalBond ? ' <span style="color:#8e44ad;font-size:0.72rem;">👶 2発合算</span>' : ''}${getMoveInfoBadge(mv, atkAbil||'', atkItem||'', weather||'none', document.getElementById('battleTerrain')?.value||'none', (getExactStats(attackerSide, parseInt(document.querySelector('input[name="'+attackerSide+'Active"]:checked')?.value||'0',10), atkPoke).spe < getExactStats(defenderSide, parseInt(document.querySelector('input[name="'+defenderSide+'Active"]:checked')?.value||'0',10), defPoke).spe), parseInt(document.getElementById(attackerSide+'RankAcc')?.value||0,10), parseInt(document.getElementById(defenderSide+'RankEva')?.value||0,10), document.getElementById(attackerSide+'Status')?.value||'none', !!(document.getElementById('gravityField')?.value==='1'), document.getElementById(defenderSide+'Item')?.value||'', document.getElementById(defenderSide+'Ability')?.value||'')}</td><td>${effMark}${moveType}</td><td>${power}</td><td style="line-height:1.6;text-align:center;"><span style="font-size:0.85rem;font-weight:bold;">${minPct}〜${maxPct}%</span><br><span style="font-size:0.76rem;color:#666;">${dmg.min}〜${dmg.max}</span></td><td>${koStat}</td></tr>` + multiRows;
             });
             html += '</table>';
             out.innerHTML = html;
@@ -8148,8 +8295,8 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
             if (!atkPoke) { out.innerHTML = '<div style="color:#e74c3c;padding:10px;">⚠️ 攻撃するポケモンを選択してください</div>'; return; }
             const atkAbil = document.getElementById(attackerSide + 'Ability')?.value || '';
             const atkItem = document.getElementById(attackerSide + 'Item')?.value || '';
-            const aRankA = parseInt(document.getElementById(attackerSide + 'RankA', 10)?.value || '0', 10);
-            const aRankC = parseInt(document.getElementById(attackerSide + 'RankC', 10)?.value || '0', 10);
+            const aRankA = parseInt(document.getElementById(attackerSide + 'RankA')?.value || '0', 10);
+            const aRankC = parseInt(document.getElementById(attackerSide + 'RankC')?.value || '0', 10);
             const dmgMod = (atkItem === 'いのちのたま' && !atkPoke.isMega) ? 1.3 : 1.0;
             const moves = [];
             for (let s = 1; s <= 4; s++) {
@@ -8170,7 +8317,7 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
                 if (moves.length > 8) moves.splice(8);
             }
             let html = `<div class="result-title">📋 相手全選出への打点一覧 (${atkPoke.name})</div>
-                <table class="predict-table">
+                <table class="predict-table party-table">
                 <tr><th>相手ポケモン</th>${moves.map(m => `<th>${m}</th>`).join('')}</tr>`;
             for (let i = 0; i < 6; i++) {
                 const defName = document.getElementById(defenderSide + 'Poke' + i)?.value;
@@ -8190,31 +8337,48 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
                 moves.forEach(mv => {
                     const md = moveDex[mv];
                     if (!md) { row += `<td style="color:#aaa; font-size:0.75rem;">未登録</td>`; return; }
-                    const eff = calcTypeEffectiveness(md.type, defPoke.types, atkAbil, defAbil);
+                    let _mvType2 = md.type;
+                    if (atkAbil==='スカイスキン'    && _mvType2==='ノーマル') { _mvType2='ひこう';    _mvPow=Math.floor(_mvPow*1.2); }
+                    if (atkAbil==='フェアリースキン' && _mvType2==='ノーマル') { _mvType2='フェアリー'; _mvPow=Math.floor(_mvPow*1.2); }
+                    if (atkAbil==='フリーズスキン'   && _mvType2==='ノーマル') { _mvType2='こおり';    _mvPow=Math.floor(_mvPow*1.2); }
+                    if (atkAbil==='エレキスキン'     && _mvType2==='ノーマル') { _mvType2='でんき';    _mvPow=Math.floor(_mvPow*1.2); }
+                    if (atkAbil==='ノーマルスキン') { _mvType2='ノーマル'; }
+                    if (atkAbil==='ドラゴンスキン'   && _mvType2==='ノーマル') { _mvType2='ドラゴン'; _mvPow=Math.floor(_mvPow*1.2); }
+                    const eff = calcTypeEffectiveness(_mvType2, defPoke.types, atkAbil, defAbil);
                     if (eff === 0) { row += `<td style="color:#aaa;text-align:center;"><span style="font-weight:bold;">×</span></td>`; return; }
                     const moveCat = md.category;
                     const isParentalBond = (atkAbil === 'おやこあい' && moveCat !== '変化');
                     const baseA = moveCat === '物理' ? atkPoke.atk : atkPoke.spa;
-                    const atkPts = parseInt(document.getElementById(attackerSide + (moveCat === '物理' ? 'Atk' : 'SpA', 10))?.value || '0', 10);
+                    const atkPts = parseInt(document.getElementById(attackerSide + (moveCat === '物理' ? 'Atk' : 'SpA'))?.value || '0', 10);
                     const atkNat = moveCat === '物理'
                         ? parseFloat(document.getElementById(attackerSide + 'Nature')?.value    || '1.0')
                         : parseFloat(document.getElementById(attackerSide + 'SpaNature')?.value || '1.0');
-                    let atkReal = Math.floor(calcStat(baseA, atkPts, atkNat, false) * getRankMod(moveCat === '物理' ? aRankA : aRankC));
+                    const _aRankEff2 = (defAbil === 'てんねん') ? 0 : (moveCat === '物理' ? aRankA : aRankC);
+                    let atkReal = Math.floor(calcStat(baseA, atkPts, atkNat, false) * getRankMod(_aRankEff2));
                     if (atkItem === 'こだわりハチマキ' && moveCat === '物理' && !atkPoke.isMega) atkReal = Math.floor(atkReal * 1.5);
                     if (atkItem === 'こだわりメガネ' && moveCat === '特殊' && !atkPoke.isMega) atkReal = Math.floor(atkReal * 1.5);
                     if (atkItem === 'でんきだま' && atkPoke.name === 'ピカチュウ') atkReal = Math.floor(atkReal * 2); // [Bug6B修正]
-                    const stab = atkPoke.types.includes(md.type) ? (atkAbil === 'てきおうりょく' ? 2.0 : 1.5) : 1.0;
+                    const stab = atkPoke.types.includes(_mvType2) ? (atkAbil === 'てきおうりょく' ? 2.0 : 1.5) : 1.0;
                     const baseD = moveCat === '物理' ? defPoke.def : defPoke.spd;
                     let defReal = moveCat === '物理'
                         ? Math.floor(calcStat(defPoke.def, _defP2, _defNat2, false))
                         : Math.floor(calcStat(defPoke.spd, _spdP2, _defSpdNat2, false));
                     if (!defReal || defReal === 0) defReal = 1;
                     if (document.getElementById(defenderSide+'Item')?.value === 'とつげきチョッキ' && moveCat === '特殊' && !defPoke.isMega) defReal = Math.floor(defReal * 1.5); // [Bug7B修正]
+                    // 防御ランク補正（てんねん: 防御ランク無視）
+                    { const _defRankKey2 = moveCat === '物理' ? defenderSide+'RankD' : defenderSide+'RankD2';
+                      const _defRankRaw2 = parseInt(document.getElementById(_defRankKey2)?.value || '0', 10);
+                      const _defRankEff2 = (atkAbil === 'てんねん') ? 0 : _defRankRaw2;
+                      if (_defRankEff2 !== 0) defReal = Math.floor(defReal * getRankMod(_defRankEff2)); }
+                    // 天候防御補正: すなあらし→いわタイプ特防×1.5 / ゆき→こおりタイプ防御×1.5
+                    const _effWeather2 = (() => { let w = document.getElementById('battleWeather')?.value || 'none'; if (atkAbil==='ひでり'||defAbil==='ひでり') w='sun'; if (atkAbil==='あめふらし'||defAbil==='あめふらし') w='rain'; if (atkAbil==='すなおこし'||defAbil==='すなおこし') w='sand'; if (atkAbil==='ゆきふらし'||defAbil==='ゆきふらし') w='snow'; return w; })();
+                    if (_effWeather2 === 'sand' && defPoke.types && defPoke.types.includes('いわ') && moveCat === '特殊') defReal = Math.floor(defReal * 1.5);
+                    if (_effWeather2 === 'snow' && defPoke.types && defPoke.types.includes('こおり') && moveCat === '物理') defReal = Math.floor(defReal * 1.5);
                     // 条件変化技・天候・フィールド補正
                     let _mvPow = (mv === 'くさむすび' || mv === 'けたぐり') ? getWeightPower(defName) : (md.power || 0);
                     const _atkSt2 = document.getElementById(attackerSide+'Status')?.value || 'none';
                     const _defSt2 = (window.teamSlotState[defenderSide][i] || {})[defenderSide+'Status'] || 'none';
-                    const _aSpe2 = getExactStats(attackerSide, parseInt(document.querySelector(`input[name="${attackerSide}Active"]:checked`, 10)?.value||'0',10), atkPoke).spe || 1;
+                    const _aSpe2 = getExactStats(attackerSide, parseInt(document.querySelector(`input[name="${attackerSide}Active"]:checked`)?.value||'0',10), atkPoke).spe || 1;
                     const _dSpe2 = defStats.spe || 1;
                     const _weather2 = document.getElementById('battleWeather')?.value || 'none';
                     const _terrain2 = document.getElementById('battleTerrain')?.value || 'none';
@@ -8258,8 +8422,8 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
                     if (defAbil==='すいほう' && md.type==='ほのお') _mvPow=Math.floor(_mvPow*0.5);
                     if (defAbil==='きよめのしお' && md.type==='ゴースト') _mvPow=Math.floor(_mvPow*0.5);
                     const dmg = getPBMoveDamage(atkReal, defReal, _mvPow, stab, eff, _dmgMod2, false, false, isParentalBond);
-                    const minPct = (dmg.min / defHp * 100).toFixed(0);
-                    const maxPct = (dmg.max / defHp * 100).toFixed(0);
+                    const minPct = (dmg.min / defHp * 100).toFixed(1);
+                    const maxPct = (dmg.max / defHp * 100).toFixed(1);
                     const ko1c = parseFloat(minPct) >= 100;
                     const ko1 = parseFloat(maxPct) >= 100;
                     // チームサマリーと同じ記号体系
@@ -8275,11 +8439,11 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
                     const mhD = multiHitMoves[mv];
                     let multiNote = '';
                     if (mhD) {
-                        const maxHPct = (dmg.max * mhD.max / defHp * 100).toFixed(0);
+                        const maxHPct = (dmg.max * mhD.max / defHp * 100).toFixed(1);
                         const maxHKo = parseFloat(maxHPct) >= 100;
-                        multiNote = `<br><span style="font-size:0.75rem;color:#8e44ad;">最大${mhD.max}hit: ${(dmg.min*mhD.max/defHp*100).toFixed(0)}〜${maxHPct}%</span>`;
+                        multiNote = `<br><span style="font-size:0.75rem;color:#8e44ad;">最大${mhD.max}hit: ${(dmg.min*mhD.max/defHp*100).toFixed(1)}〜${maxHPct}%</span>`;
                     }
-                    row += `<td style="background:${bg};font-weight:${fw};"><span style="color:${effColor};font-weight:bold;margin-right:2px;">${effSym}</span>${minPct}〜${maxPct}%${multiNote}</td>`;
+                    row += `<td style="background:${bg};font-weight:${fw};line-height:1.6;text-align:center;"><span style="color:${effColor};font-weight:bold;margin-right:2px;">${effSym}</span><span style="font-size:0.85rem;font-weight:bold;">${minPct}〜${maxPct}%</span><br><span style="font-size:0.74rem;color:#555;">${dmg.min}〜${dmg.max}</span>${multiNote}</td>`;
                 });
                 row += '</tr>';
                 html += row;
@@ -8368,18 +8532,18 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
 
         // ============ ターン管理 ============
         function updateTurnMgr() {
-            const bpMy  = parseInt(document.getElementById('badPoisonTurnMy', 10)?.value||'0', 10);
-            const bpOpp = parseInt(document.getElementById('badPoisonTurnOpp', 10)?.value||'0', 10);
-            const twMy  = parseInt(document.getElementById('tailwindTurnMy', 10)?.value||'0', 10);
-            const twOpp = parseInt(document.getElementById('tailwindTurnOpp', 10)?.value||'0', 10);
-            const rfMy  = parseInt(document.getElementById('reflectTurnMy', 10)?.value||'0', 10);
-            const lwMy  = parseInt(document.getElementById('lightWallTurnMy', 10)?.value||'0', 10);
-            const rfOpp = parseInt(document.getElementById('reflectTurnOpp', 10)?.value||'0', 10);
-            const lwOpp = parseInt(document.getElementById('lightWallTurnOpp', 10)?.value||'0', 10);
+            const bpMy  = parseInt(document.getElementById('badPoisonTurnMy')?.value||'0', 10);
+            const bpOpp = parseInt(document.getElementById('badPoisonTurnOpp')?.value||'0', 10);
+            const twMy  = parseInt(document.getElementById('tailwindTurnMy')?.value||'0', 10);
+            const twOpp = parseInt(document.getElementById('tailwindTurnOpp')?.value||'0', 10);
+            const rfMy  = parseInt(document.getElementById('reflectTurnMy')?.value||'0', 10);
+            const lwMy  = parseInt(document.getElementById('lightWallTurnMy')?.value||'0', 10);
+            const rfOpp = parseInt(document.getElementById('reflectTurnOpp')?.value||'0', 10);
+            const lwOpp = parseInt(document.getElementById('lightWallTurnOpp')?.value||'0', 10);
             const getMaxHp = (side) => {
                 const poke = getEffectivePoke(side);
                 if (!poke) return 100;
-                const pts = parseInt(document.getElementById(side+'HP', 10)?.value||'0', 10);
+                const pts = parseInt(document.getElementById(side+'HP')?.value||'0', 10);
                 return calcStat(poke.hp, pts, 1.0, true);
             };
             const bpEl = document.getElementById('badPoisonInfo');
@@ -9354,27 +9518,64 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
             }));
         }
 
-        function getMoveInfoBadge(moveName, atkAbil, atkItem, weather, terrain, isSlower, accRank, evaRank, atkStatus) { // [AccEva修正]
+        function getMoveInfoBadge(moveName, atkAbil, atkItem, weather, terrain, isSlower, accRank, evaRank, atkStatus, gravityActive, defItem, defAbil) {
             const info = moveInfoTable[moveName];
             if (!info) return '';
             let badges = [];
 
-            // 命中率
-            let acc = info.acc ?? null;
-            if (acc === null && info.acc === null) {
-                // [必中修正] 必中技
+            // 命中率の計算
+            // info.acc が undefined → 必中技（スウィフト等）
+            // info.acc が数値 → 命中率（100でも回避で外れうる）
+            const baseAcc = info.acc; // undefined=必中, 数値=命中率
+            let acc = (baseAcc === undefined) ? null : baseAcc;
+
+            if (acc === null) {
+                // 必中技: 天候による必中化もここで処理
                 badges.push('<span style="font-size:0.7rem;color:#27ae60;margin-left:3px;">[必中]</span>');
-            } else if (acc !== null) {
-                if ((moveName === 'かみなり' || moveName === 'ぼうふう') && weather === 'rain') acc = null;
-                if ((moveName === 'かみなり' || moveName === 'ぼうふう') && weather === 'sun')  acc = 50;
-                if ((moveName === 'かみなり' || moveName === 'ふぶき') && weather === 'snow') acc = null;
-                if (atkAbil === 'ズームレンズ' && isSlower) acc = acc ? Math.min(100, Math.round(acc * 1.2)) : null;
-                if (atkItem === 'こうかくレンズ') acc = acc ? Math.min(100, Math.round(acc * 1.1)) : null;
-                // [AccEva修正] 命中・回避ランク反映
-                if (acc !== null && typeof getAccRankMod === 'function') {
-                    const _aRank = accRank || 0; const _eRank = evaRank || 0;
-                    acc = Math.min(100, Math.round(acc * getAccRankMod(_aRank) / getAccRankMod(_eRank)));
+            } else {
+                // 天候による命中変化
+                if ((moveName === 'かみなり' || moveName === 'ぼうふう') && weather === 'rain') { acc = null; }
+                else if ((moveName === 'かみなり' || moveName === 'ぼうふう') && weather === 'sun') { acc = 50; }
+                if ((moveName === 'かみなり' || moveName === 'ふぶき') && weather === 'snow') { acc = null; }
+
+                if (acc !== null) {
+                    // じゅうりょく: 命中率 × 5/3
+                    if (gravityActive) acc = Math.min(100, Math.round(acc * 5 / 3));
+
+                    // 特性による命中補正
+                    if (atkAbil === 'ズームレンズ' && isSlower) acc = Math.min(100, Math.round(acc * 1.2));
+                    if (atkAbil === 'はりきり') acc = Math.round(acc * 0.8); // はりきり: 物理命中0.8倍（簡易判定）
+
+                    // 持ち物による命中補正
+                    if (atkItem === 'こうかくレンズ') acc = Math.min(100, Math.round(acc * 1.1));
+                    // 相手の持ち物: ひかりのこな
+                    if (defItem === 'ひかりのこな') acc = Math.round(acc * 0.9);
+
+                    // 相手の特性による回避補正
+                    // すながくれ: すなあらし時に回避率+1段階相当 (×4/3)
+                    if (defAbil === 'すながくれ' && weather === 'sand') acc = Math.round(acc * 3 / 4);
+                    // ゆきがくれ: ゆき/あられ時に回避率+1段階相当 (×4/3)
+                    if (defAbil === 'ゆきがくれ' && (weather === 'snow' || weather === 'hail')) acc = Math.round(acc * 3 / 4);
+
+                    // 特性: ふくがん（命中×1.3）
+                    if (atkAbil === 'ふくがん') acc = Math.min(100, Math.round(acc * 1.3));
+                    // 特性: しんがん（相手の回避無視 → 回避ランクを0扱い）
+                    const _evaRankEff = (atkAbil === 'しんがん') ? 0 : (evaRank || 0);
+                    // 特性: ミラクルスキン（変化技に当たる命中率が半減）
+                    // ※ moveInfoTable で category を持たないため moveDex を参照
+                    if (defAbil === 'ミラクルスキン' && typeof moveDex !== 'undefined' && moveDex[moveName]?.category === '変化') {
+                        acc = Math.round(acc * 0.5);
+                    }
+                    // 命中・回避ランク反映
+                    if (typeof getAccRankMod === 'function') {
+                        const _aRank = accRank || 0;
+                        if (_aRank !== 0 || _evaRankEff !== 0) {
+                            acc = Math.round(acc * getAccRankMod(_aRank) / getAccRankMod(_evaRankEff));
+                        }
+                    }
+                    acc = Math.max(1, Math.min(100, acc));
                 }
+
                 const accLabel = acc === null ? '必中' : `命中${acc}%`;
                 const accColor = acc === null ? '#27ae60' : acc < 80 ? '#e74c3c' : acc < 100 ? '#e67e22' : '#555';
                 badges.push(`<span style="font-size:0.7rem;color:${accColor};margin-left:3px;">[${accLabel}]</span>`);
@@ -9385,29 +9586,52 @@ function getSpecialMovePower(moveName, basePower, attackerSide, defPokeName) {
                 let ec = info.ec;
                 if (atkAbil === 'てんのめぐみ') ec = Math.min(100, ec * 2);
                 const ecColor = ec >= 50 ? '#8e44ad' : '#888';
-                const edLabel = info.ed ? `${info.ed} ` : '';
+                const _edMap = {
+                    'こうげき↓':'敵A↓','こうげき↑':'自A↑',
+                    'ぼうぎょ↓':'敵B↓','ぼうぎょ↑':'自B↑',
+                    'とくこう↓':'敵C↓','とくこう↑':'自C↑',
+                    'とくぼう↓':'敵D↓','とくぼう↑':'自D↑',
+                    'すばやさ↓':'敵S↓','すばやさ↑':'自S↑',
+                    'めいちゅう↓':'敵命↓','めいちゅう↑':'敵命↑',
+                    'かいひ↓':'敵避↓','かいひ↑':'敵避↑',
+                    '自こうげき↓':'自A↓','自ぼうぎょ↓':'自B↓',
+                    '自とくこう↓':'自C↓','自とくぼう↓':'自D↓',
+                    '自すばやさ↓':'自S↓',
+                };
+                const edLabel = info.ed ? `${_edMap[info.ed] || info.ed} ` : '';
                 badges.push(`<span style="font-size:0.7rem;color:${ecColor};margin-left:3px;">[${edLabel}${ec}%]</span>`);
             }
 
-            // [麻痺修正] 麻痺時の命中率×行動成功率バッジ
-            if (atkStatus === 'paralysis') {
-                let _accForPara = info.acc ?? null;
-                if (_accForPara !== null) {
-                    if ((moveName === 'かみなり' || moveName === 'ぼうふう') && weather === 'rain') _accForPara = 100;
-                    if ((moveName === 'かみなり' || moveName === 'ぼうふう') && weather === 'sun')  _accForPara = 50;
-                    if ((moveName === 'かみなり' || moveName === 'ふぶき') && weather === 'snow')  _accForPara = 100;
-                    if (typeof getAccRankMod === "function") {
-                        const _ar = accRank || 0; const _er = evaRank || 0;
-                        _accForPara = Math.min(100, _accForPara * getAccRankMod(_ar) / getAccRankMod(_er));
+            // 麻痺時の命中率×行動成功率バッジ (acc が null=必中以外のみ)
+            if (atkStatus === 'paralysis' && baseAcc !== undefined) {
+                // 上で計算した acc（各種補正済み）をそのまま使う
+                let _paraBaseAcc = (baseAcc === undefined) ? null : baseAcc;
+                if (_paraBaseAcc !== null) {
+                    if ((moveName === 'かみなり' || moveName === 'ぼうふう') && weather === 'rain') _paraBaseAcc = 100;
+                    else if ((moveName === 'かみなり' || moveName === 'ぼうふう') && weather === 'sun') _paraBaseAcc = 50;
+                    if ((moveName === 'かみなり' || moveName === 'ふぶき') && weather === 'snow') _paraBaseAcc = 100;
+                    if (gravityActive) _paraBaseAcc = Math.min(100, Math.round(_paraBaseAcc * 5 / 3));
+                    if (atkAbil === 'ズームレンズ' && isSlower) _paraBaseAcc = Math.min(100, Math.round(_paraBaseAcc * 1.2));
+                    if (atkItem === 'こうかくレンズ') _paraBaseAcc = Math.min(100, Math.round(_paraBaseAcc * 1.1));
+                    if (defItem === 'ひかりのこな') _paraBaseAcc = Math.round(_paraBaseAcc * 0.9);
+                    if (defAbil === 'すながくれ' && weather === 'sand') _paraBaseAcc = Math.round(_paraBaseAcc * 3 / 4);
+                    if (defAbil === 'ゆきがくれ' && (weather === 'snow' || weather === 'hail')) _paraBaseAcc = Math.round(_paraBaseAcc * 3 / 4);
+                    if (atkAbil === 'ふくがん') _paraBaseAcc = Math.min(100, Math.round(_paraBaseAcc * 1.3));
+                    if (defAbil === 'ミラクルスキン' && typeof moveDex !== 'undefined' && moveDex[moveName]?.category === '変化') _paraBaseAcc = Math.round(_paraBaseAcc * 0.5);
+                    if (typeof getAccRankMod === 'function') {
+                        const _paraEvaEff = (atkAbil === 'しんがん') ? 0 : (evaRank || 0);
+                        _paraBaseAcc = Math.round(_paraBaseAcc * getAccRankMod(accRank||0) / getAccRankMod(_paraEvaEff));
                     }
-                    const _paraAcc = Math.round(_accForPara * 0.875 * 10) / 10;
+                    _paraBaseAcc = Math.max(1, Math.min(100, _paraBaseAcc));
+                    const _paraAcc = Math.round(_paraBaseAcc * 0.875 * 10) / 10;
                     badges.push(`<span style="font-size:0.7rem;color:#f1c40f;margin-left:3px;">[命痺${_paraAcc}%]</span>`);
                 }
             }
 
             // PP
             if (info.pp) {
-                badges.push(`<span style="font-size:0.7rem;color:#aaa;margin-left:3px;">[PP${info.pp}]</span>`);
+                const _ppDisp = info.pp <= 5 ? 8 : info.pp <= 10 ? 12 : info.pp <= 15 ? 16 : 20;
+                badges.push(`<span style="font-size:0.7rem;color:#aaa;margin-left:3px;">[PP${_ppDisp}]</span>`);
             }
 
             return badges.join('');
@@ -9655,7 +9879,7 @@ function predictTotalSurvival(side, attackDmgMin, attackDmgMax) {
             const dMin = dmgMatch ? parseInt(dmgMatch[1],10) : 0;
             const dMax = dmgMatch ? parseInt(dmgMatch[2],10) : 0;
             if (true) {
-                const pred = predictTotalSurvival(defSide, dMin, dMax);
+                const pred = typeof predictTotalSurvival === 'function' ? predictTotalSurvival(defSide, dMin, dMax) : '';
                 if (pred && !out.innerHTML.includes('複合ダメージ予測')) {
                     out.innerHTML += pred;
                 }
@@ -9782,11 +10006,11 @@ function updatePriorityKO() {
   const atkHpPct = parseFloat((document.getElementById(atkSide==='my'?'myCurrentHpPct':'oppCurrentHpPct')||{}).value)||100;
   const atkStatus= (document.getElementById(atkSide==='my'?'myStatus':'oppStatus')||{}).value||'';
   const atkItem  = (document.getElementById(atkSide==='my'?'myItem':'oppItem')||{}).value||'';
-  const atkRankA = parseInt((document.getElementById(atkSide==='my'?'myRankA':'oppRankA', 10)||{}).value)||0;
-  const atkRankC = parseInt((document.getElementById(atkSide==='my'?'myRankC':'oppRankC', 10)||{}).value)||0;
-  const atkPtsA  = parseInt((document.getElementById(atkSide==='my'?'myAtk':'oppAtk', 10)||{}).value)||0;
-  const atkPtsC  = parseInt((document.getElementById(atkSide==='my'?'mySpA':'oppSpA', 10)||{}).value)||0;
-  const atkPtsD  = parseInt((document.getElementById(atkSide==='my'?'myDef':'oppDef', 10)||{}).value)||0;
+  const atkRankA = parseInt((document.getElementById(atkSide==='my'?'myRankA':'oppRankA')||{}).value)||0;
+  const atkRankC = parseInt((document.getElementById(atkSide==='my'?'myRankC':'oppRankC')||{}).value)||0;
+  const atkPtsA  = parseInt((document.getElementById(atkSide==='my'?'myAtk':'oppAtk')||{}).value)||0;
+  const atkPtsC  = parseInt((document.getElementById(atkSide==='my'?'mySpA':'oppSpA')||{}).value)||0;
+  const atkPtsD  = parseInt((document.getElementById(atkSide==='my'?'myDef':'oppDef')||{}).value)||0;
   const atkNatD  = parseFloat((document.getElementById(atkSide==='my'?'myDefNature':'oppDefNature')||{}).value)||1.0;
   const atkRankD_bp = parseInt((document.getElementById(atkSide==='my'?'myRankD':'oppRankD')||{}).value)||0;
   let atkRealD_bp = Math.floor(calcStat(atkPoke.def, atkPtsD, atkNatD, false) * getRankMod(atkRankD_bp));
@@ -9806,11 +10030,11 @@ function updatePriorityKO() {
   const defAbil  = (document.getElementById(defSide==='my'?'myAbility':'oppAbility')||{}).value||'';
   const defNatD  = parseFloat((document.getElementById(defSide==='my'?'myDefNature':'oppDefNature')||{}).value)||1.0;
   const defNatS  = parseFloat((document.getElementById(defSide==='my'?'mySpdNature':'oppSpdNature')||{}).value)||1.0;
-  const defPtsD  = parseInt((document.getElementById(defSide==='my'?'myDef':'oppDef', 10)||{}).value)||0;
-  const defPtsS  = parseInt((document.getElementById(defSide==='my'?'mySpD':'oppSpD', 10)||{}).value)||0;
-  const defPtsH  = parseInt((document.getElementById(defSide==='my'?'myHP':'oppHP', 10)||{}).value)||0;
-  const defRankD = parseInt((document.getElementById(defSide==='my'?'myRankD':'oppRankD', 10)||{}).value)||0;
-  const defRankS = parseInt((document.getElementById(defSide==='my'?'myRankS':'oppRankS', 10)||{}).value)||0;
+  const defPtsD  = parseInt((document.getElementById(defSide==='my'?'myDef':'oppDef')||{}).value)||0;
+  const defPtsS  = parseInt((document.getElementById(defSide==='my'?'mySpD':'oppSpD')||{}).value)||0;
+  const defPtsH  = parseInt((document.getElementById(defSide==='my'?'myHP':'oppHP')||{}).value)||0;
+  const defRankD = parseInt((document.getElementById(defSide==='my'?'myRankD':'oppRankD')||{}).value)||0;
+  const defRankS = parseInt((document.getElementById(defSide==='my'?'myRankS':'oppRankS')||{}).value)||0;
   const defHpPct = parseFloat((document.getElementById(defSide==='my'?'myCurrentHpPct':'oppCurrentHpPct')||{}).value)||100;
   const defItem  = (document.getElementById(defSide==='my'?'myItem':'oppItem')||{}).value||'';
 
@@ -9891,7 +10115,7 @@ function updatePriorityKO() {
     const fieldMk  = fieldMod !== 1.0 ? '<span style="color:#27ae60" title="フィールド補正">F</span>' : '';
     const wMk      = weatherMod !== 1.0 ? '<span style="color:#2980b9" title="天気補正">W</span>' : '';
     const hitNote  = mv.hits > 1 ? ` <span style="color:#e67e22">${mv.hits}hit</span>` : '';
-    const infoNote = getMoveInfoBadge(mv.name, atkAbil, atkItem, document.getElementById('battleWeather')?.value||'none', document.getElementById('battleTerrain')?.value||'none', false, parseInt(document.getElementById(atkSide+'RankAcc')?.value||0,10), parseInt(document.getElementById(defSide+'RankEva')?.value||0,10), document.getElementById(atkSide+'Status')?.value||'none');
+    const infoNote = getMoveInfoBadge(mv.name, atkAbil, atkItem, document.getElementById('battleWeather')?.value||'none', document.getElementById('battleTerrain')?.value||'none', false, parseInt(document.getElementById(atkSide+'RankAcc')?.value||0,10), parseInt(document.getElementById(defSide+'RankEva')?.value||0,10), document.getElementById(atkSide+'Status')?.value||'none', !!(document.getElementById('gravityField')?.value==='1'), document.getElementById(defSide+'Item')?.value||'', document.getElementById(defSide+'Ability')?.value||'');
     const catMark  = mv.cat === '特殊' ? '<span style="color:#8e44ad;font-size:0.7rem">特</span>' : '<span style="color:#c0392b;font-size:0.7rem">物</span>';
 
     results.push({
@@ -9951,6 +10175,7 @@ function updatePriorityKO() {
       <span style="color:#8e44ad;font-size:0.7rem">特</span>=特殊
     </div>`;
 }
+window.updatePriorityKO = updatePriorityKO;
 
 
 
@@ -10003,9 +10228,9 @@ function updateSpeedAdj() {
     }
     // 自分の現在のP振り・性格・ランクを参照
     const myNat  = parseFloat(document.getElementById('mySpeNature')?.value) || 1.0;
-    const myPts  = parseInt(document.getElementById('mySpe', 10)?.value, 10)     || 0;
-    const myRank = parseInt(document.getElementById('myRankS', 10)?.value, 10)   || 0;
-    const oppRank= parseInt(document.getElementById('oppRankS', 10)?.value, 10)  || 0;
+    const myPts  = parseInt(document.getElementById('mySpe')?.value, 10)     || 0;
+    const myRank = parseInt(document.getElementById('myRankS')?.value, 10)   || 0;
+    const oppRank= parseInt(document.getElementById('oppRankS')?.value, 10)  || 0;
 
     // --- 相手の4パターン ---
     const oppSpeMax  = Math.floor(calcStat(oppPoke.spe, 32,  1.1, false) * getRankMod(oppRank));
@@ -10015,7 +10240,7 @@ function updateSpeedAdj() {
 
     // 現在入力の相手実数値
     const oppNatCur = parseFloat(document.getElementById('oppSpeNature')?.value) || 1.0;
-    const oppPtsCur = parseInt(document.getElementById('oppSpe', 10)?.value, 10) || 0;
+    const oppPtsCur = parseInt(document.getElementById('oppSpe')?.value, 10) || 0;
     const oppSpeCur = Math.floor(calcStat(oppPoke.spe, oppPtsCur, oppNatCur, false) * getRankMod(oppRank));
 
     // --- 自分の必要Pを求める（現在の性格・ランクを使用）---
@@ -10108,6 +10333,7 @@ function updateSpeedAdj() {
             ${abilRef}
         </div>`;
 }
+window.updateSpeedAdj = updateSpeedAdj;
 
 // ============================================================
 // 7. ランク倍率バッジのリアルタイム表示
@@ -10128,8 +10354,8 @@ function updateRankBadges() {
             sel.parentNode.style.position = 'relative';
             sel.parentNode.insertBefore(badge, sel.nextSibling);
         }
-        badge.textContent = '×' + mod.toFixed(2);
-        badge.style.background = rank > 0 ? '#27ae60' : rank < 0 ? '#e74c3c' : '#999';
+        badge.textContent = '';
+        badge.style.display = 'none';
     });
 }
 document.addEventListener('change', function(e) {
@@ -10147,11 +10373,13 @@ function toggleDarkMode() {
     localStorage.setItem('pokechan_darkmode', document.body.classList.contains('dark-mode') ? '1' : '0');
 }
 window.addEventListener('load', () => {
+    try {
     if (localStorage.getItem('pokechan_darkmode') === '1') {
         document.body.classList.add('dark-mode');
         const btn = document.getElementById('darkModeToggle');
         if (btn) btn.textContent = '☀️';
     }
+    } catch(e) { /* localStorage がブロックされている環境では無視 */ }
 });
 
 // ============================================================
@@ -10200,7 +10428,7 @@ window.addEventListener('load', () => {
             const defSide = atkSide === 'me' ? 'opp' : 'my';
             const defPoke = getEffectivePoke(defSide);
             if (!defPoke) return;
-            const defHpPts = parseInt(document.getElementById(defSide+'HP', 10)?.value, 10) || 0;
+            const defHpPts = parseInt(document.getElementById(defSide+'HP')?.value, 10) || 0;
             const maxHp = calcStat(defPoke.hp, defHpPts, 1.0, true);
             const currentPct = parseFloat(document.getElementById(defSide+'CurrentHpPct')?.value) || 100;
             const currentHp = Math.max(1, Math.round(maxHp * currentPct / 100));
@@ -10249,7 +10477,7 @@ window.addEventListener('load', () => {
             const atkSide = document.querySelector('input[name="attackerSide"]:checked')?.value;
             const defSide = (atkSide === 'me' || atkSide === 'my') ? 'opp' : 'my';
             const defPoke = getEffectivePoke(defSide);
-            const defHpPts = parseInt(document.getElementById(defSide === 'my' ? 'myHP' : 'oppHP', 10)?.value || 0, 10);
+            const defHpPts = parseInt(document.getElementById(defSide === 'my' ? 'myHP' : 'oppHP')?.value || 0, 10);
             const maxHp = defPoke ? calcStat(defPoke.hp, defHpPts, 1.0, true) : 0;
             // 16乱数を均等補間で推定（min=85%,max=100%の線形16点）
             const rolls = Array.from({length: 16}, (_, i) => {
@@ -10311,21 +10539,7 @@ window.addEventListener('load', () => {
 // ============================================================
 // 新機能①: ポケモン名オートコンプリート
 // ============================================================
-(
-        // ===== おはかまいり: ひんし数集計 =====
-        window._faintedCount = { my: 0, opp: 0 };
-        function calcFaintedCount() {
-            let mc = 0, oc = 0;
-            for (let i = 0; i < 6; i++) {
-                const m = document.getElementById('myFainted'  + i);
-                const o = document.getElementById('oppFainted' + i);
-                if (m && m.checked) mc++;
-                if (o && o.checked) oc++;
-            }
-            window._faintedCount = { my: mc, opp: oc };
-        }
-
-        
+(function() {
         // ===== おはかまいり: ひんし数集計 + 選出バッジ =====
         window._faintedCount = { my: 0, opp: 0 };
         function calcFaintedCount() {
@@ -10365,8 +10579,7 @@ window.addEventListener('load', () => {
                 }
             }
         }
-        function initPokeAutocomplete() {
-    function setupAC(inputEl) {
+        function setupAC(inputEl) {
         if (!inputEl || inputEl.dataset.acInit) return;
         inputEl.dataset.acInit = '1';
         const wrap = document.createElement('div');
@@ -10754,125 +10967,113 @@ window.addEventListener('load', () => {
         const TEAM_STORAGE_KEY = 'pokechan_saved_teams';
 
         function getTeamFields(side) {
-            // チームリスト: 各ポケモン行のselect値
-            const teamList = [];
-            const rows = document.querySelectorAll('.poke-row');
-            // my/opp それぞれの rows を収集
-            const myTeamList  = document.getElementById('myTeamList');
-            const oppTeamList = document.getElementById('oppTeamList');
-            const container   = side === 'my' ? myTeamList : oppTeamList;
-            if (container) {
-                const selects = container.querySelectorAll('select.poke-select, select[onchange*="selectPoke"]');
-                selects.forEach((sel, i) => {
-                    teamList.push(sel.value || '');
-                });
-                // poke-row 内の select を fallback で取得
-                if (teamList.length === 0) {
-                    const pokeRows = container.querySelectorAll('.poke-row');
-                    pokeRows.forEach(row => {
-                        const sel = row.querySelector('select');
-                        teamList.push(sel ? sel.value : '');
-                    });
-                }
-            }
-
             const p = side;
-            function gv(id) {
-                const el = document.getElementById(id);
-                if (!el) return '';
-                if (el.type === 'checkbox') return el.checked;
-                return el.value || '';
-            }
 
-            const fainted=[], selected=[];
-            for(let i=0;i<6;i++){
-                const f=document.getElementById(`${p}Fainted${i}`);
-                const s=document.getElementById(`${p}Selected${i}`);
-                fainted.push(f?f.checked:false);
-                selected.push(s?s.checked:false);
+            // 現在場に出ているスロットの状態をまず teamSlotState に保存
+            const activeRadio = document.querySelector(`input[name="${p}Active"]:checked`);
+            const activeIdx = activeRadio ? parseInt(activeRadio.value, 10) : 0;
+            const activeState = window.teamSlotState[p][activeIdx] || {};
+
+            // 各スロットのポケモン名と teamSlotState から6体分取得
+            const slots = [];
+            for (let i = 0; i < 6; i++) {
+                const pokeSel = document.getElementById(`${p}Poke${i}`);
+                const name = pokeSel ? (pokeSel.value || '') : '';
+                // 現在場に出ているポケモンはUIの現在値を使う
+                let state;
+                if (i === activeIdx) {
+                    state = {};
+                    [`${p}HP`,`${p}Atk`,`${p}Def`,`${p}SpA`,`${p}SpD`,`${p}Spe`,
+                     `${p}NatureAll`,`${p}Ability`,`${p}Item`,
+                     `${p}Move1`,`${p}Move2`,`${p}Move3`,`${p}Move4`].forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) state[id] = el.type === 'checkbox' ? el.checked : (el.value || '');
+                    });
+                } else {
+                    state = window.teamSlotState[p][i] || {};
+                }
+                slots.push({ name, state });
             }
-            return {
-                teamList,
-                HP:  gv(`${p}HP`), Atk: gv(`${p}Atk`), Def: gv(`${p}Def`),
-                SpA: gv(`${p}SpA`), SpD: gv(`${p}SpD`), Spe: gv(`${p}Spe`),
-                natureAll: gv(`${p}NatureAll`),
-                ability: gv(`${p}Ability`),
-                item:    gv(`${p}Item`),
-                status:  gv(`${p}Status`),
-                move1: gv(`${p}Move1`), move2: gv(`${p}Move2`),
-                move3: gv(`${p}Move3`), move4: gv(`${p}Move4`),
-                fainted, selected,
-            };
+            return { slots };
         }
 
         function setTeamFields(side, data) {
             if (!data) return;
             const p = side;
-            function sv(id, val) {
-                const el = document.getElementById(id);
-                if (!el) return;
-                if (el.type === 'checkbox') { el.checked = !!val; }
-                else { el.value = val || ''; }
-                try{el.dispatchEvent(new Event('change',{bubbles:true}));}catch(e){}
-                try{el.dispatchEvent(new Event('input', {bubbles:true}));}catch(e){}
-            }
+
             function normalizeMoveName(n) {
                 if (!n) return n;
                 return n.replace(/[0-9]/g, c => '０１２３４５６７８９'[+c]);
             }
-            function setMove(id, val) {
-                if (!val) return;
-                val = normalizeMoveName(val);
-                const el = document.getElementById(id);
-                if (!el) return;
-                if (!el.querySelector('option[value="' + val + '"]')) el.add(new Option(val, val));
-                el.value = val;
-            }
-            // チームリスト復元（dispatchEventなし）
-            if (data.teamList && data.teamList.length > 0) {
-                const container = document.getElementById(side === 'my' ? 'myTeamList' : 'oppTeamList');
-                if (container) {
-                    const pokeRows = container.querySelectorAll('.poke-row');
-                    data.teamList.forEach((name, i) => {
-                        if (pokeRows[i]) {
-                            const sel = pokeRows[i].querySelector('select');
-                            if (sel) {
-                                if (name && !sel.querySelector('option[value="' + name + '"]')) sel.add(new Option(name, name));
-                                sel.value = name || '';
-                            }
+
+            // slots 形式 (新): 6体分を teamSlotState に直接書き込んでから updateActive
+            if (data.slots && Array.isArray(data.slots)) {
+                data.slots.forEach((slot, i) => {
+                    const pokeSel = document.getElementById(`${p}Poke${i}`);
+                    if (pokeSel) {
+                        const name = slot.name || '';
+                        if (name && !pokeSel.querySelector('option[value="' + name + '"]')) {
+                            pokeSel.add(new Option(name, name));
                         }
+                        pokeSel.value = name;
+                    }
+                    // teamSlotState に保存（技名は正規化）
+                    const st = Object.assign({}, slot.state || {});
+                    for (let m = 1; m <= 4; m++) {
+                        const mk = `${p}Move${m}`;
+                        if (st[mk]) st[mk] = normalizeMoveName(st[mk]);
+                    }
+                    st.name = slot.name || '';
+                    window.teamSlotState[p][i] = st;
+                });
+
+                // スロット0を場に出す
+                const radio0 = document.querySelector(`input[name="${p}Active"][value="0"]`);
+                if (radio0) { radio0.checked = true; }
+                if (typeof updateActive === 'function') updateActive(p);
+
+            } else {
+                // 旧形式フォールバック (teamList + 個別フィールド)
+                function sv(id, val) {
+                    const el = document.getElementById(id);
+                    if (!el) return;
+                    if (el.type === 'checkbox') { el.checked = !!val; }
+                    else { el.value = (val !== undefined && val !== null) ? String(val) : ''; }
+                    try{el.dispatchEvent(new Event('change',{bubbles:true}));}catch(e){}
+                    try{el.dispatchEvent(new Event('input', {bubbles:true}));}catch(e){}
+                }
+                function setMove(id, val) {
+                    if (!val) return;
+                    val = normalizeMoveName(val);
+                    const el = document.getElementById(id);
+                    if (!el) return;
+                    if (!el.querySelector('option[value="' + val + '"]')) el.add(new Option(val, val));
+                    el.value = val;
+                }
+                if (data.teamList) {
+                    data.teamList.forEach((name, i) => {
+                        const sel = document.getElementById(`${p}Poke${i}`);
+                        if (!sel) return;
+                        if (name && !sel.querySelector('option[value="' + name + '"]')) sel.add(new Option(name, name));
+                        sel.value = name || '';
                     });
                 }
+                sv(`${p}HP`, data.HP); sv(`${p}Atk`, data.Atk); sv(`${p}Def`, data.Def);
+                sv(`${p}SpA`, data.SpA); sv(`${p}SpD`, data.SpD); sv(`${p}Spe`, data.Spe);
+                if (data.natureAll !== undefined) sv(`${p}NatureAll`, data.natureAll);
+                if (data.ability) sv(`${p}Ability`, data.ability);
+                if (data.item) { const el = document.getElementById(`${p}Item`); if (el) el.value = data.item; }
+                setMove(`${p}Move1`, data.move1); setMove(`${p}Move2`, data.move2);
+                setMove(`${p}Move3`, data.move3); setMove(`${p}Move4`, data.move4);
+                if (typeof updateActive === 'function') updateActive(p);
             }
-            sv(`${p}HP`, data.HP);  sv(`${p}Atk`, data.Atk); sv(`${p}Def`, data.Def);
-            sv(`${p}SpA`, data.SpA); sv(`${p}SpD`, data.SpD); sv(`${p}Spe`, data.Spe);
-            if (data.natureAll) sv(`${p}NatureAll`, data.natureAll);
-            if (data.ability)   sv(`${p}Ability`, data.ability);
-            if (data.item) {
-                const itemEl = document.getElementById(`${p}Item`);
-                if (itemEl) { itemEl.value = data.item; if (typeof updateItemBadges==='function') updateItemBadges(p); }
-            }
-            if (data.status) sv(`${p}Status`, data.status);
-            setMove(`${p}Move1`, data.move1); setMove(`${p}Move2`, data.move2);
-            setMove(`${p}Move3`, data.move3); setMove(`${p}Move4`, data.move4);
-            // 選出復元
-            if (data.selected && Array.isArray(data.selected)) {
-                data.selected.forEach((val, i) => { const el=document.getElementById(`${p}Selected${i}`); if(el) el.checked=!!val; });
-            }
-            // ひんし復元
-            if (data.fainted && Array.isArray(data.fainted)) {
-                data.fainted.forEach((val, i) => { const el=document.getElementById(`${p}Fainted${i}`); if(el) el.checked=!!val; });
-                if (typeof calcFaintedCount === 'function') calcFaintedCount();
-            }
-            if (typeof applyNature      === 'function') applyNature(p);
-            if (typeof updateRealStats  === 'function') updateRealStats(p);
-            if (typeof updateSpeed      === 'function') updateSpeed();
+
             if (typeof updateItemBadges === 'function') {
                 updateItemBadges(p);
-                setTimeout(() => updateItemBadges(p), 0);
                 setTimeout(() => updateItemBadges(p), 100);
             }
             if (typeof updateSelectedBadge === 'function') updateSelectedBadge(p);
+            if (typeof updateTeamSummary   === 'function') setTimeout(() => updateTeamSummary(p), 80);
         }
 
 
@@ -10917,12 +11118,21 @@ window.addEventListener('load', () => {
             const teams = loadSavedTeams();
             const entry = teams.find(t => t.name === name);
             if (!entry) return;
-            if (targetSide === 'my' && entry.myTeam)   setTeamFields('my', entry.myTeam);
-            else if (targetSide === 'my' && entry.oppTeam) setTeamFields('my', entry.oppTeam);
-            if (targetSide === 'opp' && entry.oppTeam)  setTeamFields('opp', entry.oppTeam);
-            else if (targetSide === 'opp' && entry.myTeam) setTeamFields('opp', entry.myTeam);
-            document.getElementById('teamSaveMsg').style.color = '#2980b9';
-            document.getElementById('teamSaveMsg').innerText = `「${name}」を${targetSide === 'my' ? '自分' : '相手'}のチームに読み込みました！`;
+            // 自分側への読み込み: myTeam 優先、なければ oppTeam を使用
+            if (targetSide === 'my') {
+                if (entry.myTeam)       setTeamFields('my', entry.myTeam);
+                else if (entry.oppTeam) setTeamFields('my', entry.oppTeam);
+            }
+            // 相手側への読み込み: oppTeam 優先、なければ myTeam を使用
+            else if (targetSide === 'opp') {
+                if (entry.oppTeam)      setTeamFields('opp', entry.oppTeam);
+                else if (entry.myTeam)  setTeamFields('opp', entry.myTeam);
+            }
+            const msg = document.getElementById('teamSaveMsg');
+            if (msg) {
+                msg.style.color = '#2980b9';
+                msg.innerText = `「${name}」を${targetSide === 'my' ? '自分' : '相手'}のチームに読み込みました！`;
+            }
         }
 
         function renderSavedTeams() {
@@ -10934,8 +11144,8 @@ window.addEventListener('load', () => {
                 return;
             }
             list.innerHTML = teams.map(t => {
-                const myPreview  = t.myTeam  ? (t.myTeam.teamList.filter(Boolean).join('・') || '(なし)') : '-';
-                const oppPreview = t.oppTeam ? (t.oppTeam.teamList.filter(Boolean).join('・') || '(なし)') : '-';
+                const myPreview  = t.myTeam  ? ((t.myTeam.slots  ? t.myTeam.slots.map(s=>s.name).filter(Boolean)  : (t.myTeam.teamList  || [])).join('・') || '(なし)') : '-';
+                const oppPreview = t.oppTeam ? ((t.oppTeam.slots ? t.oppTeam.slots.map(s=>s.name).filter(Boolean) : (t.oppTeam.teamList || [])).join('・') || '(なし)') : '-';
                 const hasMyTeam  = !!t.myTeam;
                 const hasOppTeam = !!t.oppTeam;
                 const myBtnLabel  = hasMyTeam  ? '自分のチームとして読み込む' : (hasOppTeam ? '自分のチームとして読み込む（相手分）' : '');
@@ -11020,14 +11230,14 @@ window.addEventListener('load', () => {
                 // 3→off
                 cb.checked = false;
                 selEl.value = '1';
-                btn.classList.remove('on-orange');
+                btn.classList.remove('on-maki');
                 btn.textContent = 'まきびし';
                 try{cb.dispatchEvent(new Event('change', {bubbles:true}));}catch(e){}
                 return;
             } else {
                 selEl.value = String(cur);
             }
-            btn.classList.add('on-orange');
+            btn.classList.add('on-maki');
             const labels = {1:'まきびし×1', 2:'まきびし×2', 3:'まきびし×3'};
             btn.textContent = labels[parseInt(selEl.value, 10)] || 'まきびし';
             try{cb.dispatchEvent(new Event('change', {bubbles:true}));}catch(e){}
@@ -11044,7 +11254,7 @@ window.addEventListener('load', () => {
                 // off → ×1
                 cb.checked = true;
                 selEl.value = '1';
-                btn.classList.add('on-orange');
+                btn.classList.add('on-maki');
                 btn.textContent = 'まきびし×1';
             } else {
                 const cur = parseInt(selEl.value, 10);
@@ -11055,14 +11265,14 @@ window.addEventListener('load', () => {
                     // ×3 → off
                     cb.checked = false;
                     selEl.value = '1';
-                    btn.classList.remove('on-orange');
+                    btn.classList.remove('on-maki');
                     btn.textContent = 'まきびし';
                 }
             }
             try{cb.dispatchEvent(new Event('change', {bubbles:true}));}catch(e){}
         }
 
-        // 持ち物バッジ自動更新（珠ダメ・たべのこし）
+        // 持ち物バッジ自動更新（いのちのたま・たべのこし）
         function updateItemBadges(side) {
             const item = document.getElementById(side + 'Item')?.value || '';
             const loArea = document.getElementById('itemBadge_lo_' + side);
