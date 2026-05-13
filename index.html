@@ -61,8 +61,8 @@ body{font-family:'Hiragino Sans','Noto Sans JP',sans-serif;background:var(--bg);
 .hpr{width:50px;font-size:.76rem;text-align:center;padding:3px;border:1px solid var(--bdr);border-radius:4px;background:var(--sur2);color:var(--sub)}
 /* MOVES */
 .mvw{padding:8px 12px;border-bottom:1px solid var(--bdr)}
-.mvg{display:grid;grid-template-columns:1fr 1fr;gap:5px}
-.mvr{display:flex;gap:3px}
+.mvg{display:grid;grid-template-columns:1fr 1fr;gap:5px;min-width:0}
+.mvr{display:flex;gap:3px;min-width:0;overflow:hidden}
 .mvr select{flex:1;font-size:.76rem;padding:5px 3px;border:1.5px solid var(--bdr);border-radius:var(--rs);background:var(--sur);color:var(--tx);cursor:pointer;min-width:0}
 .mvr select:focus{border-color:var(--my);outline:none}
 #opp-col .mvr select:focus{border-color:var(--op)}
@@ -157,10 +157,12 @@ body{font-family:'Hiragino Sans','Noto Sans JP',sans-serif;background:var(--bg);
 .ko-no{background:var(--sur2);color:var(--sub);padding:2px 8px;border-radius:20px;font-size:.76rem;display:inline-block;border:1px solid var(--bdr)}
 /* TOOLS */
 #tools{margin-top:0;grid-column:1/-1}
+#dmgLogSection{grid-column:1/-1;margin-bottom:0}
 .tc{background:var(--sur);border:1px solid var(--bdr);border-radius:var(--r);box-shadow:var(--sh);margin-bottom:7px;overflow:hidden}
 .thd{display:flex;align-items:center;justify-content:space-between;padding:9px 14px;cursor:pointer;user-select:none;font-weight:700;font-size:.84rem;transition:.1s;gap:7px}
 .thd:hover{background:var(--sur2)}
-.thd .tha{font-size:.68rem;color:var(--xs);transition:transform .2s}
+.thd .tha{font-size:.68rem;color:var(--xs);font-weight:normal;transition:transform .2s}
+.sub-tha{font-size:.65rem;color:var(--xs);font-weight:normal;}
 .thd.op2 .tha{transform:rotate(180deg)}
 .tbd{padding:11px 14px;border-top:1px solid var(--bdr)}
 .tbd.cl{display:none}
@@ -264,10 +266,52 @@ body.dark-mode .hs option{color:var(--tx)!important;background:var(--sur)!import
             display:none; position:fixed; z-index:9999;
             background:rgba(20,20,30,0.96); color:#fff;
             font-size:0.78rem; padding:6px 12px;
+            white-space:nowrap; width:max-content; max-width:90vw; line-height:1.6;
             border-radius:8px; pointer-events:none;
             white-space:nowrap; box-shadow:0 2px 10px rgba(0,0,0,0.5);
             border:1px solid rgba(255,255,255,0.12);
         }
+
+/* ===== ② カスタムコンボボックス ===== */
+.cb-wrap{position:relative;display:block;width:100%;min-width:0}
+.cb-input-row{display:flex;align-items:center;border:1.5px solid var(--bdr);border-radius:var(--rs,4px);background:var(--sur);overflow:hidden;cursor:pointer;min-width:0}
+.cb-input-row:focus-within{border-color:var(--my)}
+.cb-inp{flex:1;border:none;outline:none;background:transparent;color:var(--tx);font-size:.8rem;padding:4px 6px;min-width:0;cursor:pointer}
+.cb-arrow{padding:0 6px;color:var(--sub);font-size:.7rem;cursor:pointer;user-select:none;flex-shrink:0}
+.cb-dropdown{position:fixed;background:var(--sur);border:1.5px solid var(--my);border-radius:var(--rs,4px);z-index:9000;max-height:220px;overflow-y:auto;display:none;box-shadow:0 4px 16px rgba(0,0,0,.25)}
+.cb-dropdown.open{display:block}
+.cb-item{padding:5px 10px;font-size:.8rem;cursor:pointer;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cb-item:hover,.cb-item.active{background:var(--my);color:#fff}
+.cb-item.cb-empty{color:var(--sub);font-size:.75rem;pointer-events:none}
+.mvr select{display:none!important}
+#moveSelect{display:none!important}
+.poke-row select{display:none!important}
+.poke-row .cb-wrap{flex:1;min-width:60px;max-width:110px}
+.poke-row .cb-inp{font-size:0.78rem;padding:2px 3px}
+.poke-row .cb-input-row{min-height:26px}
+
+/* ⑤ 耐久調整 */
+.dur-row{display:flex;align-items:baseline;gap:6px;padding:3px 0;border-bottom:1px solid var(--bdr);font-size:.78rem;flex-wrap:wrap}
+.dur-row:last-child{border-bottom:none}
+.dur-tag{font-size:.65rem;padding:1px 5px;border-radius:3px;background:var(--my);color:#fff;flex-shrink:0;white-space:nowrap}
+.dur-tag.b{background:#16a085}
+.dur-tag.d{background:#8e44ad}
+
+/* 能力値エリアの select をコンボボックスに置き換え */
+.stat-item select{display:none!important}
+.rank-row select{display:none!important}
+select#myAbility,select#oppAbility,
+select#myItem,select#oppItem,
+select#myStatus,select#oppStatus,
+select#myNatureAll,select#oppNatureAll,
+select#myRankA,select#myRankD,select#myRankC,select#myRankD2,select#myRankS,select#myRankAcc,select#myRankEva,
+select#oppRankA,select#oppRankD,select#oppRankC,select#oppRankD2,select#oppRankS,select#oppRankAcc,select#oppRankEva{display:none!important}
+
+/* stat-item / rank-row 内のコンボボックス */
+.stat-item .cb-wrap{width:100%;min-width:0}
+.rank-row .cb-wrap{width:100%;min-width:0}
+.stat-item .cb-inp{font-size:.8rem}
+.rank-row .cb-inp{font-size:.8rem}
 </style>
 </head>
 <body>
@@ -478,6 +522,14 @@ body.dark-mode .hs option{color:var(--tx)!important;background:var(--sur)!import
                     <span class="item-auto-badge badge-shell" id="itemBadge_shell_my" style="display:none">かいがらのすず</span>
                 </div>
                 </div>
+
+<!-- ⑤ 耐久調整 (my) -->
+<div class="sacc-hd" onclick="(function(el){var b=document.getElementById('dur_my');b.classList.toggle('cl');el.querySelector('.sar').style.transform=b.classList.contains('cl')?'':'rotate(180deg)';setTimeout(function(){if(!b.classList.contains('cl'))window.calcDurabilityAdjust('my');},50);})(this)">
+  <span>⚙️ 耐久調整</span><span class="sar">▼</span>
+</div>
+<div id="dur_my" class="sacc-bd cl">
+  <div id="durResult_my" style="font-size:.74rem;padding:2px 0"></div>
+</div>
 <div class="bdga"></div>
 <div id="myActiveBox" style="display:none"></div>
 </div>
@@ -726,8 +778,31 @@ body.dark-mode .hs option{color:var(--tx)!important;background:var(--sur)!import
                     <span class="item-auto-badge badge-shell" id="itemBadge_shell_opp" style="display:none">かいがらのすず</span>
                 </div>
                 </div>
+
+<!-- ⑤ 耐久調整 (opp) -->
+<div class="sacc-hd" onclick="(function(el){var b=document.getElementById('dur_opp');b.classList.toggle('cl');el.querySelector('.sar').style.transform=b.classList.contains('cl')?'':'rotate(180deg)';setTimeout(function(){if(!b.classList.contains('cl'))window.calcDurabilityAdjust('opp');},50);})(this)">
+  <span>⚙️ 耐久調整</span><span class="sar">▼</span>
+</div>
+<div id="dur_opp" class="sacc-bd cl">
+  <div id="durResult_opp" style="font-size:.74rem;padding:2px 0"></div>
+</div>
 <div class="bdga"></div>
 <div id="oppActiveBox" style="display:none"></div>
+</div>
+
+<!-- ① ダメージログ -->
+<div class="tc" id="dmgLogSection">
+  <div class="thd" onclick="var b=document.getElementById('tt_dmglog');b.classList.toggle('cl');this.classList.toggle('op2')">
+    <span>📝 ダメージログ <span id="dmgLogCount" style="font-size:.68rem;color:var(--xs);font-weight:400"></span><span id="dmgLogSumInline" style="font-size:.77rem;color:var(--ac);font-weight:700;display:none;margin-left:8px"></span></span>
+    <div style="display:flex;align-items:center;gap:6px">
+      <button onclick="event.stopPropagation();clearDmgLog()" style="font-size:.7rem;padding:2px 8px;border:1px solid var(--bdr);border-radius:4px;cursor:pointer;background:var(--sur2);color:var(--sub)">🗑 クリア</button>
+      <span class="tha">▼</span>
+    </div>
+  </div>
+  <div id="tt_dmglog" class="tbd cl">
+    <div id="dmgLogList"></div>
+    <div id="dmgLogSum" style="padding:5px 11px;font-size:.79rem;font-weight:700;color:var(--ac);border-top:1px solid var(--bdr);display:none">✅ 選択合計: <span id="dmgLogSumVal">0〜0%</span></div>
+  </div>
 </div>
 <div id="tools">
 <div class="tc">
@@ -768,7 +843,7 @@ body.dark-mode .hs option{color:var(--tx)!important;background:var(--sur)!import
 <div class="tc">
   <div class="thd" onclick="var b=document.getElementById('tt_turn');b.classList.toggle('cl');this.classList.toggle('op2')">
     <span>⏱️ ターン管理</span><span class="tha">▼</span></div>
-  <div id="tt_turn" class="tbd cl">
+  <div id="tt_turn" class="tbd cl" style="padding-bottom:0;">
 <div style="display:flex; flex-wrap:wrap; gap:12px;">
                 <div style="flex:1; min-width:140px; background:#fdf2f8; border:1px solid #d2b4de; border-radius:6px; padding:8px;">
                     <div style="font-weight:bold; color:#8e44ad; margin-bottom:4px;">🟣 もうどく</div>
@@ -803,7 +878,7 @@ body.dark-mode .hs option{color:var(--tx)!important;background:var(--sur)!import
                     <button onclick="resetTurnMgr()" style="flex:1; background:#bdc3c7; color:white; border:none; padding:8px; border-radius:4px; font-weight:bold; cursor:pointer;">↺ リセット</button>
                 </div>
             </div>
-            <div id="turnMgrLog" style="margin-top:8px; font-size:0.82rem; color:#555; min-height:1em;"></div>
+            <div id="turnMgrLog" style="margin-top:0; font-size:0.82rem; color:#555;"></div>
   </div>
 </div>
 <div class="tc">
@@ -812,11 +887,10 @@ body.dark-mode .hs option{color:var(--tx)!important;background:var(--sur)!import
   <div id="tt_sline" class="tbd cl">
 <div id="speedTierList" style="background:#f9f9f9;padding:10px;border-radius:4px;font-size:0.85rem;border:1px solid #ddd;margin-top:10px;">※「計算 ＆ 予測を実行」を押すと更新されます</div>
 <!-- 先制技圏内判定 -->
-            <div style="margin-top:10px; border-top:1px solid #ddd; padding-top:8px;">
-              <div style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-weight:bold;color:#e67e22;"
-                   onclick="const _e=document.getElementById('priorityBody');const _o=_e.style.display==='none';_e.style.display=_o?'block':'none';this.querySelector('.tog-arrow').textContent=_o?'▲':'▼';if(_o&&typeof updatePriorityKO==='function')updatePriorityKO();">
+            <div style="margin-top:10px; border-top:1px solid #ddd; padding-top:0;">
+              <div style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;padding:11px 2px 3px;font-weight:bold;font-size:.84rem;align-items:center;" onclick="const _e=document.getElementById('priorityBody');const _o=_e.style.display==='none';_e.style.display=_o?'block':'none';this.querySelector('.sub-tha').textContent=_o?'▲':'▼';if(_o&&typeof updatePriorityKO==='function')updatePriorityKO();">
                 <span>⚡ 先制技圏内判定</span>
-                <span class="tog-arrow" style="font-size:0.8rem;color:#888;font-weight:normal;">▼</span>
+                <span class="sub-tha">▼</span>
               </div>
               <div id="priorityBody" style="display:none;margin-top:6px;">
               <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
@@ -833,10 +907,9 @@ body.dark-mode .hs option{color:var(--tx)!important;background:var(--sur)!import
             </div>
             <!-- 能力P素早さ調整補助 -->
 <div id="speedCalcBox" style="margin-top:10px;border-top:1px solid #ddd;padding-top:8px;">
-              <div style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-weight:bold;color:#2980b9;"
-                   onclick="const _e=document.getElementById('speedAdjBody');const _o=_e.style.display==='none';_e.style.display=_o?'block':'none';this.querySelector('.tog-arrow').textContent=_o?'▲':'▼';if(_o&&typeof updateSpeedAdj==='function')updateSpeedAdj();">
+              <div style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;padding:11px 2px 3px;font-weight:bold;font-size:.84rem;align-items:center;" onclick="const _e=document.getElementById('speedAdjBody');const _o=_e.style.display==='none';_e.style.display=_o?'block':'none';this.querySelector('.sub-tha').textContent=_o?'▲':'▼';if(_o&&typeof updateSpeedAdj==='function')updateSpeedAdj();">
                 <span>🎯 素早さ調整補助</span>
-                <span class="tog-arrow" style="font-size:0.8rem;color:#888;font-weight:normal;">▼</span>
+                <span class="sub-tha">▼</span>
               </div>
               <div id="speedAdjBody" style="display:none;margin-top:6px;">
                 <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
@@ -859,44 +932,46 @@ body.dark-mode .hs option{color:var(--tx)!important;background:var(--sur)!import
                 <span style="color:#bbb;">－=1倍</span>
             </div>
             <div id="typeChartContainer"></div>
-            <div style="margin-top:10px; padding:8px; background:#f0fff4; border:1px solid #c6f6d5; border-radius:6px;">
-                <b style="color:#27ae60; font-size:0.85rem;">🎯 場のポケモンへの被タイプ相性</b>
-                <div style="display:flex; gap:8px; margin-top:6px; flex-wrap:wrap;">
-                    <button onclick="showPokeTypeChart('my')"
-                        style="font-size:0.78rem;padding:4px 12px;background:#2980b9;color:#fff;border:none;border-radius:4px;cursor:pointer;">
-                        🔵 自分の場のポケモン
-                    </button>
-                    <button onclick="showPokeTypeChart('opp')"
-                        style="font-size:0.78rem;padding:4px 12px;background:#c0392b;color:#fff;border:none;border-radius:4px;cursor:pointer;">
-                        🔴 相手の場のポケモン
-                    </button>
-                </div>
-                <div id="pokeTypeResult" style="margin-top:8px;font-size:0.82rem;line-height:1.8;"></div>
-            <!-- 技の一貫性チェック -->
-            <div style="margin-top:10px; padding:8px; background:#fdf3fd; border:1px solid #d6b0e0; border-radius:6px;">
-                <div style="cursor:pointer; display:flex; justify-content:space-between; align-items:center; font-weight:bold; font-size:0.85rem; color:#8e44ad;"
-                     onclick="const cd=document.getElementById('consistencyBody');const _open=cd.style.display==='none';cd.style.display=_open?'block':'none';this.querySelector('.cc-arrow').textContent=_open?'▲':'▶';if(_open&&typeof executeConsistencyCheck==='function')executeConsistencyCheck();if(!_open){const r=document.getElementById('consistencyResult');if(r)r.innerHTML=''}">
-                    <span>⚠️ 技の一貫性チェック</span>
-                    <span class="cc-arrow" style="font-size:0.8rem;">▶</span>
-                </div>
-                <div id="consistencyBody" style="display:none; margin-top:8px;">
-                    <div id="consistencyResult" style="margin-top:6px;"></div>
-
-                </div>
-            </div>
-            </div></div>
-<!-- ── チームのタイプ相性集計 ── -->
-<div style="margin-top:12px;border-top:2px dashed #a0c4ff;padding:10px 12px 0;">
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
-    <span style="font-weight:700;font-size:0.85rem;color:#2980b9;">🔰 チームのタイプ相性集計</span>
-    <button onclick="updateTypeChart()" style="background:#2980b9;color:#fff;border:none;padding:3px 12px;border-radius:4px;font-size:0.78rem;cursor:pointer;font-weight:600;">集計する</button>
-  </div>
-  <p style="font-size:0.75rem;color:#888;margin-bottom:8px;">自分・相手チームのポケモンを集計。各攻撃タイプが何体に何倍効くか表示します。</p>
-  <div id="typeChartResult">
-    <span style="font-size:0.78rem;color:#aaa;">「集計する」を押してください</span>
-  </div>
 </div>
-  </div>
+<div style="margin-top:10px; border-top:1px solid #ddd; padding-top:0;">
+    <div style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;padding:11px 2px 3px;font-weight:bold;font-size:.84rem;align-items:center;" onclick="const _e=document.getElementById('pokeTypeBody');const _o=_e.style.display==='none';_e.style.display=_o?'block':'none';this.querySelector('.sub-tha').textContent=_o?'▲':'▼';">
+        <span>🎯 場のポケモンへの被タイプ相性</span>
+        <span class="sub-tha">▼</span>
+    </div>
+    <div id="pokeTypeBody" style="display:none;margin-top:6px;">
+        <div style="display:flex; gap:8px; margin-top:4px; flex-wrap:wrap;">
+            <button onclick="showPokeTypeChart('my')"
+                style="font-size:0.78rem;padding:4px 12px;background:#2980b9;color:#fff;border:none;border-radius:4px;cursor:pointer;">
+                🔵 自分の場のポケモン
+            </button>
+            <button onclick="showPokeTypeChart('opp')"
+                style="font-size:0.78rem;padding:4px 12px;background:#c0392b;color:#fff;border:none;border-radius:4px;cursor:pointer;">
+                🔴 相手の場のポケモン
+            </button>
+        </div>
+        <div id="pokeTypeResult" style="margin-top:8px;font-size:0.82rem;line-height:1.8;"></div>
+    </div>
+</div>
+<div style="margin-top:10px; border-top:1px solid #ddd; padding-top:0;">
+    <div style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;padding:11px 2px 3px;font-weight:bold;font-size:.84rem;align-items:center;" onclick="const cd=document.getElementById('consistencyBody');const _open=cd.style.display==='none';cd.style.display=_open?'block':'none';this.querySelector('.sub-tha').textContent=_open?'▲':'▼';if(_open&&typeof executeConsistencyCheck==='function')executeConsistencyCheck();if(!_open){const r=document.getElementById('consistencyResult');if(r)r.innerHTML=''}">
+        <span>⚠️ 技の一貫性チェック</span>
+        <span class="sub-tha">▼</span>
+    </div>
+    <div id="consistencyBody" style="display:none;margin-top:6px;">
+        <div id="consistencyResult" style="margin-top:4px;"></div>
+    </div>
+</div>
+<div style="margin-top:10px; border-top:1px solid #ddd; padding-top:0;">
+    <div style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;padding:11px 2px 3px;font-weight:bold;font-size:.84rem;align-items:center;" onclick="const _e=document.getElementById('teamTypeBody');const _o=_e.style.display==='none';_e.style.display=_o?'block':'none';this.querySelector('.sub-tha').textContent=_o?'▲':'▼';if(_o&&typeof updateTypeChart==='function')updateTypeChart();">
+        <span>🔰 チームのタイプ相性集計</span>
+        <span class="sub-tha">▼</span>
+    </div>
+    <div id="teamTypeBody" style="display:none;margin-top:6px;">
+        <p style="font-size:0.75rem;color:#888;margin-bottom:8px;">自分・相手チームのポケモンを集計。各攻撃タイプが何体に何倍効くか表示します。</p>
+        <div id="typeChartResult"></div>
+    </div>
+</div>
+</div>
 </div>
 <div class="tc">
   <div class="thd" onclick="var b=document.getElementById('tt_battle');b.classList.toggle('cl');this.classList.toggle('op2')">
@@ -1072,7 +1147,15 @@ body.dark-mode .hs option{color:var(--tx)!important;background:var(--sur)!import
                 .replace(/'/g, '&#039;');
         }
 
-        const moveDex = {
+        
+// ================================================================
+// 技追加効果データ
+// ================================================================
+const MOVE_EFFECTS = {"かえんほうしゃ": "10%の確率で相手をやけど状態にする。", "だいもんじ": "10%の確率で相手をやけど状態にする。", "ほのおのうず": "4〜5ターン相手を炎の渦に閉じ込め、毎ターンダメージ。", "かえんぐるま": "10%の確率で相手をやけど状態にする。", "ニトロチャージ": "自分の素早さを1段階上げる。", "フレアドライブ": "10%の確率で相手をやけど状態にする。反動ダメージあり(1/3)。", "オーバーヒート": "使用後、自分の特攻が2段階下がる。", "ねっぷう": "10%の確率で相手をやけど状態にする。ダブルで両側を攻撃。", "ねっとう": "30%の確率で相手をやけど状態にする。", "ほのおのちかい": "相手側フィールドに炎の誓いエリアを4ターン展開。", "ブレイズキック": "10%の確率でやけど。急所に当たりやすい(+1)。", "マグマストーム": "4〜5ターン相手を閉じ込め毎ターンダメージ。", "ヒートスタンプ": "自分の体重が相手より重いほど威力が高い(最大120)。", "かえんだんのまとい": "4ターン炎の粉をまとい、接触技を使った相手をやけど状態にする。", "だいちのちから": "20%の確率で相手の特防を1段階下げる。", "ほのおのたつまき": "ダブル両隣を攻撃。炎フィールド展開中に威力1.5倍。", "バーニングバレット": "100%の確率で相手をやけど状態にする。", "エルフーン": "100%の確率で相手をやけど状態にする。", "Ｖジェネレート": "使用後、自分の防御・特防・素早さが1段階ずつ下がる。", "なみのり": "全体攻撃。あなをほる中・ダイビング中の相手には威力2倍。", "みずでっぽう": "通常攻撃。", "ハイドロポンプ": "命中率が低めだが高威力。", "アクアジェット": "必ず先制できる(優先度+1)。", "たきのぼり": "20%の確率で相手をひるませる。", "クラブハンマー": "急所に当たりやすい(+1)。", "みずのちかい": "相手側フィールドに水の誓いエリアを4ターン展開。", "しおみず": "相手のHPが半分以下のとき威力2倍。", "アクアテール": "通常攻撃。", "ウォーターフォール": "20%の確率で相手をひるませる。", "ウェザーボール": "天気が雨のとき水タイプになり威力2倍。", "ハイドロカノン": "使用後、次のターン動けない。", "ウォータースポット": "4ターン相手側フィールドを水浸しにし炎技のダメージを軽減。", "みずびたし": "相手のタイプを水タイプにする。", "ジェットパンチ": "必ず先制できる(優先度+1)。", "タネマシンガン": "2〜5回連続で攻撃する。", "はっぱカッター": "急所に当たりやすい(+1)。", "ソーラービーム": "1ターン溜めてから攻撃。晴れ時は溜め不要。", "やどりぎのタネ": "相手を宿り木状態にし、毎ターンHPを吸収する。", "くさのちかい": "自分側フィールドに草の誓いエリアを4ターン展開。", "パワーウィップ": "通常攻撃(高威力)。", "ウッドハンマー": "反動ダメージあり(1/3)。", "リーフストーム": "使用後、自分の特攻が2段階下がる。", "エナジーボール": "10%の確率で相手の特防を1段階下げる。", "グラスフィールド": "グラスフィールドを展開。草技1.3倍、HP1/16回復。", "ねをはる": "根を張ってグラスフィールドを展開。命中率1段階上昇。", "タネばくだん": "通常攻撃。", "ジャングルヒール": "自分のHPを半分回復し状態異常を治す。", "かみなり": "30%の確率でまひ状態。雨天時は必中、晴れ時は命中50%。", "１０まんボルト": "10%の確率でまひ状態にする。", "かみなりパンチ": "10%の確率でまひ状態にする。", "でんきショック": "10%の確率でまひ状態にする。", "ボルトチェンジ": "攻撃後、自分を交代させる。", "ワイルドボルト": "反動ダメージあり(1/4)。", "でんじは": "相手をまひ状態にする。", "スパーク": "30%の確率でまひ状態にする。", "エレキボール": "自分の素早さが相手より高いほど威力が上がる(最大150)。", "プラズマフィスト": "1ターンだけ通常技を電気技に変える。", "１０００まんボルト": "特殊。ピカチュウ専用。ポリゴンZ以外に使用後まひ。", "ライジングボルト": "エレキフィールド中威力2倍。", "エレクトロビーム": "1ターン溜め。雨天時は溜め不要。使用後特攻-1。", "テラバースト": "テラスタル時、攻撃・特攻の高い方でテラスタイプの技を使う。", "れいとうビーム": "10%の確率でこおり状態にする。", "ふぶき": "10%の確率でこおり状態。ゆき時は必中。", "こおりのつぶて": "必ず先制できる(優先度+1)。", "こごえるかぜ": "必ず相手の素早さを1段階下げる。", "フリーズドライ": "水タイプに効果抜群(例外的に)。", "こおりのキバ": "10%の確率でこおりまたはひるみ状態にする。", "オーロラベール": "ゆき時のみ使用可。3ターン物理・特殊ダメージを半減(重複可)。", "アイスボール": "5ターン連続で攻撃し、毎ターン威力が2倍になる。", "つのドリル": "一撃必殺技。相手の素早さが自分より高いと外れる。", "れいとうパンチ": "10%の確率でこおり状態にする。", "トリプルアクセル": "3回連続攻撃。毎回命中判定あり、当たるたびに威力上昇。", "こなゆき": "通常攻撃(ゆき時に特防1段階上昇)。", "インファイト": "使用後、自分の防御・特防が1段階ずつ下がる。", "ローキック": "必ず相手の素早さを1段階下げる。", "かわらわり": "リフレクター・ひかりのかべ・オーロラベールも破壊する。", "きしかいせい": "自分のHPが少ないほど威力が高い(最大200)。", "ドレインパンチ": "与えたダメージの半分HPを回復する。", "マッハパンチ": "必ず先制できる(優先度+1)。", "ばくれつパンチ": "必ず相手を混乱状態にする。", "スーパーセル": "使用後、自分の攻撃・防御が1段階ずつ下がる。", "とびひざげり": "外れると反動ダメージ(最大HP1/2)。", "クロスチョップ": "急所に当たりやすい(+1)。", "はどうだん": "特殊。", "フォーカスブラスト": "10%の確率で相手の特防を1段階下げる。命中率やや低め。", "ポカブ": "20%の確率で相手をひるませる。", "スカイアッパー": "通常攻撃。", "ちきゅうなげ": "自分のレベルと同じダメージを与える。", "どくどく": "相手を猛毒状態にする。", "どくばり": "必ず相手を毒状態にする。", "ヘドロウェーブ": "30%の確率で相手を毒状態にする。", "ヘドロばくだん": "30%の確率で相手を毒状態にする。", "あくのはどう": "20%の確率で相手を混乱状態にする。", "クロスポイズン": "急所に当たりやすい(+1)。10%の確率で毒状態にする。", "どくづき": "30%の確率で相手を毒状態にする。", "ベノムショック": "相手が毒/猛毒状態なら威力2倍。", "サイコファング": "ひかりのかべ・リフレクター・オーロラベールを破壊する。", "じしん": "全体攻撃。あなをほる中の相手にも当たる。威力2倍。", "じならし": "必ず相手の素早さを1段階下げる。全体攻撃。", "マグニチュード": "威力5〜10のランダム(平均71)。あなをほる中の相手にも当たる。", "あなをほる": "1ターン目に潜り、2ターン目に攻撃する。", "ダイアース": "ダイマックス地面技。フィールドをグラスフィールドに。", "ボーンラッシュ": "2〜5回連続で攻撃する。", "ぼんぐりなげ": "通常攻撃。", "サンドトゥーム": "4〜5ターン相手を砂の渦に閉じ込め毎ターンダメージ。", "いわなだれ": "30%の確率で相手をひるませる。全体攻撃。", "ストーンエッジ": "急所に当たりやすい(+1)。命中率やや低め。", "がんせきふうじ": "必ず相手の素早さを1段階下げる。", "いわおとし": "30%の確率で相手をひるませる。", "スマートホーン": "必中技。", "パワージェム": "通常攻撃。", "ダイヤストーム": "30%の確率で自分の防御を2段階上げる。", "メテオビーム": "1ターン溜め。使用時に特攻+1。", "らんせつ": "2〜5回連続で攻撃する。", "むしのさざめき": "50%の確率で相手の特防を1段階下げる。全体攻撃。", "シグナルビーム": "10%の確率で相手を混乱状態にする。", "とびかかる": "必ず相手の攻撃を1段階下げる。", "シザークロス": "急所に当たりやすい(+1)。", "みだれひっかき": "2〜5回連続で攻撃する。", "Uターン": "攻撃後、自分を交代させる。", "バグバイト": "相手の食べているきのみを食べてその効果を得る。", "むしくい": "相手の持っているきのみを食べてその効果を得る。", "ハガネール": "通常攻撃。", "ギガドレイン": "与えたダメージの半分HPを回復する。", "ふみつけ": "30%の確率で相手をひるませる。", "たたみがえし": "必ず先制できる(優先度+1)。", "シルバーウィンド": "10%の確率で全能力値を1段階上げる。", "シャドーボール": "20%の確率で相手の特防を1段階下げる。", "シャドークロー": "急所に当たりやすい(+1)。", "おにびえんまく": "必ず相手をやけど状態にする。", "たたりめ": "相手が状態異常なら威力2倍。", "ナイトヘッド": "自分のレベルと同じダメージを与える。", "まとわりつく": "4〜5ターン相手に毎ターンダメージ。交代を封じる。", "ゴーストダイブ": "1ターン目に消え、2ターン目に攻撃する。", "かげぬい": "交代を封じる。", "アシッドボム": "必ず相手の特防を2段階下げる。", "りゅうのいぶき": "30%の確率でまひ状態にする。", "げきりん": "2〜3ターン暴走して攻撃後、自分が混乱する。", "ドラゴンクロー": "通常攻撃。", "ドラゴンテール": "相手を強制交代させる(優先度-6)。壁際では無効。", "ルーペ": "通常攻撃。", "ドラゴンバレット": "通常攻撃。", "したでなめる": "30%の確率でまひ状態にする。", "りゅうのまい": "自分の攻撃・素早さを1段階ずつ上げる。", "スケイルノイズ": "必ず相手の特防を1段階下げる。全体攻撃。", "ツインノバ": "自分の特攻と特防を2段階ずつ下げる代わりに大ダメージ。", "かみつく": "30%の確率で相手をひるませる。", "ふいうち": "相手が攻撃技を使おうとしている時のみ先制攻撃(優先度+1)。", "イカサマ": "相手の攻撃実数値を使って計算する。", "バークアウト": "必ず相手の特攻を1段階下げる。全体攻撃。", "かみくだく": "20%の確率で相手の防御を1段階下げる。", "ちょうはつ": "3ターン相手が変化技を使えなくなる。", "フェイント": "まもる・みきりを貫通(優先度+2)。", "ゆきなだれ": "同じターンにダメージを受けていると威力2倍。", "じごくぐるま": "相手の防御実数値でダメージを計算する。", "ハイパーボイス": "全体攻撃。ノーマルタイプだがフェアリーにも有効な場合あり。", "タブレット": "攻撃後に相手を眠り状態にする。", "ソウルクラッシュ": "必ず相手の特攻を1段階下げる。", "フールクラフト": "使用後、自分の特攻・特防が1段階ずつ下がる。", "バレットパンチ": "必ず先制できる(優先度+1)。", "アイアンヘッド": "30%の確率で相手をひるませる。", "アイアンテール": "30%の確率で相手の防御を1段階下げる。", "ラスターカノン": "10%の確率で相手の特防を1段階下げる。", "ジャイロボール": "自分の素早さが低いほど威力が高い(最大150)。", "コメットパンチ": "25%の確率で自分の攻撃を1段階上げる。", "せいなるつるぎ": "相手の防御ランクを無視してダメージを与える。", "ヘビーボンバー": "自分の体重が相手より重いほど威力が高い(最大120)。", "ドリルライナー": "急所に当たりやすい(+1)。", "メテオドライブ": "通常攻撃。", "スチールウィング": "10%の確率で自分の防御を1段階上げる。", "アイアンローラー": "フィールド技を破壊してダメージを与える。フィールドがないと失敗。", "タールショット": "必ず相手のすばやさを1段階下げる。炎技に弱くなる効果も。", "マジカルシャイン": "全体攻撃。", "ムーンフォース": "30%の確率で相手の特攻を1段階下げる。", "じゃれつく": "30%の確率で相手の攻撃を1段階下げる。", "ドレインキッス": "与えたダメージの3/4をHPとして回復する。", "マジックパウダー": "相手のタイプをエスパータイプにする。", "みずのはどう": "20%の確率で相手を混乱状態にする。", "チャームボイス": "必中技。", "デコレーション": "自分の特攻・素早さを2段階ずつ上げる(ピクシー等)。", "ようせいのかぜ": "通常攻撃。", "フェアリーウィンド": "通常攻撃。", "みどりのひどう": "20%の確率で相手の特防を1段階下げる。", "クレッフィ": "必ず先制できる(優先度+1)。", "サイコキネシス": "10%の確率で相手の特防を1段階下げる。", "サイコショック": "相手の防御を参照してダメージを計算する。", "サイコカッター": "急所に当たりやすい(+1)。", "しねんのずつき": "30%の確率で相手をひるませる。", "サイコフィールド": "5ターンサイコフィールドを展開。エスパー技1.3倍。", "ゆびをふる": "ランダムな技を使う。", "テレポート": "交代優先技(優先度-6)。", "おきみやげ": "自分は交代し、相手の特攻・特防を2段階ずつ下げる。", "フューチャーサイト": "2ターン後にダメージを与える。", "しぜんのいかり": "相手のHPを残りHPの半分にする。", "じんつうりき": "通常攻撃。", "ミラクルアイ": "あく・みずタイプへのエスパー技の無効を解除する。", "エスパー": "10%の確率で相手の特防を1段階下げる。", "エスパーウィング": "急所に当たりやすい(+1)。自分の素早さを1段階上げる。", "ひっかく": "通常攻撃。", "たいあたり": "通常攻撃。", "けたぐり": "相手の体重が重いほど威力が高い(最大120)。", "はかいこうせん": "使用後、次のターン動けない。", "ギガインパクト": "使用後、次のターン動けない。", "のしかかり": "30%の確率でまひ状態にする。", "でんこうせっか": "必ず先制できる(優先度+1)。", "ひみつのちから": "30%の確率で相手に追加効果を与える(環境依存)。", "すてみタックル": "反動ダメージあり(1/3)。", "ダブルエッジ": "反動ダメージあり(1/3)。", "もろはのずつき": "反動ダメージあり(自分のダメージ分)。", "とっしん": "反動ダメージあり(1/4)。", "ねこだまし": "必ず先制かつ相手をひるませる(1ターン目のみ有効・優先度+3)。", "まもる": "このターン受けるダメージを無効。連続使用で失敗率上昇。", "みきり": "物理技をこのターン無効。", "ねむる": "HPを完全回復し、2ターン眠り状態になる。", "こうそくいどう": "自分の素早さを2段階上げる。", "りんしょう": "前のターン同じ技を使った味方がいると威力2倍。", "なりきり": "自分の特性を相手と同じにする。", "みがわり": "自分のHP1/4を消費してみがわり人形を作る。", "かたくなる": "自分の防御を1段階上げる。", "ちいさくなる": "自分の回避率を2段階上げる。のしかかり等に弱くなる。", "てだすけ": "このターン味方の技の威力を1.5倍にする。", "ロールアウト": "5ターン連続で攻撃し、毎ターン威力が2倍になる。", "からげんき": "やけど・まひ・どく状態なら威力3倍。", "かぜおこし": "通常攻撃。", "ひこうのちかい": "水の誓いと組み合わせると全体攻撃。炎の誓いと組み合わせると龍巻発生。", "とびはねる": "1ターン目に跳び上がり2ターン目に攻撃。", "ものまね": "相手の直前に使った技をコピーして使う。", "こらえる": "このターン瀕死になるダメージをHP1で耐える。", "おだてる": "相手の特攻を2段階上げて混乱させる。", "てんしのキッス": "相手を混乱状態にする。", "ブレイブバード": "反動ダメージあり(1/3)。", "つばさでうつ": "通常攻撃。", "とびける": "通常攻撃(空中へ飛び上がって攻撃)。", "エアスラッシュ": "30%の確率で相手をひるませる。", "ぼうふう": "30%の確率で相手を混乱状態にする。雨天時必中。", "はがねのつばさ": "通常攻撃。", "アクロバット": "自分が道具を持っていないとき威力2倍。", "おいかぜ": "4ターン自分側の素早さを2倍にする。", "ハリケーン": "30%の確率で相手を混乱。雨天時必中、晴れ時命中50%。", "トリックルーム": "5ターン素早さが低いポケモンが先に行動するようになる。", "テールウィンド": "4ターン自分側の素早さを2倍にする。", "いのちがけ": "互いのHPを合計して半分ずつにする。", "トリック": "相手と持ち物を入れ替える。", "すりかえ": "相手と持ち物を入れ替える。", "ほろびのうた": "3ターン後に相手を瀕死にする。", "クロスサンダー": "クロスフレイムと組み合わせると必中になりお互いの威力が2倍。", "クロスフレイム": "クロスサンダーと組み合わせると必中になりお互いの威力が2倍。", "ほえる": "相手を強制交代させる。野生戦を終わらせる。", "ふきとばし": "相手を強制交代させる(優先度-6)。野生戦を終わらせる。", "みちづれ": "このターン自分が瀕死になると相手も瀕死にする。", "じばく": "自分が瀕死になる。ダブルでは両隣を攻撃。", "だいばくはつ": "自分が瀕死になる。ダブルでは両隣を攻撃。", "アシストパワー": "自分の能力が上がっている段階の数×20だけ威力が上がる(基礎20)。", "かたきうち": "前のターン味方が倒されていると威力2倍。", "しっぺがえし": "後攻で使うと威力2倍。", "おかえし": "相手にHPを削られたターン、受けたダメージと同じダメージを返す。", "めざめるパワー": "使うポケモンのIVによってタイプが変わる(現在廃止)。", "なげつける": "持っている道具によって効果が変わる。", "スピードスター": "必中技。", "がむしゃら": "相手のHPを自分のHPと同じ数値まで削る。", "かみなりのキバ": "10%の確率でまひまたはひるみ状態にする。", "ほのおのキバ": "10%の確率でやけどまたはひるみ状態にする。", "ダブルチョップ": "2回連続で攻撃する。急所に当たりやすい(+1)。", "ニードルアーム": "30%の確率でひるませる。", "どろかけ": "必ず相手の命中率を1段階下げる。", "かいがらのすず": "与えたダメージの1/8のHPを回復する。", "うずしお": "4〜5ターン相手を渦潮に閉じ込め毎ターンダメージ。", "バインド": "4〜5ターン相手を締め付けて毎ターンダメージ。", "まきつく": "4〜5ターン相手に巻きつき毎ターンダメージ。", "ゆびでふさぐ": "相手が選んだ技を1ターン使えなくする。", "ちょうのまい": "自分の特攻・特防・素早さを1段階ずつ上げる。", "つるぎのまい": "自分の攻撃を2段階上げる。", "てっぺき": "自分の防御を2段階上げる。", "とぐろをまく": "自分の攻撃・防御・命中率を1段階ずつ上げる。", "めいそう": "自分の特攻・特防を1段階ずつ上げる。", "なぎはらい": "必ず相手の命中率を1段階下げる。", "からをやぶる": "自分の攻撃・特攻・素早さを2段階ずつ上げ、防御・特防を1段階ずつ下げる。", "ほたるび": "自分の特攻を3段階上げる。", "はらだいこ": "HPを半分消費して攻撃を最大まで上げる(+6段階相当)。", "アンコール": "相手を直前に使った技を3ターン使い続けさせる。", "ステルスロック": "相手側に岩を仕掛け、交代で出てきたポケモンにダメージ。", "まきびし": "相手側に撒き菱を仕掛け、交代で出てきたポケモンにダメージ(最大3重)。", "どくびし": "相手側に毒菱を仕掛け、地面接地のポケモンを毒状態にする(2枚で猛毒)。", "リフレクター": "5ターン自分側の物理ダメージを半減する。", "ひかりのかべ": "5ターン自分側の特殊ダメージを半減する。", "しんぴのまもり": "5ターン自分側が状態異常にならなくなる。", "フォッグ": "場の岩・菱・蜘蛛の巣を消す変化技。", "くろいきり": "全ポケモンの能力変化をリセットする。", "みずあそび": "5ターン炎技の威力を半減する。", "でんじふゆう": "5ターン自分が地面技を受けなくなる。", "ふういん": "相手が自分と同じ技を使えなくする。", "なやみのタネ": "相手の特性をふみんに変える。", "いえき": "相手の特性を無効化する。", "じゅうでん": "次に使う電気技の威力を2倍にする。特防を1段階上げる。", "コットンガード": "自分の防御を3段階上げる。", "そらをとぶ": "1ターン目に飛び上がり2ターン目に攻撃。", "ダイビング": "1ターン目に潜り2ターン目に攻撃。雨の誓いと相性良。", "こうらをかためる": "自分の特防を2段階上げる。", "まるくなる": "自分の防御を1段階上げる。ころがる・アイスボール威力2倍。", "ドわすれ": "自分の特防を2段階上げる。", "とおせんぼ": "相手を交代できなくする。", "くさわけ": "必ず相手の素早さを1段階下げる。", "もみじでまもる": "このターン技を受けない。使用後、自分と相手のポケモンを入れ替える。"};
+
+const ABILITY_EFFECTS = {"あくしゅう": "攻撃時10%の確率で相手をちぢみあがりにする。", "あついしぼう": "ほのお・こおりタイプの技のダメージを半減する。", "あとだし": "優先度+1の技を使った相手に対し、後攻になる。", "あめうけざら": "雨天時にターンごとにHPを1/16回復する。", "あめふらし": "登場時に雨を5ターン降らせる。", "あめのめぐみ": "雨天時に追加効果の確率が2倍になる。", "いかく": "登場時に相手の攻撃を1段階下げる。", "いしあたま": "反動ダメージを受けない。", "いたずらごころ": "変化技の優先度が+1になる。", "いろめがね": "相手への効果が今ひとつの技の威力が2倍になる。", "うるおいボディ": "雨天時にターンごとに状態異常を回復する。", "うのミサイル": "2〜5回連続で攻撃する技の命中率が上がる。", "おみとおし": "登場時に相手の持ち物を見抜く。", "おとぼけ": "相手の特攻を2段階下げる。", "かいりきバサミ": "「ハサミギロチン」「はさむ」の威力が2倍になる。", "かがくへんかガス": "接触した相手の特性を無効化する。", "かたいツメ": "接触技の威力が1.3倍になる。", "かぜのり": "かぜ技を受けると特攻が上がる。", "かるわざ": "持ち物がなくなると素早さが2倍になる。", "がんじょう": "一撃で倒されない。HP満タン時に攻撃を耐える。", "がんじょうあご": "かみつく系の技の威力が1.5倍になる。", "きけんよち": "相手のわざの威力が強化されると事前に気づく。", "きよめのしお": "ゴーストタイプの技のダメージを半減する。", "きんちょうかん": "相手のきのみを使えなくする。", "くだけるよろい": "物理攻撃を受けると防御が下がり素早さが2段階上がる。", "くろいきり": "場の全能力変化をリセットする。", "くろいぬめり": "毎ターン相手の素早さを1段階下げる。", "げきりゅう": "HPが1/3以下になるとみずタイプの技の威力が1.5倍になる。", "こんじょう": "状態異常時に攻撃が1.5倍になる。", "こんらん": "攻撃を受けると相手が混乱する。", "さいせいりょく": "交代するとHPが1/3回復する。", "さめはだ": "接触してきた相手に最大HP1/8のダメージを与える。", "しぜんかいふく": "交代するとターン経過で状態異常が回復する。", "しぜんのめぐみ": "「しぜんのめぐみ」の威力と効果が持ち物で変わる。", "じきゅうりょく": "防御が上がっても攻撃が下がらない。", "じどうかふん": "花粉を毎ターン散らす（効果は未実装）。", "しめりけ": "爆発・自爆系の技を封じる。", "じゅうなん": "まひの素早さ低下を無視する。", "じょおうのいげん": "相手が補助技を使えなくなる。", "シンクロ": "状態異常を相手にも与える。", "すいほう": "みずタイプの技の威力が2倍。ほのおタイプの技を無効化する。", "すながくれ": "砂嵐時に回避率が1.25倍になる。", "すなあらし": "登場時に砂嵐を5ターン巻き起こす。", "すなのちから": "砂嵐時にいわ・じめん・はがねタイプの技の威力が1.3倍になる。", "すなはき": "砂嵐時に素早さが2倍になる。", "すなよけ": "砂嵐ダメージを受けない。", "すりぬけ": "相手のリフレクター・ひかりのかべ・くろいきりを無視する。", "スロースタート": "最初の5ターンは攻撃と素早さが半分になる。", "スワームチェンジ": "HPが半分以下になるとフォルムチェンジする（ウルガモス）。", "せいでんき": "接触してきた相手を30%の確率でまひにする。", "せいしんりょく": "怯まない。", "ぜったいねむり": "ねむり状態にならない。", "そうしょく": "くさタイプの技を無効化し攻撃が1段階上がる。", "たいねつ": "ほのおタイプの技のダメージを半減する。やけどにならない。", "だっぴ": "毎ターン30%の確率で状態異常が回復する。", "ちからずく": "追加効果がなくなるかわりに技の威力が1.3倍になる。", "ちどりあし": "混乱時に回避率が2倍になる。", "ちょすい": "みずタイプの技を無効化しHPを1/4回復する。", "ちょっかん": "急所ランクが常に+1される。", "ちんもく": "音系の技を封じる。", "てきおうりょく": "タイプ一致技の補正が2倍になる。", "てつのこぶし": "パンチ技の威力が1.2倍になる。", "てつのとげ": "接触してきた相手に1/8ダメージを与える。", "でんきエンジン": "でんきタイプの技を無効化し素早さが1段階上がる。", "でんきにかわる": "でんき技を無効化しノーマルタイプに変える。", "でんちくわ": "でんきタイプの技の威力が1.3倍になる。", "どんかん": "おだてる・挑発などの変化技を受けない。", "なまけ": "1ターンおきにしか行動できない。", "ねつぼうそう": "やけど時に特攻が1.5倍になる。", "ねんちゃく": "持ち物を取られない。どろぼうが効かない。", "のうりょく": "自分が攻撃するとき攻撃・特攻のどちらか高い方を使う。", "のろわれボディ": "攻撃を受けると30%の確率で相手の技をかなしばりにする。", "ハードロック": "相手の抜群技のダメージを3/4にする。", "はがねのせいしん": "はがねタイプの技の威力が1.5倍になる。", "はやあし": "状態異常時に素早さが1.5倍になる。", "はやてのつばさ": "HP満タン時にひこうタイプの技の優先度が+1になる。", "ばけのかわ": "一度だけどんな攻撃も無効化する。", "ばりあ": "特殊技のダメージを半減する。", "ひでり": "登場時に晴れを5ターン続ける。", "ひめんじょ": "登場時に相手の場にスパイクを3段階撒く。", "ひらいしん": "でんきタイプの技を引き付けて無効化し特攻が1段階上がる。", "ふうりょく": "かぜ系の技の威力が2倍になる。", "ふしぎなまもり": "効果が抜群の技しかダメージを受けない。", "ふしぎなうろこ": "状態異常時に防御が1.5倍になる。", "ふみん": "ねむり状態にならない。", "ふゆう": "じめんタイプの技を無効化する。", "フラワーギフト": "晴れ時に自分と味方の攻撃・特防を1.5倍にする。", "フィルター": "相手の抜群技のダメージを3/4にする。", "ふんか": "HPが半分以下になるとほのおタイプの技の威力が1.5倍になる。", "ポイズンヒール": "どく状態のときにHPを1/8回復する。", "ほうし": "接触してきた相手に毒・まひ・眠りのいずれかを与える（30%）。", "ほのおのからだ": "接触してきた相手を30%の確率でやけどにする。", "ほろびのうた": "3ターン後に相手を瀕死にする（効果は一部省略）。", "まけんき": "能力が下げられると攻撃が2段階上がる。", "マイペース": "混乱しない。", "マジックガード": "直接攻撃以外のダメージを受けない。", "マジックミラー": "変化技を相手に跳ね返す。", "マルチスケイル": "HP満タン時に受けるダメージを半減する。", "みずのベール": "やけど状態にならない。", "みずびたし": "自分のタイプをみずタイプに変える。", "みずあそび": "ほのおタイプの技の威力を下げる（効果は一部省略）。", "むしのしらせ": "HPが1/3以下になるとむしタイプの技の威力が1.5倍になる。", "もうか": "HPが1/3以下になるとほのおタイプの技の威力が1.5倍になる。", "もふもふ": "接触技のダメージを半減し、ほのお技は2倍受ける。", "もらいび": "ほのおタイプの技を無効化し、次のほのお技の威力が1.5倍になる。", "ゆうき": "特殊技のダメージを反撃時に活用する（ミラーコート換算）。", "ゆきがくれ": "霰のとき回避率が1.25倍になる。", "ゆきふらし": "登場時に霰を5ターン降らせる。", "ゆるふわ": "重さに関係する技の影響を受けない。", "ようりょくそ": "晴れ時に素早さが2倍になる。", "ライトメタル": "自分の重さが半分になる。", "りんぷん": "粉・胞子技を無効化する。", "りゅうのあぎと": "ドラゴンタイプの技の威力が1.5倍になる。", "ルーキー": "場に出たターンに使う技の優先度が+1になる。", "わるいてぐせ": "自分に接触した相手の持ち物を奪う。", "おうじゃのしるし": "急所に当たりやすくなる。", "かみなりよけ": "でんきタイプの技を無効化する。", "おもかげやどし": "登場時に相手の最大HPを半分にする。", "きょうせい": "味方の持ち物がなくなると自分の持ち物を渡す。", "コンパウンドアイ": "技の命中率が1.3倍になる。", "ターボブレイズ": "相手の特性を無視して攻撃できる。", "テラボルテージ": "相手の特性を無視して攻撃できる。", "トレース": "登場時に相手の特性をコピーする。", "にげあし": "野生のポケモンから必ず逃げられる。", "ぬめぬめ": "接触した相手の素早さを1段階下げる。", "ねつこうかん": "ほのお技を無効化しHPを1/4回復する。", "のんき": "ランクの変化をコピーする（効果は一部省略）。", "バトルアーマー": "急所に当たらない。", "はりこみ": "交代で出てきた相手への技の威力が2倍になる。", "ビーストブースト": "相手を倒すと最も高い能力が上がる。", "ふかしのこぶし": "パンチ技が相手に接触しない扱いになる。", "ブレインフォース": "効果抜群時に威力がさらに1.25倍になる。", "へんげんじざい": "使う技と同タイプに変わる。", "ほうだん": "弾系の技の威力が1.5倍になる。", "ミラクルスキン": "変化技の命中率が50%になる。", "めんえき": "どく状態にならない。", "よびみず": "みずタイプの技を引き付けて無効化し特攻が1段階上がる。", "りんごのおすそわけ": "毎ターン相手にリンゴの恵みを分ける（効果は省略）。", "わたげ": "素早さが上がる技の代わりに素早さを下げる（効果は省略）。", "すなかき": "砂嵐のとき素早さが2倍になる。", "こだいのうろこ": "防御・特防が上がりやすい。", "こうかつ": "追加効果の確率が2倍になる。", "しんりょく": "HPが1/3以下になるとくさタイプの技の威力が1.5倍になる。", "とうそうしん": "同性の相手への攻撃が1.25倍、異性への攻撃が0.75倍になる。", "ふしぎなしっぽ": "野生のポケモンの逃走を防ぐ（対戦では無効）。", "くだけないよろい": "物理攻撃を受けると防御が上がる。", "すなつき": "砂嵐を降らせる（効果は一部省略）。", "スピードスター": "素早さが上がる（一部実装）。", "タイプヌル": "タイプが変わる（実装省略）。", "のびのびキー": "素早さが毎ターン上がる。", "ぼうだん": "弾系の技を無効化する。", "ミステリーガード": "効果抜群の技しか当たらない（ふしぎなまもりの別名）。", "なまり": "自分と相手の素早さを入れ替える（実装省略）。", "おとなしい": "急所に当たりやすい（実装省略）。", "クリアボディ": "能力を下げる技・特性を無効化する。", "しろいけむり": "能力を下げる技・特性を無効化する。", "かちき": "能力を下げられると特攻が2段階上がる。", "すなあつめ": "砂嵐時にHPを回復する（詳細省略）。", "ひこうき": "ひこうタイプの技を強化する（詳細省略）。", "はんすう": "きのみを食べた後のターンに再度効果を得る。", "じゅくせい": "きのみの効果が2倍になる。", "いのちがけ": "自分のHPを犠牲にして相手に大ダメージを与える（技効果）。", "さかあがり": "防御が上がると攻撃も上がる。", "すなおこし": "登場時に砂嵐を5ターン起こす。", "テクニシャン": "威力60以下の技の威力が1.5倍になる。", "タフネス": "防御が高いほどダメージが減る（実装省略）。", "ミラーアーマー": "能力を下げる効果を相手に跳ね返す。", "ダウンロード": "登場時に相手の防御・特防を比べ低い方に応じて攻撃か特攻を上げる。", "プレッシャー": "相手の技のPPを2消費させる。", "かそく": "毎ターン素早さが1段階上がる。", "マグマのよろい": "こおり状態にならない。", "あまのじゃく": "能力が下がるかわりに上がり、上がるかわりに下がる。", "きんしのちから": "相手の変化技を受けると能力が上がる（詳細省略）。", "ゴリむちゅう": "攻撃が高いほどダメージが増す（詳細省略）。", "サンパワー": "晴れ時に特攻が1.5倍になるがターンごとにHPを失う。", "ビビッドボディ": "相手の先制技を無効化する（詳細省略）。", "フラワーベール": "味方の草タイプの能力低下を防ぐ。", "ポイントアップ": "PPが増える（対戦では無効）。", "マルチタイプ": "プレートに応じてタイプが変わる（アルセウス専用）。", "メロメロボディ": "接触してきた相手を50%でメロメロにする。", "ゆうばえ": "ターン終了時にフェアリータイプの技の威力が上がる（詳細省略）。", "らんらんな": "攻撃するとランダムな能力が上がる（詳細省略）。", "わがままな": "攻撃が上がるが命中が下がる（詳細省略）。", "アナライズ": "最後に攻撃すると技の威力が1.3倍になる。", "アロマベール": "精神系の変化技を受けない。", "いわはこび": "いわタイプの技の威力が1.5倍になる。", "ウオーターバブル": "みずタイプの技の威力が2倍になり、やけど状態にならない。", "エレキメイカー": "エレキフィールドを展開する。", "おうごんのからだ": "変化技を受けつけない。", "おどりこ": "踊り技を受けると自分も同じ技を使う。", "おやこあい": "技が2回連続で当たる（2回目の威力は25%）。", "かいがらのよろい": "接触技のダメージを半減する（初回のみ）。", "かくれみの": "天候ダメージを受けない。", "かたをならべる": "一緒に出ているポケモンと同じ特性になる（詳細省略）。", "ガリョウテンセイ": "登場時に相手の防御・特防を下げる（詳細省略）。", "きあいのなみだ": "急所ランクが常に最大になる（詳細省略）。", "きりばらい": "場の壁・トラップを消す（詳細省略）。", "グラスメイカー": "グラスフィールドを展開する。", "クイックドロウ": "30%の確率で先制して行動できる。", "くさのめぐみ": "グラスフィールド時に追加効果の確率が上がる（詳細省略）。", "こんがりボディ": "ほのお技を受けるとHPが回復する。", "さいくるロール": "状態異常を交代時に引き継ぐ（詳細省略）。", "シールドダスト": "追加効果を受けない。", "しこうかい": "特攻が高いほどダメージが増す（詳細省略）。", "じゅうりょく": "じめん技が当たるようになる（詳細省略）。", "スクリュードライブ": "相手の特性を一時的に無効化する（詳細省略）。", "ぜんりょく": "HP満タン時に技の威力が上がる（詳細省略）。", "ソーラーパワー": "晴れ時に特攻が1.5倍になるがHPをターンごとに失う。", "タンジェントフラッシュ": "命中が低下する（詳細省略）。", "ちからもち": "攻撃が2倍になる。", "テイルアーマー": "急所に当たらない。", "でんじは": "30%の確率で相手をまひにする（特性扱いの一部）。", "トリックスター": "変化技の優先度が上がる（詳細省略）。", "なだれ": "先制して使う技の威力が上がる（詳細省略）。", "にじいろのはね": "ノーマルタイプの技がランダムなタイプになる（ゲッコウガ等）。", "ヌケニン": "HP1で、効果抜群の技しか当たらない（ヌケニン専用）。", "ねらいのまと": "回避率を無視して技が当たる（詳細省略）。", "ノーマルスキン": "全ての技がノーマルタイプになる。", "ハーブいただき": "きのみを使った後に攻撃が上がる（詳細省略）。", "バリアフリー": "壁技を無効化して戦う（詳細省略）。", "ひかえめ": "特攻が上がるが攻撃が下がる（性格効果）。", "ヒーリングシフト": "毎ターンHPを回復する（詳細省略）。", "ふくつのこころ": "臆病・混乱を受けると素早さが上がる（詳細省略）。", "フルメタルボディ": "能力を下げる効果を受けない。", "ほうしきのていすう": "ターンごとに特性効果が変わる（詳細省略）。", "まけんきすぴん": "能力を下げられると全能力が上がる（詳細省略）。", "まもりのこうら": "防御が下がらない。", "みをけずる": "毎ターンHPを失うかわりに素早さが上がる。", "ミラクルアイ": "エスパー技があくタイプにも当たる（詳細省略）。", "メガランチャー": "波動系技の威力が1.5倍になる。", "もりののろい": "相手にのろいの効果を与える（詳細省略）。", "やるき": "ねむりにならない。攻撃が1.5倍になる（一部実装）。", "ゆきがき": "霰時に技の威力が上がる（詳細省略）。", "ゆきのいぶき": "氷タイプの技の威力が1.3倍になる（詳細省略）。", "ようきのきわみ": "素早さが最も高いとき行動が早くなる（詳細省略）。", "ライフオーブ": "毎ターン微量のHPを失うかわりに技の威力が上がる（詳細省略）。", "らくらくしっぽ": "攻撃速度が上がる（詳細省略）。", "ランナウェイ": "野生で必ず逃げられる（対戦では無効）。", "リミットシールド": "HPが半分以下になると防御が大きく上がる（詳細省略）。", "レインメイカー": "あめふらし同様の効果（詳細省略）。", "ロックヘッド": "反動ダメージを受けない。", "わかいいのち": "HPが半分以下になると回復する（詳細省略）。", "わざとおそい": "素早さが最も低い順に行動する（詳細省略）。", "ワンダーガード": "効果抜群の技しか当たらない（ふしぎなまもり別名）。", "ワンダースキン": "変化技の命中率が50%になる。"};
+
+const moveDex = {
     "１０００まんボルト": { power: 195, type: "でんき", category: "特殊" },
     "１０まんばりき": { power: 95, type: "じめん", category: "物理" },
     "１０まんボルト": { power: 90, type: "でんき", category: "特殊" },
@@ -11789,142 +11872,270 @@ function advisorBestMove() {
     const oppPoke = getEffectivePoke('opp');
     if (!myPoke || !oppPoke) return '<span style="color:#e74c3c;">⚠️ 自分・相手のポケモンを選択してください</span>';
 
-    const myAbil   = document.getElementById('myAbility')?.value || '';
+    const myAbil   = document.getElementById('myAbility')?.value  || '';
     const oppAbil  = document.getElementById('oppAbility')?.value || '';
-    const myItem   = document.getElementById('myItem')?.value || '';
-    const weather  = document.getElementById('battleWeather')?.value || 'none';
-    const myHpPct  = parseFloat(document.getElementById('myCurrentHpPct')?.value) || 100;
+    const myItem   = document.getElementById('myItem')?.value     || '';
+    const oppItem  = document.getElementById('oppItem')?.value    || '';
+    const weather  = document.getElementById('battleWeather')?.value  || 'none';
+    const terrain  = document.getElementById('battleTerrain')?.value  || 'none';
+    const myHpPct  = parseFloat(document.getElementById('myCurrentHpPct')?.value)  || 100;
     const oppHpPct = parseFloat(document.getElementById('oppCurrentHpPct')?.value) || 100;
-    const myStatus = document.getElementById('myStatus')?.value || 'none';
+    const myStatus = document.getElementById('myStatus')?.value  || 'none';
+    const oppStatus= document.getElementById('oppStatus')?.value || 'none';
 
-    const oppHpMax  = calcStat(oppPoke.hp, 0, 1.0, true);
+    // --- 実数値 ---
+    const myIdx  = parseInt(document.querySelector('input[name="myActive"]:checked')?.value ?? 0);
+    const oppIdx = parseInt(document.querySelector('input[name="oppActive"]:checked')?.value ?? 0);
+    const myStat  = getExactStats('my',  myIdx,  myPoke);
+    const oppStat = getExactStats('opp', oppIdx, oppPoke);
+    const myHpMax  = calcStat(myPoke.hp,  parseInt(document.getElementById('myHP')?.value)||0,  1.0, true);
+    const oppHpMax = calcStat(oppPoke.hp, parseInt(document.getElementById('oppHP')?.value)||0, 1.0, true);
+    const myHpReal  = Math.max(1, Math.round(myHpMax  * myHpPct  / 100));
     const oppHpReal = Math.max(1, Math.round(oppHpMax * oppHpPct / 100));
 
-    // タイプ強化アイテムマップ
-    const _TIM = {'もくたん':'ほのお','しんぴのしずく':'みず','じしゃく':'でんき','きせきのタネ':'くさ','とけないこおり':'こおり','くろおび':'かくとう','どくバリ':'どく','やわらかいすな':'じめん','するどいくちばし':'ひこう','まがったスプーン':'エスパー','ぎんのこな':'むし','かたいいし':'いわ','のろいのおふだ':'ゴースト','りゅうのキバ':'ドラゴン','くろいメガネ':'あく','メタルコート':'はがね','ようせいのハネ':'フェアリー','シルクのスカーフ':'ノーマル'};
+    // --- 素早さ計算（先攻/後攻判定）---
+    const myRankS   = parseInt(document.getElementById('myRankS')?.value)  || 0;
+    const oppRankS  = parseInt(document.getElementById('oppRankS')?.value) || 0;
+    let mySpe  = Math.floor(myStat.spe  * getRankMod(myRankS));
+    let oppSpe = Math.floor(oppStat.spe * getRankMod(oppRankS));
+    if (myAbil  === 'すなはき'  && weather === 'sand') mySpe  = Math.floor(mySpe  * 2);
+    if (myAbil  === 'すなかき'  && weather === 'sand') mySpe  = Math.floor(mySpe  * 2);
+    if (myAbil  === 'ようりょくそ' && (weather==='sun'||weather==='harshsun')) mySpe = Math.floor(mySpe * 2);
+    if (myAbil  === 'かそく') mySpe = Math.floor(mySpe * 2);
+    if (myAbil  === 'はやあし' && myStatus !== 'none' && myStatus !== '') mySpe = Math.floor(mySpe * 1.5);
+    if (myItem  === 'こだわりスカーフ') mySpe = Math.floor(mySpe * 1.5);
+    if (oppItem === 'こだわりスカーフ') oppSpe = Math.floor(oppSpe * 1.5);
+    if (myStatus  === 'paralysis') mySpe  = Math.floor(mySpe  * 0.5);
+    if (oppStatus === 'paralysis') oppSpe = Math.floor(oppSpe * 0.5);
+    const iAmFaster = mySpe > oppSpe;
+    const isSameSpeed = mySpe === oppSpe;
 
-    // 自分の4技評価
+    // --- こだわり判定 ---
+    const koKodawari = ['こだわりハチマキ','こだわりメガネ','こだわりスカーフ'];
+    const oppIsLocked = koKodawari.includes(oppItem);
+    const lastOppMv = window.turnLog ? [...window.turnLog].reverse().find(e => e.attackerSide==='opp' && e.moveName && e.moveName!=='—')?.moveName : null;
+
+    // --- タイプ強化アイテム ---
+    const TIM = {'もくたん':'ほのお','しんぴのしずく':'みず','じしゃく':'でんき','きせきのタネ':'くさ','とけないこおり':'こおり','くろおび':'かくとう','どくバリ':'どく','やわらかいすな':'じめん','するどいくちばし':'ひこう','まがったスプーン':'エスパー','ぎんのこな':'むし','かたいいし':'いわ','のろいのおふだ':'ゴースト','りゅうのキバ':'ドラゴン','くろいメガネ':'あく','メタルコート':'はがね','ようせいのハネ':'フェアリー','シルクのスカーフ':'ノーマル'};
+
+    // --- 優先度マップ ---
+    const PRIO_MAP = {'でんこうせっか':1,'マッハパンチ':1,'かげうち':1,'アクアジェット':1,'バレットパンチ':1,'こおりのつぶて':1,'ふいうち':1,'しんそく':2,'まもる':4,'みがわり':0,'なまける':0,'つるぎのまい':0,'りゅうのまい':0,'ちょうのまい':0,'わるだくみ':0,'こわいかお':0,'ステルスロック':0,'どくびし':0};
+    const NEGATIVE_PRIO = {'トリックルーム':-7,'どくどく':-5,'でんじは':-5};
+    function getMovePriority(mv, myAbil) {
+        if (myAbil === 'いたずらごころ') {
+            const info = moveDex[mv];
+            if (info && info.power === 0) return 1; // 変化技に+1
+        }
+        return PRIO_MAP[mv] || NEGATIVE_PRIO[mv] || 0;
+    }
+
+    // --- 自分のHP連動特性補正 ---
+    function getAbilAtkMod(abil, types, moveType, myHpPct) {
+        const lowHP = myHpPct <= 33;
+        if (abil==='もうか'    && types.includes('ほのお') && lowHP && moveType==='ほのお') return 1.5;
+        if (abil==='げきりゅう' && types.includes('みず')   && lowHP && moveType==='みず')   return 1.5;
+        if (abil==='しんりょく' && types.includes('くさ')   && lowHP && moveType==='くさ')   return 1.5;
+        if (abil==='むしのしらせ'&& types.includes('むし')   && lowHP && moveType==='むし')   return 1.5;
+        if (abil==='サンパワー' && (weather==='sun'||weather==='harshsun') && moveType==='ほのお') return 1.5;
+        if (abil==='ソーラーパワー' && (weather==='sun'||weather==='harshsun')) return 1.5;
+        if (abil==='はがねのせいしん' && moveType==='はがね') return 1.5;
+        if (abil==='りゅうのあぎと' && moveType==='ドラゴン') return 1.5;
+        if (abil==='りんごのおすそわけ') return 1.0;
+        if (abil==='ちからずく') return 1.3;
+        if (abil==='テクニシャン') return 1.0; // 威力で処理
+        if (abil==='アナライズ' && !iAmFaster) return 1.3;
+        if (abil==='はりこみ') return 1.0; // 交代直後で変わるため基本1.0
+        return 1.0;
+    }
+
+    // --- 4技評価 ---
     const results = [];
     for (let s = 1; s <= 4; s++) {
         const sel = document.getElementById(`myMove${s}`);
-        if (!sel || !sel.value || sel.value === '' || sel.value === '--') continue;
+        if (!sel || !sel.value || sel.value==='' || sel.value==='--') continue;
         const mv = sel.value;
         const info = moveDex[mv];
         if (!info) continue;
         let moveType = info.type || '';
         let moveCat  = info.category || '物理';
         let power = info.power || 0;
-        if (power <= 0) { results.push({mv, cat:'変化', score:-1, label:'変化技', detail:''}); continue; }
-        const baseA = moveCat === '物理' ? myPoke.atk : myPoke.spa;
-        const myAtkP = parseInt(document.getElementById(moveCat==='物理'?'myAtk':'mySpA')?.value)||0;
-        const myNat  = parseFloat(document.getElementById('myNature')?.value)||1.0;
+
+        // ランク変化技・補助技のスコア
+        if (power <= 0) {
+            let utilScore = 0, utilLabel = '変化技', utilDetail = '';
+            if (['つるぎのまい','りゅうのまい','ちょうのまい','わるだくみ','コスモパワー','めいそう'].includes(mv)) {
+                utilScore = 30; utilLabel = '積み技'; utilDetail = '積んで火力・耐久UP';
+            } else if (['まもる','みきり','ひかりのかべ','リフレクター'].includes(mv)) {
+                utilScore = oppHpPct < 50 ? 10 : 20; utilLabel = '守り技';
+                utilDetail = iAmFaster ? '先制して守れます' : '後攻のため守り効果薄';
+            } else if (['ステルスロック','どくびし','まきびし','ねばねばネット'].includes(mv)) {
+                const alreadyUsed = window.turnLog && window.turnLog.some(e=>e.attackerSide==='my'&&e.moveName===mv);
+                utilScore = alreadyUsed ? 0 : 20; utilLabel = alreadyUsed ? '使用済み' : 'フィールド技'; 
+                utilDetail = alreadyUsed ? 'すでに場に出ています' : '相手の交代に圧力';
+            } else if (['かいふく','じこさいせい','ねをはる','のみこむ'].includes(mv)) {
+                const healVal = myHpPct < 50 ? 40 : myHpPct < 75 ? 20 : 5;
+                utilScore = healVal; utilLabel = '回復技'; utilDetail = `現HP${myHpPct}%のため${healVal>=40?'優先度高':'通常'}`;
+            } else if (['でんじは','どくどく','ねむりごな','きのこのほうし'].includes(mv)) {
+                utilScore = 15; utilLabel = '状態異常技'; utilDetail = oppStatus==='none'?'有効':'相手はすでに状態異常';
+            }
+            results.push({mv, cat:moveCat, score:utilScore, label:utilLabel, detail:utilDetail, minPct:0, maxPct:0, eff:1});
+            continue;
+        }
+
+        // テクニシャン補正
+        if (myAbil==='テクニシャン' && power <= 60) power = Math.floor(power * 1.5);
+
+        const baseA = moveCat==='物理' ? myStat.atk : myStat.spa;
         const myRankA = parseInt(document.getElementById(moveCat==='物理'?'myRankA':'myRankC')?.value)||0;
-        let atkReal = Math.floor(calcStat(baseA, myAtkP, myNat, false) * getRankMod(myRankA));
-        if (myItem==='こだわりハチマキ'&&moveCat==='物理') atkReal=Math.floor(atkReal*1.5);
-        if (myItem==='こだわりメガネ'&&moveCat==='特殊')  atkReal=Math.floor(atkReal*1.5);
-        let dmgMod = myItem==='いのちのたま' ? 1.3 : 1.0;
-        if (_TIM[myItem]===moveType) dmgMod*=1.2;
+        let atkReal = Math.floor(baseA * getRankMod(myRankA));
+        if (myItem==='こだわりハチマキ' && moveCat==='物理') atkReal = Math.floor(atkReal*1.5);
+        if (myItem==='こだわりメガネ'   && moveCat==='特殊')  atkReal = Math.floor(atkReal*1.5);
+        const abilMod = getAbilAtkMod(myAbil, myPoke.types, moveType, myHpPct);
+        let dmgMod = (myItem==='いのちのたま' ? 1.3 : 1.0) * abilMod;
+        if (TIM[myItem]===moveType) dmgMod *= 1.2;
+        // フィールド補正
+        if (terrain==='electric' && moveCat==='物理'  && moveType==='でんき') dmgMod *= 1.3;
+        if (terrain==='grassy'   && moveCat==='物理'  && moveType==='くさ')   dmgMod *= 1.3;
+        if (terrain==='psychic'  && moveCat==='特殊'  && moveType==='エスパー') dmgMod *= 1.3;
+        if (terrain==='misty'    && moveType==='ドラゴン') dmgMod *= 0.5;
+        // 天候補正
         let wMod=1.0;
-        if (weather==='sun'&&moveType==='ほのお') wMod=1.5;
-        if (weather==='sun'&&moveType==='みず')   wMod=0.5;
-        if (weather==='rain'&&moveType==='みず')  wMod=1.5;
-        if (weather==='rain'&&moveType==='ほのお') wMod=0.5;
-        dmgMod*=wMod;
-        const stab = myPoke.types.includes(moveType)?(myAbil==='てきおうりょく'?2.0:1.5):1.0;
+        if ((weather==='sun'||weather==='harshsun') && moveType==='ほのお') wMod=1.5;
+        if ((weather==='sun'||weather==='harshsun') && moveType==='みず')   wMod=0.5;
+        if ((weather==='rain'||weather==='heavyrain') && moveType==='みず')  wMod=1.5;
+        if ((weather==='rain'||weather==='heavyrain') && moveType==='ほのお') wMod=0.5;
+        if (weather==='sand' && moveType==='いわ' && myPoke.types.some(t=>['いわ','じめん','はがね'].includes(t))) wMod=1.3;
+        dmgMod *= wMod;
+
+        const stab = myPoke.types.includes(moveType) ? (myAbil==='てきおうりょく'?2.0:1.5) : 1.0;
         const eff  = calcTypeEffectiveness(moveType, oppPoke.types, myAbil, oppAbil);
+        if (eff===0) { results.push({mv,cat:moveCat,score:0,label:'無効',detail:`${moveType}は効果がありません`,minPct:0,maxPct:0,eff:0}); continue; }
+
         const baseD = moveCat==='物理' ? oppPoke.def : oppPoke.spd;
         const oppDefRank = parseInt(document.getElementById(moveCat==='物理'?'oppRankD':'oppRankD2')?.value)||0;
-        const defReal_min = Math.floor(calcStat(baseD,0,1.0,false)*getRankMod(oppDefRank));
-        const defReal_max = Math.floor(calcStat(baseD,32,1.1,false)*getRankMod(oppDefRank));
-        if (eff===0||power===0) { results.push({mv,cat:moveCat,score:0,label:'無効',detail:`${moveType}は効果がありません`}); continue; }
-        const dmg_min = getDamageRange(atkReal,Math.max(1,defReal_min),power,stab,eff,dmgMod,false,false);
-        const dmg_max = getDamageRange(atkReal,Math.max(1,defReal_max),power,stab,eff,dmgMod,false,false);
-        const minPct = dmg_min.min/oppHpReal*100;
-        const maxPct = dmg_max.max/oppHpReal*100;
-        let koLabel, score;
-        if (minPct>=100)       {koLabel='確定1発';score=100;}
-        else if (maxPct>=100)  {const p=Math.round(dmg_min.max>=oppHpReal?85:50);koLabel=`乱数1発(約${p}%)`;score=70+p*0.3;}
-        else if (minPct*2>=100){koLabel='確定2発';score=50;}
-        else if (maxPct*2>=100){koLabel='乱数2発';score=35;}
-        else {koLabel=`確定${Math.ceil(100/Math.max(0.1,maxPct))}発`;score=Math.max(5,30-Math.ceil(100/Math.max(0.1,maxPct))*5);}
-        const effLabel=eff>=4?'4倍':eff>=2?'2倍':eff<=0.25?'1/4倍':eff<1?'1/2倍':'';
-        const detail=`ダメージ ${dmg_min.min}〜${dmg_max.max} / 推定HP${oppHpReal} (${minPct.toFixed(0)}〜${maxPct.toFixed(0)}%)${effLabel?' ['+effLabel+']':''}`;
-        results.push({mv,cat:moveCat,score,koLabel,detail,minPct,maxPct,eff});
-    }
-    if (results.length===0) return '<span style="color:#e74c3c;">⚠️ 技が設定されていません</span>';
-    results.sort((a,b)=>b.score-a.score);
+        // 相手の防御補正（マルチスケイル等）
+        let defMod = 1.0;
+        if (oppAbil==='マルチスケイル' && oppHpPct >= 100) defMod = 2.0;
+        if (oppAbil==='ハードロック' && eff>=2) defMod *= (4/3);
+        if (oppAbil==='フィルター'   && eff>=2) defMod *= (4/3);
+        const defReal_min = Math.floor(calcStat(baseD, 0,  1.0, false) * getRankMod(oppDefRank) * defMod);
+        const defReal_max = Math.floor(calcStat(baseD, 32, 1.1, false) * getRankMod(oppDefRank) * defMod);
 
-    // 相手既知技で最悪被ダメ
-    const oppMoveNames=[1,2,3,4].map(s=>document.getElementById(`oppMove${s}`)?.value).filter(m=>m&&m!==''&&m!=='--');
-    let worstDmgHtml='';
-    if (oppMoveNames.length>0) {
-        const oppItem=document.getElementById('oppItem')?.value||'';
-        const myHpMax=calcStat(myPoke.hp,parseInt(document.getElementById('myHP')?.value)||0,1.0,true);
-        const myHpReal=Math.max(1,Math.round(myHpMax*myHpPct/100));
-        let worstPct=0,worstMv='';
-        for (const omv of oppMoveNames) {
+        const dmg_min = getDamageRange(atkReal, Math.max(1,defReal_min), power, stab, eff, dmgMod, false, false);
+        const dmg_max = getDamageRange(atkReal, Math.max(1,defReal_max), power, stab, eff, dmgMod, false, false);
+        const minPct = dmg_min.min / oppHpReal * 100;
+        const maxPct = dmg_max.max / oppHpReal * 100;
+
+        let koLabel, score;
+        if      (minPct>=100)     {koLabel='確定1発'; score=100;}
+        else if (maxPct>=100)     {const p=Math.round(dmg_min.max>=oppHpReal?85:50); koLabel=`乱数1発(約${p}%)`; score=70+p*0.3;}
+        else if (minPct*2>=100)   {koLabel='確定2発'; score=50;}
+        else if (maxPct*2>=100)   {koLabel='乱数2発'; score=35;}
+        else {koLabel=`確定${Math.ceil(100/Math.max(0.1,maxPct))}発`; score=Math.max(5,30-Math.ceil(100/Math.max(0.1,maxPct))*5);}
+
+        // 優先度ボーナス
+        const prio = getMovePriority(mv, myAbil);
+        let prioNote = '';
+        if (prio > 0 && oppHpPct <= 50) { score += 15; prioNote=`[先制+${prio}] `; }
+        if (prio > 0 && !iAmFaster)      { score += 10; prioNote=`[先制+${prio}] `; }
+
+        // こだわりスカーフ相手なら後攻になる技に注意
+        const effLabel = eff>=4?'4倍':eff>=2?'2倍':eff<=0.25?'1/4倍':eff<1?'1/2倍':'';
+        const speedNote = iAmFaster ? '先攻' : isSameSpeed ? '同速' : '後攻';
+        const detail = `${prioNote}${speedNote} / ダメージ ${dmg_min.min}〜${dmg_max.max} (${minPct.toFixed(0)}〜${maxPct.toFixed(0)}%)${effLabel?' ['+effLabel+']':''}`;
+        results.push({mv, cat:moveCat, score, koLabel, detail, minPct, maxPct, eff, prio});
+    }
+
+    if (results.length===0) return '<span style="color:#e74c3c;">⚠️ 技が設定されていません</span>';
+    results.sort((a,b) => b.score - a.score);
+
+    // --- 相手からの被ダメ＆生存ターン推定 ---
+    const oppMoveNames = [1,2,3,4].map(s=>document.getElementById(`oppMove${s}`)?.value).filter(m=>m&&m!==''&&m!=='--');
+    // こだわりロック中なら直前技のみ
+    const effectiveOppMoves = (oppIsLocked && lastOppMv && oppMoveNames.includes(lastOppMv))
+        ? [lastOppMv] : oppMoveNames;
+
+    let worstDmgHtml = '';
+    if (effectiveOppMoves.length > 0) {
+        let worstPct=0, worstMv='';
+        for (const omv of effectiveOppMoves) {
             const oi=moveDex[omv]; if(!oi||!oi.power) continue;
             const ot=oi.type||''; const oc=oi.category||'物理';
-            const oBaseA=oc==='物理'?oppPoke.atk:oppPoke.spa;
-            const oppAtkP=parseInt(document.getElementById(oc==='物理'?'oppAtk':'oppSpA')?.value)||0;
-            const oppNat=parseFloat(document.getElementById(oc==='物理'?'oppNature':'oppSpaNature')?.value)||1.0;
-            const oppAtkRank=parseInt(document.getElementById(oc==='物理'?'oppRankA':'oppRankC')?.value)||0;
-            let oAtk=Math.floor(calcStat(oBaseA,oppAtkP,oppNat,false)*getRankMod(oppAtkRank));
-            if (oppItem==='こだわりハチマキ'&&oc==='物理') oAtk=Math.floor(oAtk*1.5);
-            if (oppItem==='こだわりメガネ'&&oc==='特殊')  oAtk=Math.floor(oAtk*1.5);
-            let oDmgMod=oppItem==='いのちのたま'?1.3:1.0;
-            const _tim={'もくたん':'ほのお','しんぴのしずく':'みず','じしゃく':'でんき','きせきのタネ':'くさ','とけないこおり':'こおり','くろおび':'かくとう','どくバリ':'どく','やわらかいすな':'じめん','するどいくちばし':'ひこう','まがったスプーン':'エスパー','ぎんのこな':'むし','かたいいし':'いわ','のろいのおふだ':'ゴースト','りゅうのキバ':'ドラゴン','くろいメガネ':'あく','メタルコート':'はがね','ようせいのハネ':'フェアリー','シルクのスカーフ':'ノーマル'};
-            if (_tim[oppItem]===ot) oDmgMod*=1.2;
+            const oBaseA = oc==='物理' ? oppStat.atk : oppStat.spa;
+            const oppAtkRank = parseInt(document.getElementById(oc==='物理'?'oppRankA':'oppRankC')?.value)||0;
+            let oAtk = Math.floor(oBaseA * getRankMod(oppAtkRank));
+            if (oppItem==='こだわりハチマキ' && oc==='物理') oAtk=Math.floor(oAtk*1.5);
+            if (oppItem==='こだわりメガネ'   && oc==='特殊')  oAtk=Math.floor(oAtk*1.5);
+            let oDmgMod = oppItem==='いのちのたま' ? 1.3 : 1.0;
+            const _tim = {'もくたん':'ほのお','しんぴのしずく':'みず','じしゃく':'でんき','きせきのタネ':'くさ','とけないこおり':'こおり','くろおび':'かくとう','どくバリ':'どく','やわらかいすな':'じめん','するどいくちばし':'ひこう','まがったスプーン':'エスパー','ぎんのこな':'むし','かたいいし':'いわ','のろいのおふだ':'ゴースト','りゅうのキバ':'ドラゴン','くろいメガネ':'あく','メタルコート':'はがね','ようせいのハネ':'フェアリー','シルクのスカーフ':'ノーマル'};
+            if (_tim[oppItem]===ot) oDmgMod *= 1.2;
             let oWMod=1.0;
-            if(weather==='sun'&&ot==='ほのお')oWMod=1.5;
-            if(weather==='rain'&&ot==='みず') oWMod=1.5;
-            oDmgMod*=oWMod;
-            const oStab=oppPoke.types.includes(ot)?(oppAbil==='てきおうりょく'?2.0:1.5):1.0;
-            const oEff=calcTypeEffectiveness(ot,myPoke.types,oppAbil,myAbil);
-            if(oEff===0) continue;
-            const myBaseD=oc==='物理'?myPoke.def:myPoke.spd;
-            const myDefRank=parseInt(document.getElementById(oc==='物理'?'myRankD':'myRankD2')?.value)||0;
-            const myDefP=parseInt(document.getElementById(oc==='物理'?'myDef':'mySpD')?.value)||0;
-            const myDefNat=parseFloat(document.getElementById(oc==='物理'?'myDefNature':'mySpdNature')?.value)||1.0;
-            const myDef=Math.floor(calcStat(myBaseD,myDefP,myDefNat,false)*getRankMod(myDefRank));
-            const oDmg=getDamageRange(oAtk,Math.max(1,myDef),oi.power,oStab,oEff,oDmgMod,false,false);
-            const oPct=oDmg.max/myHpReal*100;
-            if(oPct>worstPct){worstPct=oPct;worstMv=omv;}
+            if ((weather==='sun'||weather==='harshsun')   && ot==='ほのお') oWMod=1.5;
+            if ((weather==='rain'||weather==='heavyrain') && ot==='みず')   oWMod=1.5;
+            oDmgMod *= oWMod;
+            // 相手の特性補正（HP連動）
+            const oppLowHP = oppHpPct <= 33;
+            if (oppAbil==='もうか'    && oppPoke.types?.includes('ほのお') && oppLowHP && ot==='ほのお') oDmgMod*=1.5;
+            if (oppAbil==='げきりゅう' && oppPoke.types?.includes('みず')   && oppLowHP && ot==='みず')   oDmgMod*=1.5;
+            if (oppAbil==='しんりょく' && oppPoke.types?.includes('くさ')   && oppLowHP && ot==='くさ')   oDmgMod*=1.5;
+            if (oppAbil==='むしのしらせ'&& oppPoke.types?.includes('むし')   && oppLowHP && ot==='むし')   oDmgMod*=1.5;
+            if (oppAbil==='ちからずく') oDmgMod*=1.3;
+            if (oppAbil==='テクニシャン' && (oi.power||0)<=60) { oDmgMod*=1.5; } // 元powerで判定
+            const oStab = oppPoke.types.includes(ot) ? (oppAbil==='てきおうりょく'?2.0:1.5) : 1.0;
+            const oEff  = calcTypeEffectiveness(ot, myPoke.types, oppAbil, myAbil);
+            if (oEff===0) continue;
+            // 自分の防御補正
+            let myDefMod = 1.0;
+            if (myAbil==='マルチスケイル' && myHpPct >= 100) myDefMod = 2.0;
+            if (myAbil==='ハードロック'  && oEff>=2) myDefMod *= (4/3);
+            if (myAbil==='フィルター'    && oEff>=2) myDefMod *= (4/3);
+            if (myAbil==='ふしぎなまもり' && oEff < 2) continue;
+            const myBaseD = oc==='物理' ? myPoke.def : myPoke.spd;
+            const myDefRank = parseInt(document.getElementById(oc==='物理'?'myRankD':'myRankD2')?.value)||0;
+            const myDefP    = parseInt(document.getElementById(oc==='物理'?'myDef':'mySpD')?.value)||0;
+            const myDefNat  = parseFloat(document.getElementById(oc==='物理'?'myDefNature':'mySpdNature')?.value)||1.0;
+            const myDef = Math.floor(calcStat(myBaseD, myDefP, myDefNat, false) * getRankMod(myDefRank) * myDefMod);
+            const oDmg = getDamageRange(oAtk, Math.max(1,myDef), oi.power, oStab, oEff, oDmgMod, false, false);
+            const oPct = oDmg.max / myHpReal * 100;
+            if (oPct > worstPct) { worstPct=oPct; worstMv=omv; }
         }
-        if(worstMv){
-            const survives=worstPct<100;
-            worstDmgHtml=`<div style="margin-top:10px;padding:8px;background:#fff8e1;border-radius:6px;border-left:3px solid #f39c12;font-size:0.85rem;">
-                ⚠️ <b>相手既知技の最悪ケース：${worstMv}</b><br>
+        if (worstMv) {
+            const survives = worstPct < 100;
+            const lockedNote = (oppIsLocked && lastOppMv) ? `<br><span style="color:#8e44ad;font-size:0.78rem;">🔒 こだわり持ち: 直前技「${lastOppMv}」固定の可能性</span>` : '';
+            worstDmgHtml = `<div style="margin-top:10px;padding:8px;background:#fff8e1;border-radius:6px;border-left:3px solid #f39c12;font-size:0.85rem;">
+                ⚠️ <b>相手最悪ケース: ${worstMv}</b><br>
                 <span style="color:${survives?'#27ae60':'#e74c3c'};">${survives?'🛡 耐えられます':'💀 倒される可能性があります'}（最大${worstPct.toFixed(0)}%ダメージ）</span>
+                <span style="font-size:0.78rem;color:#555;"> / 自分は${iAmFaster?'先攻':'後攻'}${isSameSpeed?' (同速)':''}</span>
+                ${lockedNote}
             </div>`;
         }
     }
 
-    // 自然言語
-    const best=results[0];
-    const myStatusNote=myStatus==='paralysis'?'（麻痺のため行動不能の可能性あり）':myStatus==='sleep'?'（眠り状態）':'';
+    // --- 総合コメント ---
+    const best = results[0];
+    const myStatusNote = myStatus==='paralysis'?'（麻痺・行動不能の可能性あり）':myStatus==='sleep'?'（眠り状態）':myStatus==='freeze'?'（こおり状態）':'';
+    const speedWarning = !iAmFaster && !isSameSpeed && (worstDmgHtml.includes('倒される')) ? '⚡ 相手が先攻で致命傷を受ける可能性があります。先制技・まもる・交代を検討してください。' : '';
     let intro='';
-    if(best.score<=0)           intro=`<span style="color:#e74c3c;">⚠️ 有効打がありません。交代を検討してください。</span>`;
-    else if(best.score>=100)    intro=`<span style="color:#27ae60;font-size:1rem;">✅ <b>${best.mv}</b> で<b>確定1発</b>です。そのまま攻めましょう。${myStatusNote}</span>`;
-    else if(best.score>=70)     intro=`<span style="color:#e67e22;font-size:1rem;">🎯 <b>${best.mv}</b> で<b>${best.koLabel}</b>です。勝負に出るタイミングです。${myStatusNote}</span>`;
-    else if(best.score>=50)     intro=`<span style="color:#2980b9;font-size:1rem;">⚔️ <b>${best.mv}</b>（<b>${best.koLabel}</b>）が最善です。相手の行動に注意しながら攻めましょう。${myStatusNote}</span>`;
-    else                        intro=`<span style="color:#7f8c8d;font-size:1rem;">🔄 有効打が薄い状況です。<b>${best.mv}</b>（${best.koLabel}）が最善ですが、交代も検討してください。${myStatusNote}</span>`;
+    if      (best.score<=0)   intro=`<span style="color:#e74c3c;">⚠️ 有効打がありません。交代を検討してください。</span>`;
+    else if (best.score>=100) intro=`<span style="color:#27ae60;font-size:1rem;">✅ <b>${best.mv}</b> で<b>確定1発</b>です。${myStatusNote}</span>`;
+    else if (best.score>=70)  intro=`<span style="color:#e67e22;font-size:1rem;">🎯 <b>${best.mv}</b>（<b>${best.koLabel}</b>）勝負どころです。${myStatusNote}</span>`;
+    else if (best.score>=50)  intro=`<span style="color:#2980b9;font-size:1rem;">⚔️ <b>${best.mv}</b>（<b>${best.koLabel}</b>）が最善です。${myStatusNote}</span>`;
+    else                      intro=`<span style="color:#7f8c8d;font-size:1rem;">🔄 有効打が薄い状況です。<b>${best.mv}</b>（${best.koLabel||'低火力'}）が最善ですが交代も検討。${myStatusNote}</span>`;
+    if (speedWarning) intro += `<div style="margin-top:4px;font-size:0.82rem;color:#c0392b;">${speedWarning}</div>`;
 
-    const tableRows=results.map((r,i)=>{
+    const tableRows = results.map((r,i)=>{
         const bg=i===0?'#e8f5e9':'#fff';
         const icon=i===0?'🥇':i===1?'🥈':i===2?'🥉':'　';
-        return `<tr style="background:${bg};"><td style="padding:5px 8px;">${icon} <b>${r.mv}</b></td><td style="padding:5px 8px;color:#555;">${r.cat||'—'}</td><td style="padding:5px 8px;font-weight:bold;color:${r.score>=100?'#27ae60':r.score>=70?'#e67e22':r.score>=50?'#2980b9':'#aaa'};">${r.koLabel||r.label}</td><td style="padding:5px 8px;font-size:0.8rem;color:#666;">${r.detail}</td></tr>`;
+        const prioIcon = r.prio>0?`<span style="font-size:0.75rem;color:#8e44ad;">[先制]</span>`:'';
+        return `<tr style="background:${bg};"><td style="padding:5px 8px;">${icon} ${prioIcon}<b>${r.mv}</b></td><td style="padding:5px 8px;color:#555;">${r.cat||'—'}</td><td style="padding:5px 8px;font-weight:bold;color:${r.score>=100?'#27ae60':r.score>=70?'#e67e22':r.score>=50?'#2980b9':'#aaa'};">${r.koLabel||r.label}</td><td style="padding:5px 8px;font-size:0.8rem;color:#666;">${r.detail}</td></tr>`;
     }).join('');
 
     // ===== 交代候補セクション =====
     const myParty = getMyParty();
-    const bench = myParty.filter(p => !p.isActive && p.hpPct > 0);
-
+    const bench   = myParty.filter(p => !p.isActive && p.hpPct > 0);
     const switchCandidates = bench.map(bp => {
         const bPoke = pokedex[bp.name]; if(!bPoke) return null;
         let offScore=0, defScore=0, notes=[];
-
-        // 攻撃評価: タイプ＋技
         let bestEff=0, bestLabel='';
         for (const t of (bPoke.types||[])) {
             const e=calcTypeEffectiveness(t,oppPoke.types,bp.ability,oppAbil);
@@ -11935,39 +12146,34 @@ function advisorBestMove() {
             const e=calcTypeEffectiveness(info.type,oppPoke.types,bp.ability,oppAbil);
             if(e>bestEff){bestEff=e;bestLabel=info.type;}
         }
-        if(bestEff>=4)     {offScore+=40;notes.push(`相手に<b>4倍打点</b>(${bestLabel})`);}
+        if(bestEff>=4){offScore+=40;notes.push(`相手に<b>4倍打点</b>(${bestLabel})`);}
         else if(bestEff>=2){offScore+=25;notes.push(`相手に<b>2倍打点</b>(${bestLabel})`);}
         else if(bestEff>=1){offScore+=10;notes.push('等倍打点あり');}
-        else               {offScore-=10;notes.push('有効打なし');}
-
-        // 防御評価: 相手既知技＋特性無効
-        for (const mv of oppMoveNames) {
+        else {offScore-=10;notes.push('有効打なし');}
+        // 防御評価
+        for (const mv of effectiveOppMoves) {
             const oi=moveDex[mv]; if(!oi) continue;
             const ot=oi.type||'';
-            if(_isImmune(ot,bp.ability)){
-                defScore+=20;
-                notes.push(`<b>${ot}技を特性無効</b>(${bp.ability})`);
-                continue;
-            }
+            if(_isImmune(ot,bp.ability)){defScore+=20;notes.push(`<b>${ot}技を無効化</b>(${bp.ability})`);continue;}
             const e=calcTypeEffectiveness(ot,bPoke.types,oppAbil,bp.ability);
-            if(e===0)        {defScore+=15;notes.push(`${mv}無効`);}
-            else if(e<=0.25) {defScore+=12;notes.push(`${mv}1/4倍`);}
-            else if(e<=0.5)  {defScore+=8; notes.push(`${mv}1/2倍`);}
-            else if(e>=4)    {defScore-=25;notes.push(`${mv}に<b>4倍弱点</b>`);}
-            else if(e>=2)    {defScore-=12;notes.push(`${mv}に2倍弱点`);}
+            if(e===0)         {defScore+=15;notes.push(`${mv}無効`);}
+            else if(e<=0.25)  {defScore+=12;notes.push(`${mv}1/4倍`);}
+            else if(e<=0.5)   {defScore+=8; notes.push(`${mv}1/2倍`);}
+            else if(e>=4)     {defScore-=25;notes.push(`${mv}に<b>4倍弱点</b>`);}
+            else if(e>=2)     {defScore-=12;notes.push(`${mv}に2倍弱点`);}
         }
-        // 相手技が不明でもタイプ耐性を評価
-        if(oppMoveNames.length===0){
+        if(effectiveOppMoves.length===0){
             let bestDefEff=999;
             for(const t of(oppPoke.types||[])){
                 const e=calcTypeEffectiveness(t,bPoke.types,oppAbil,bp.ability);
                 if(e<bestDefEff) bestDefEff=e;
             }
-            if(bestDefEff===0)       {defScore+=15;notes.push('相手タイプを無効');}
-            else if(bestDefEff<=0.5) {defScore+=8; notes.push('相手タイプに耐性');}
-            else if(bestDefEff>=2)   {defScore-=12;notes.push('相手タイプに弱点');}
+            if(bestDefEff===0)      {defScore+=15;notes.push('相手タイプを無効');}
+            else if(bestDefEff<=0.5){defScore+=8; notes.push('相手タイプに耐性');}
+            else if(bestDefEff>=2)  {defScore-=12;notes.push('相手タイプに弱点');}
         }
-
+        // HP残量ペナルティ
+        if(bp.hpPct < 30) {defScore-=10;notes.push(`残HP${bp.hpPct}%`);}
         return {name:bp.name,offScore,defScore,totalScore:offScore+defScore,notes,hpPct:bp.hpPct};
     }).filter(Boolean).sort((a,b)=>b.totalScore-a.totalScore);
 
@@ -11986,7 +12192,7 @@ function advisorBestMove() {
             :(best.score<50?`<div style="margin-bottom:6px;font-size:0.88rem;color:#e67e22;">⚠️ 現状では交代も検討してください。</div>`:'');
         switchHtml=`<div style="margin-top:12px;">
             <b style="font-size:0.88rem;">🔄 交代候補（ベンチ）</b>
-            <div style="font-size:0.76rem;color:#888;margin-bottom:4px;">攻撃・防御・特性を考慮したスコア</div>
+            <div style="font-size:0.76rem;color:#888;margin-bottom:4px;">攻撃・防御・特性・残HP を考慮したスコア</div>
             ${switchIntro}
             <table style="width:100%;border-collapse:collapse;font-size:0.84rem;border:1px solid #e0e0e0;">
                 <tr style="background:#eaf0fb;font-weight:bold;"><th style="padding:5px 8px;text-align:left;">ポケモン</th><th style="padding:5px 8px;">攻</th><th style="padding:5px 8px;">防</th><th style="padding:5px 8px;">総合</th><th style="padding:5px 8px;text-align:left;">理由</th></tr>
@@ -12013,59 +12219,231 @@ function advisorSelect() {
     if (oppTeam.length===0) return '<span style="color:#e74c3c;">⚠️ 相手のパーティを登録してください（またはポケモンを入力してください）</span>';
 
     const selCount = [0,1,2,3,4,5].filter(i => document.getElementById(`oppSelected${i}`)?.checked).length;
-    const oppNote = selCount >= 3
+    const oppNote  = selCount >= 3
         ? `（相手選出確定: ${oppTeam.map(p=>p.name).join('・')}）`
         : selCount > 0
-            ? `（相手選出候補${selCount}体+未確定分あり — パーティ全体を考慮）`
+            ? `（相手選出候補${selCount}体+未確定分あり — パーティ全体考慮）`
             : `（相手パーティ全${oppTeam.length}体を考慮）`;
 
+    const weather = document.getElementById('battleWeather')?.value || 'none';
+    const terrain = document.getElementById('battleTerrain')?.value || 'none';
+
+    // --- 速度比較ヘルパー ---
+    function calcSpeReal(poke, ability, item, status) {
+        const base = poke.spe || poke.speed || 50;
+        let spe = calcStat(base, 0, 1.0, false);
+        if (ability==='かそく') spe = Math.floor(spe * 2);
+        if (ability==='ようりょくそ' && (weather==='sun'||weather==='harshsun')) spe = Math.floor(spe * 2);
+        if (ability==='すなはき'  && weather==='sand') spe = Math.floor(spe * 2);
+        if (ability==='すなかき'  && weather==='sand') spe = Math.floor(spe * 2);
+        if (ability==='はやあし'  && status && status!=='none') spe = Math.floor(spe * 1.5);
+        if (item==='こだわりスカーフ') spe = Math.floor(spe * 1.5);
+        if (status==='paralysis') spe = Math.floor(spe * 0.5);
+        return spe;
+    }
+
+    // --- スコアリング ---
     const scored = myTeam.map(mp => {
-        const bPoke = pokedex[mp.name]; if(!bPoke) return null;
-        let advantageCount=0, disadvantageCount=0, immuneCount=0;
+        const bPoke = pokedex[mp.name]; if (!bPoke) return null;
+
+        let offScore    = 0;   // 攻撃面スコア
+        let defScore    = 0;   // 防御面スコア
+        let speedScore  = 0;   // 素早さ面スコア
+        let synergyScore= 0;   // チームシナジー
+        let utilScore   = 0;   // 補助・展開スコア
+        const notes = [];
+
+        // ── 攻撃評価（タイプ一致・技・相手弱点）──
+        let totalOppCount = 0;
+        let effOver2Count = 0, eff4Count = 0;
         for (const op of oppTeam) {
-            const oPoke = pokedex[op.name]; if(!oPoke) continue;
-            // 攻め: 自分のタイプ＋技で相手に最大何倍か
-            let maxOff=0;
-            for(const t of(bPoke.types||[])){
-                const e=calcTypeEffectiveness(t,oPoke.types,mp.ability,'');
-                if(e>maxOff)maxOff=e;
+            const oPoke = pokedex[op.name]; if (!oPoke) continue;
+            totalOppCount++;
+            let maxOff = 0;
+            // 自タイプ打点
+            for (const t of (bPoke.types||[])) {
+                const e = calcTypeEffectiveness(t, oPoke.types, mp.ability, op.ability||'');
+                if (e > maxOff) maxOff = e;
             }
-            for(const mv of mp.moves){
-                const info=moveDex[mv]; if(!info||!info.power) continue;
-                const e=calcTypeEffectiveness(info.type,oPoke.types,mp.ability,'');
-                if(e>maxOff)maxOff=e;
+            // 持ち技打点
+            for (const mv of (mp.moves||[])) {
+                const info = moveDex[mv]; if (!info || !info.power) continue;
+                const e = calcTypeEffectiveness(info.type||'', oPoke.types, mp.ability, op.ability||'');
+                if (e > maxOff) maxOff = e;
             }
-            if(maxOff>=2)advantageCount++;
-            // 守り: 相手タイプで自分が何倍受けるか
-            let maxDef=0;
-            for(const t of(oPoke.types||[])){
-                if(_isImmune(t,mp.ability)){immuneCount++;continue;}
-                const e=calcTypeEffectiveness(t,bPoke.types,'',mp.ability);
-                if(e>maxDef)maxDef=e;
-            }
-            if(maxDef>=2)disadvantageCount++;
+            if (maxOff >= 4) { eff4Count++; effOver2Count++; }
+            else if (maxOff >= 2) { effOver2Count++; }
         }
-        const score=advantageCount*2-disadvantageCount+immuneCount;
-        const isSelected=mp.isSelected;
-        return {name:mp.name,types:bPoke.types,advantageCount,disadvantageCount,immuneCount,score,isSelected,hpPct:mp.hpPct};
-    }).filter(Boolean).sort((a,b)=>b.score-a.score);
+        if (eff4Count > 0)     { offScore += eff4Count * 15; notes.push(`<b>${eff4Count}体に4倍打点</b>`); }
+        if (effOver2Count > 0) { offScore += (effOver2Count - eff4Count) * 8; if(effOver2Count-eff4Count>0) notes.push(`${effOver2Count-eff4Count}体に2倍打点`); }
+        if (effOver2Count === 0) { offScore -= 15; notes.push('有効打なし'); }
 
-    const recommend=scored.slice(0,3);
-    const stars=s=>s>=4?'⭐⭐⭐⭐':s>=2?'⭐⭐⭐':s>=0?'⭐⭐':'⭐';
+        // ── 防御評価（弱点・耐性・無効化）──
+        let weakCount = 0, resistCount = 0, immuneCount = 0;
+        for (const op of oppTeam) {
+            const oPoke = pokedex[op.name]; if (!oPoke) continue;
+            // 相手のSTABタイプ＋技タイプ
+            const oppAttackTypes = new Set(oPoke.types||[]);
+            for (const mv of (op.moves||[])) {
+                const info = moveDex[mv]; if (info?.power) oppAttackTypes.add(info.type||'');
+            }
+            let worstEff = 1;
+            for (const ot of oppAttackTypes) {
+                if (_isImmune(ot, mp.ability)) { immuneCount++; break; }
+                const e = calcTypeEffectiveness(ot, bPoke.types, op.ability||'', mp.ability);
+                if (e > worstEff) worstEff = e;
+            }
+            if (worstEff >= 4)     weakCount++;
+            else if (worstEff >= 2) weakCount++;
+            else if (worstEff <= 0.5) resistCount++;
+        }
+        if (immuneCount > 0)   { defScore += immuneCount * 15; notes.push(`<b>${immuneCount}体の攻撃を無効化</b>`); }
+        if (resistCount > 0)   { defScore += resistCount * 6;  notes.push(`${resistCount}体に耐性`); }
+        if (weakCount > 0)     { defScore -= weakCount * 8;    notes.push(`${weakCount}体に弱点`); }
 
-    const tableRows=scored.map((p,i)=>{
-        const bg=i<3?'#e8f5e9':'#fff';
-        const checkMark=p.isSelected?'☑ ':'';
-        return `<tr style="background:${bg};"><td style="padding:5px 8px;">${i<3?'✅':'　'}${checkMark}<b>${p.name}</b></td><td style="padding:5px 8px;text-align:center;">${p.advantageCount}/${oppTeam.length}体</td><td style="padding:5px 8px;text-align:center;">${p.disadvantageCount}/${oppTeam.length}体</td><td style="padding:5px 8px;text-align:center;">${p.immuneCount>0?`無効${p.immuneCount}`:'-'}</td><td style="padding:5px 8px;">${stars(p.score)}</td></tr>`;
+        // ── 素早さ評価（先手率）──
+        const mySpe = calcSpeReal(bPoke, mp.ability, mp.item, 'none');
+        let fasterCount = 0, slowerCount = 0;
+        for (const op of oppTeam) {
+            const oPoke = pokedex[op.name]; if (!oPoke) continue;
+            const opSpe = calcSpeReal(oPoke, op.ability||'', op.item||'', 'none');
+            if (mySpe > opSpe)       fasterCount++;
+            else if (mySpe < opSpe)  slowerCount++;
+        }
+        if (fasterCount >= Math.ceil(totalOppCount*0.6)) {
+            speedScore += 10; notes.push(`${fasterCount}体より速い`);
+        } else if (slowerCount >= Math.ceil(totalOppCount*0.6)) {
+            speedScore -= 5; notes.push(`${slowerCount}体より遅い`);
+        }
+        // スカーフ・トリルへの言及
+        if (mp.item==='こだわりスカーフ') { speedScore += 8; notes.push('スカーフ先制'); }
+
+        // ── 補助・展開スコア ──
+        for (const mv of (mp.moves||[])) {
+            if (['ステルスロック','まきびし','どくびし','ねばねばネット'].includes(mv)) {
+                utilScore += 12; notes.push(`展開技(${mv})`); break;
+            }
+            if (['トリックルーム'].includes(mv)) {
+                // 遅いポケモンほど恩恵大
+                if (slowerCount >= 2) { utilScore += 18; notes.push('トリルサポート有利'); }
+                else { utilScore += 8; notes.push('トリルサポート'); }
+                break;
+            }
+            if (['ひかりのかべ','リフレクター','オーロラベール'].includes(mv)) {
+                utilScore += 8; notes.push(`壁技(${mv})`); break;
+            }
+            if (['あまごい','にほんばれ','すなあらし','あられ','ゆきげしき'].includes(mv)) {
+                utilScore += 8; notes.push(`天候セット(${mv})`); break;
+            }
+        }
+
+        // ── チームシナジー（パーティ内で技タイプが重複しないか）──
+        const myMoveTypes = new Set();
+        for (const mv of (mp.moves||[])) {
+            const info = moveDex[mv]; if (info?.power && info.type) myMoveTypes.add(info.type);
+        }
+        // 他のパーティメンバーとタイプカバーが被っていないほどシナジー+
+        let uniqueTypes = 0;
+        for (const t of myMoveTypes) {
+            const coveredByOthers = myTeam.some(other => {
+                if (other.name===mp.name) return false;
+                const otherPoke = pokedex[other.name]; if (!otherPoke) return false;
+                return (other.moves||[]).some(mv2 => {
+                    const i2 = moveDex[mv2]; return i2?.power && i2.type===t;
+                });
+            });
+            if (!coveredByOthers) uniqueTypes++;
+        }
+        if (uniqueTypes >= 2) { synergyScore += 8; notes.push(`固有の打点${uniqueTypes}タイプ`); }
+
+        // ── HP残量ペナルティ ──
+        if (mp.hpPct < 30)     { defScore -= 20; notes.push(`残HP${mp.hpPct}%低下`); }
+        else if (mp.hpPct < 60){ defScore -= 8;  notes.push(`残HP${mp.hpPct}%`); }
+
+        const totalScore = offScore + defScore + speedScore + utilScore + synergyScore;
+        return {
+            name: mp.name,
+            types: bPoke.types,
+            offScore,  defScore,  speedScore,  utilScore,  synergyScore,
+            totalScore,
+            advantageCount: effOver2Count,
+            disadvantageCount: weakCount,
+            immuneCount,
+            notes,
+            isSelected: mp.isSelected,
+            hpPct: mp.hpPct,
+        };
+    }).filter(Boolean).sort((a,b) => b.totalScore - a.totalScore);
+
+    const recommend = scored.slice(0, 3);
+    const stars = s => s>=30?'⭐⭐⭐⭐':s>=15?'⭐⭐⭐':s>=0?'⭐⭐':'⭐';
+
+    const tableRows = scored.map((p,i) => {
+        const bg = i<3 ? '#e8f5e9' : '#fff';
+        const checkMark = p.isSelected ? '☑ ' : '';
+        const scoreBreakdown = [
+            p.offScore!==0  ? `攻${p.offScore>0?'+':''}${p.offScore}` : '',
+            p.defScore!==0  ? `防${p.defScore>0?'+':''}${p.defScore}` : '',
+            p.speedScore!==0? `速${p.speedScore>0?'+':''}${p.speedScore}` : '',
+            p.utilScore!==0 ? `補${p.utilScore>0?'+':''}${p.utilScore}` : '',
+            p.synergyScore!==0?`連${p.synergyScore>0?'+':''}${p.synergyScore}` : '',
+        ].filter(Boolean).join(' / ');
+        const topNotes = p.notes.slice(0,3).join(' / ');
+        return `<tr style="background:${bg};">
+            <td style="padding:5px 8px;">${i<3?'✅':'　'}${checkMark}<b>${p.name}</b>${p.hpPct<60?`<span style="font-size:0.75rem;color:#e74c3c;"> HP${p.hpPct}%</span>`:''}</td>
+            <td style="padding:5px 8px;text-align:center;">${p.advantageCount}/${oppTeam.length}体</td>
+            <td style="padding:5px 8px;text-align:center;">${p.disadvantageCount}/${oppTeam.length}体</td>
+            <td style="padding:5px 8px;text-align:center;">${p.immuneCount>0?`無効${p.immuneCount}`:'-'}</td>
+            <td style="padding:5px 8px;font-weight:bold;color:${p.totalScore>=20?'#27ae60':p.totalScore>=0?'#e67e22':'#e74c3c'};">${stars(p.totalScore)}<br><span style="font-size:0.72rem;font-weight:normal;color:#888;">${scoreBreakdown}</span></td>
+            <td style="padding:5px 8px;font-size:0.78rem;color:#555;">${topNotes}</td>
+        </tr>`;
     }).join('');
 
-    const intro=`<div style="margin-bottom:10px;font-size:1rem;">
+    // 先発推奨（最もスコアが高く速いポケモン）
+    const topForSpeed = [...scored].sort((a,b)=>{
+        const aPoke=pokedex[a.name], bPoke=pokedex[b.name];
+        if(!aPoke||!bPoke) return 0;
+        return calcSpeReal(bPoke,b.name,b.item||'','none') - calcSpeReal(aPoke,a.name,a.item||'','none');
+    });
+    const leadCandidate = topForSpeed.find(p=>p.totalScore>=0) || recommend[0];
+
+    // タイプカバレッジチェック
+    const allMyTypes = new Set();
+    recommend.forEach(p => {
+        const pk = pokedex[p.name]; if(!pk) return;
+        (pk.types||[]).forEach(t=>allMyTypes.add(t));
+        (myTeam.find(m=>m.name===p.name)?.moves||[]).forEach(mv=>{
+            const i=moveDex[mv]; if(i?.power&&i.type) allMyTypes.add(i.type);
+        });
+    });
+    const uncoveredOppWeakTypes = [];
+    for (const op of oppTeam) {
+        const oPoke = pokedex[op.name]; if(!oPoke) continue;
+        (oPoke.types||[]).forEach(t => {
+            if (!allMyTypes.has(t)) uncoveredOppWeakTypes.push(t);
+        });
+    }
+
+    const coverageNote = uncoveredOppWeakTypes.length > 0
+        ? `<div style="font-size:0.8rem;color:#e67e22;margin-top:4px;">⚠️ カバーできていないタイプ: ${[...new Set(uncoveredOppWeakTypes)].slice(0,4).join('・')}</div>`
+        : '';
+
+    const intro = `<div style="margin-bottom:10px;font-size:1rem;">
         🏆 <b>推奨選出: ${recommend.map(p=>'<b>'+p.name+'</b>').join('・')}</b><br>
-        <span style="font-size:0.83rem;color:#555;">${oppNote} — 先発には <b>${recommend[0]?.name}</b> が有利です。</span>
+        <span style="font-size:0.83rem;color:#555;">${oppNote}</span><br>
+        <span style="font-size:0.83rem;color:#2980b9;">🚀 先発候補: <b>${leadCandidate?.name||'—'}</b>（素早さ・スコアを考慮）</span>
+        ${coverageNote}
     </div>`;
 
-    return intro+`<table style="width:100%;border-collapse:collapse;font-size:0.85rem;border:1px solid #e0e0e0;">
-        <tr style="background:#eaf0fb;font-weight:bold;"><th style="padding:6px 8px;text-align:left;">ポケモン</th><th style="padding:6px 8px;">有効打</th><th style="padding:6px 8px;">被弱点</th><th style="padding:6px 8px;">無効化</th><th style="padding:6px 8px;">スコア</th></tr>
+    return intro + `<table style="width:100%;border-collapse:collapse;font-size:0.85rem;border:1px solid #e0e0e0;">
+        <tr style="background:#eaf0fb;font-weight:bold;">
+            <th style="padding:6px 8px;text-align:left;">ポケモン</th>
+            <th style="padding:6px 8px;">有効打</th>
+            <th style="padding:6px 8px;">被弱点</th>
+            <th style="padding:6px 8px;">無効化</th>
+            <th style="padding:6px 8px;">総合</th>
+            <th style="padding:6px 8px;text-align:left;">理由</th>
+        </tr>
         ${tableRows}
     </table>`;
 }
@@ -12073,107 +12451,216 @@ function advisorSelect() {
 
 // ===== Mode B: 相手行動予測 =====
 function advisorPredict() {
-    const oppPoke = getEffectivePoke('opp');
+    const oppPoke  = getEffectivePoke('opp');
+    const myPoke   = getEffectivePoke('my');
     if (!oppPoke) return '<span style="color:#e74c3c;">⚠️ 相手のポケモンを選択してください</span>';
+
     const oppHpPct = parseFloat(document.getElementById('oppCurrentHpPct')?.value) || 100;
+    const myHpPct  = parseFloat(document.getElementById('myCurrentHpPct')?.value)  || 100;
+    const oppItem  = document.getElementById('oppAbility')?.value || '';   // ※以下で正しく取得
+    const oppItemV = document.getElementById('oppItem')?.value || '';
+    const oppAbil  = document.getElementById('oppAbility')?.value || '';
+    const myAbil   = document.getElementById('myAbility')?.value  || '';
+    const weather  = document.getElementById('battleWeather')?.value || 'none';
+
+    // こだわり系持ち物の直前技固定チェック
+    const koKodawari = ['こだわりハチマキ','こだわりメガネ','こだわりスカーフ'];
+    const oppIsLocked = koKodawari.includes(oppItemV);
+    const oppLogs = window.turnLog ? window.turnLog.filter(e => e.attackerSide==='opp' && e.moveName && e.moveName!=='—') : [];
+    const lastOppMv = oppLogs.length > 0 ? oppLogs[oppLogs.length-1].moveName : null;
+
+    // こだわりロック中 → 直前技がほぼ確定
+    if (oppIsLocked && lastOppMv) {
+        const info = moveDex[lastOppMv];
+        const effOnMe = myPoke ? calcTypeEffectiveness(info?.type||'', myPoke.types, oppAbil, myAbil) : 1;
+        const dangerLabel = effOnMe >= 2 ? `<span style="color:#e74c3c;">⚠️ 自分に${effOnMe>=4?'4倍':'2倍'}弱点</span>` : effOnMe===0 ? '<span style="color:#27ae60;">無効</span>' : '';
+        return `<div style="padding:8px;background:#fce4ec;border-radius:6px;border-left:3px solid #e74c3c;margin-bottom:8px;">
+            🔒 <b>こだわり技ロック中 — 「${lastOppMv}」をほぼ確実に使用します</b><br>
+            <span style="font-size:0.82rem;color:#555;">${dangerLabel} 交代か${effOnMe>=2?'耐久型':'そのまま受け'}を検討してください。</span>
+        </div>`;
+    }
 
     // 既知技を集計
-    const knownMoves = [1,2,3,4].map(s => document.getElementById(`oppMove${s}`)?.value).filter(m => m && m !== '' && m !== '--');
-    if (knownMoves.length === 0 && window.turnLog.length === 0) {
+    const knownMoves = [1,2,3,4].map(s=>document.getElementById(`oppMove${s}`)?.value).filter(m=>m&&m!==''&&m!=='--');
+    if (knownMoves.length===0 && oppLogs.length===0) {
         return `<div style="color:#888;padding:8px;">📋 まだ相手の技・ログがありません。<br>ターンを記録するか、相手の技スロットに技を入力してください。</div>`;
     }
 
-    // ログから相手の行動パターン分析
-    const oppLogs = window.turnLog.filter(e => e.attackerSide === 'opp' && e.moveName && e.moveName !== '—');
+    // ログから行動パターン分析
     const moveFreq = {};
-    const hpZoneMoves = { high: {}, mid: {}, low: {} }; // HP>66%, 33-66%, <33%
-    const prevMoves = {};
+    const hpZoneMoves = { high:{}, mid:{}, low:{} };
+    const prevMoves   = {};
+    const mamoruCount_all = { count:0 };
 
-    for (let i = 0; i < oppLogs.length; i++) {
+    for (let i=0; i < oppLogs.length; i++) {
         const e = oppLogs[i];
         const mv = e.moveName;
-        moveFreq[mv] = (moveFreq[mv] || 0) + 1;
-        const zone = e.oppHpPct > 66 ? 'high' : e.oppHpPct > 33 ? 'mid' : 'low';
-        hpZoneMoves[zone][mv] = (hpZoneMoves[zone][mv] || 0) + 1;
+        moveFreq[mv] = (moveFreq[mv]||0) + 1;
+        if (mv==='まもる'||mv==='みきり'||mv==='たてこもる') mamoruCount_all.count++;
+        const zone = e.oppHpPct>66 ? 'high' : e.oppHpPct>33 ? 'mid' : 'low';
+        hpZoneMoves[zone][mv] = (hpZoneMoves[zone][mv]||0) + 1;
         if (i > 0) {
             const prev = oppLogs[i-1].moveName;
             if (!prevMoves[prev]) prevMoves[prev] = {};
-            prevMoves[prev][mv] = (prevMoves[prev][mv] || 0) + 1;
+            prevMoves[prev][mv] = (prevMoves[prev][mv]||0) + 1;
         }
     }
 
     // 現在HPゾーン
-    const curZone = oppHpPct > 66 ? 'high' : oppHpPct > 33 ? 'mid' : 'low';
-    const zoneLabel = { high: '高HP(66%以上)', mid: '中HP(33〜66%)', low: '低HP(33%以下)' };
+    const curZone = oppHpPct>66 ? 'high' : oppHpPct>33 ? 'mid' : 'low';
+    const zoneLabel = { high:'高HP(66%以上)', mid:'中HP(33〜66%)', low:'低HP(33%以下)' };
 
-    // 予測スコア算出
+    // --- 自分への確定数計算（危険技を上位へ）---
+    function getKODangerScore(mv) {
+        if (!myPoke) return 0;
+        const info = moveDex[mv]; if(!info||!info.power) return 0;
+        const myIdx = parseInt(document.querySelector('input[name="myActive"]:checked')?.value??0);
+        const myStat = getExactStats('my', myIdx, myPoke);
+        const myHpMax = calcStat(myPoke.hp, parseInt(document.getElementById('myHP')?.value)||0, 1.0, true);
+        const myHpReal = Math.max(1, Math.round(myHpMax*myHpPct/100));
+        const oppIdx = parseInt(document.querySelector('input[name="oppActive"]:checked')?.value??0);
+        const oppStat = getExactStats('opp', oppIdx, oppPoke);
+        const oc = info.category||'物理';
+        const oAtk = oc==='物理' ? oppStat.atk : oppStat.spa;
+        let oDmgMod = oppItemV==='いのちのたま' ? 1.3 : 1.0;
+        if (oppItemV==='こだわりハチマキ'&&oc==='物理') oDmgMod*=1.5;
+        if (oppItemV==='こだわりメガネ'  &&oc==='特殊')  oDmgMod*=1.5;
+        const oStab = oppPoke.types.includes(info.type||'') ? (oppAbil==='てきおうりょく'?2.0:1.5) : 1.0;
+        const oEff  = calcTypeEffectiveness(info.type||'', myPoke.types, oppAbil, myAbil);
+        if (oEff===0) return -20; // 無効
+        const myBaseD = oc==='物理' ? myPoke.def : myPoke.spd;
+        const myDefRank = parseInt(document.getElementById(oc==='物理'?'myRankD':'myRankD2')?.value)||0;
+        const myDef = Math.floor(myStat[oc==='物理'?'def':'spd'] * getRankMod(myDefRank));
+        const oDmg = getDamageRange(oAtk, Math.max(1,myDef), info.power, oStab, oEff, oDmgMod, false, false);
+        const oPct = oDmg.max / myHpReal * 100;
+        if (oPct >= 100) return 50;  // 1発で倒される → 最高危険度
+        if (oPct >= 50)  return 25;  // 2発圏内
+        if (oPct >= 33)  return 10;
+        return 0;
+    }
+
+    // タイプ一致・弱点技ボーナス
+    function getTypeAdvBonus(mv) {
+        if (!myPoke) return 0;
+        const info = moveDex[mv]; if(!info||!info.power) return 0;
+        const oEff = calcTypeEffectiveness(info.type||'', myPoke.types, oppAbil, myAbil);
+        const isStab = oppPoke.types.includes(info.type||'');
+        let bonus = 0;
+        if (oEff >= 4) bonus += 30;
+        else if (oEff >= 2) bonus += 15;
+        if (isStab) bonus += 8;
+        return bonus;
+    }
+
+    // HP連動技ボーナス（相手のHP低いとき）
+    function getHPLinkedBonus(mv) {
+        const info = moveDex[mv]; if(!info) return 0;
+        const lowHPMoves = ['だいばくはつ','じばく','みらいよち'];
+        if (oppHpPct <= 25 && lowHPMoves.includes(mv)) return 20;
+        // HP低いとき回復技を使う傾向
+        if (oppHpPct <= 40 && ['かいふく','じこさいせい','ねをはる','のみこむ','つきのひかり','あさのひざし'].includes(mv)) return 25;
+        // HP高いとき積み技を使う傾向
+        if (oppHpPct >= 70 && ['つるぎのまい','りゅうのまい','ちょうのまい','わるだくみ','めいそう'].includes(mv)) return 20;
+        return 0;
+    }
+
+    // PP枯渇リスク（使いすぎ技は除外気味に）
+    function getPPRiskPenalty(mv) {
+        const usedCount = moveFreq[mv]||0;
+        const info = moveDex[mv]; if(!info||!info.pp) return 0;
+        const maxPP = info.pp * 1.6; // いわゆる最大PP
+        if (usedCount >= maxPP * 0.8) return -30; // PP切れ可能性大
+        return 0;
+    }
+
+    // スコア算出
+    const ONE_TIME_MOVES = ['ステルスロック','どくびし','ねばねばネット','にほんばれ','あまごい','すなあらし','あられ','ゆきげしき','トリックルーム','マジックルーム','ワンダールーム','いやしのねがい','みらいよち'];
     const allCandidates = [...new Set([...knownMoves, ...Object.keys(moveFreq)])];
-    // 1回きり技: すでに使用済みなら予測スコアを最下位に
-    const ONE_TIME_MOVES = ['ステルスロック','どくびし','ねばねばネット',
-        'にほんばれ','あまごい','すなあらし','あられ','ゆきげしき',
-        'トリックルーム','マジックルーム','ワンダールーム','いやしのねがい','みらいよち'];
 
     const scored = allCandidates.map(mv => {
+        const usedCount = moveFreq[mv]||0;
+        if (ONE_TIME_MOVES.includes(mv) && usedCount >= 1) return { mv, score:1, oneTime:true };
         let score = 0;
-        const usedCount = moveFreq[mv] || 0;
-        if (ONE_TIME_MOVES.includes(mv) && usedCount >= 1) {
-            return { mv, score: 1, oneTime: true }; // 使用済み1回きり技は最下位
-        }
+        // 頻度スコア
         if (usedCount) score += usedCount * 10;
+        // HPゾーン別スコア
         if (hpZoneMoves[curZone][mv]) score += hpZoneMoves[curZone][mv] * 15;
-        const lastOppMove = oppLogs.length > 0 ? oppLogs[oppLogs.length-1].moveName : null;
-        if (lastOppMove && prevMoves[lastOppMove]?.[mv]) score += prevMoves[lastOppMove][mv] * 20;
-        return { mv, score, oneTime: false };
-    }).sort((a,b) => b.score - a.score);
+        // 直前技からの遷移
+        if (lastOppMv && prevMoves[lastOppMv]?.[mv]) score += prevMoves[lastOppMv][mv] * 20;
+        // 自分へのKO危険度
+        score += getKODangerScore(mv);
+        // タイプ一致・弱点ボーナス
+        score += getTypeAdvBonus(mv);
+        // HP連動ボーナス
+        score += getHPLinkedBonus(mv);
+        // PP枯渇ペナルティ
+        score += getPPRiskPenalty(mv);
+        return { mv, score, oneTime:false };
+    }).sort((a,b) => b.score-a.score);
 
-    const total = scored.reduce((s,x) => s + x.score, 0) || 1;
-    const top3 = scored.filter(x => x.score > 1 && !x.oneTime).slice(0, 3);
+    const total = scored.reduce((s,x) => s+x.score, 0) || 1;
+    const top3  = scored.filter(x => x.score>1 && !x.oneTime).slice(0,3);
 
     let predHtml = '';
     if (top3.length > 0) {
         predHtml = `<div style="margin-bottom:8px;font-size:0.85rem;color:#555;">
-            現在の相手HP: <b>${oppHpPct}%</b>（${zoneLabel[curZone]}帯）
+            相手HP: <b>${oppHpPct}%</b>（${zoneLabel[curZone]}帯） / 技ログ: ${oppLogs.length}ターン分
         </div>`;
         predHtml += `<table style="width:100%;border-collapse:collapse;font-size:0.85rem;margin-bottom:10px;">
             <tr style="background:#f3e5f5;font-weight:bold;">
                 <th style="padding:5px 8px;text-align:left;">予測技</th>
-                <th style="padding:5px 8px;">使用確率</th>
+                <th style="padding:5px 8px;">信頼度</th>
                 <th style="padding:5px 8px;">根拠</th>
             </tr>`;
-        top3.forEach((x, i) => {
+        top3.forEach((x,i) => {
             const pct = Math.round(x.score / total * 100);
             const icon = i===0?'🔮':i===1?'📊':'💭';
-            const zoneBonus = hpZoneMoves[curZone][x.mv] ? ` / ${zoneLabel[curZone]}で使用傾向あり` : '';
-            const freqNote = moveFreq[x.mv] ? `過去${moveFreq[x.mv]}回使用` : '既知技';
+            const info = moveDex[x.mv];
+            const danger = getKODangerScore(x.mv);
+            const effNote = info ? (() => {
+                if(!myPoke) return '';
+                const oEff = calcTypeEffectiveness(info.type||'', myPoke.types, oppAbil, myAbil);
+                if(oEff>=4) return '<span style="color:#e74c3c;font-weight:bold;"> 4倍弱点⚠️</span>';
+                if(oEff>=2) return '<span style="color:#e74c3c;"> 2倍弱点</span>';
+                if(oEff===0)return '<span style="color:#27ae60;"> 無効</span>';
+                if(oEff<=0.5)return '<span style="color:#2980b9;"> 耐性</span>';
+                return '';
+            })() : '';
+            const zoneBonus  = hpZoneMoves[curZone][x.mv] ? ` / ${zoneLabel[curZone]}で使用傾向` : '';
+            const freqNote   = moveFreq[x.mv] ? `過去${moveFreq[x.mv]}回使用` : '既知技';
+            const dangerNote = danger >= 50 ? ' / <b style="color:#e74c3c;">⚠️ 一撃圏内</b>' : danger >= 25 ? ' / 2発圏内' : '';
+            const hpNote     = getHPLinkedBonus(x.mv) > 0 ? ' / HP状況に一致' : '';
             predHtml += `<tr style="background:${i===0?'#fce4ec':'#fff'};">
-                <td style="padding:5px 8px;">${icon} <b>${x.mv}</b></td>
+                <td style="padding:5px 8px;">${icon} <b>${x.mv}</b>${effNote}</td>
                 <td style="padding:5px 8px;font-weight:bold;color:#8e44ad;">${pct}%</td>
-                <td style="padding:5px 8px;font-size:0.78rem;color:#666;">${freqNote}${zoneBonus}</td>
+                <td style="padding:5px 8px;font-size:0.78rem;color:#666;">${freqNote}${zoneBonus}${dangerNote}${hpNote}</td>
             </tr>`;
         });
         predHtml += '</table>';
     } else {
-        predHtml = `<div style="color:#888;padding:8px;">まだ分析できるデータが少ないです。ターンを記録してください。</div>`;
+        predHtml = `<div style="color:#888;padding:8px;">ログが少なく予測が困難です。ターンを記録してください。</div>`;
     }
 
-    // 癖コメント
+    // まもる傾向のクセ分析
     let quirkHtml = '';
-    const mamoruCount = (moveFreq['まもる'] || 0);
     const totalTurns = oppLogs.length;
     if (totalTurns >= 2) {
         const quirkList = [];
-        if (mamoruCount / totalTurns >= 0.3) quirkList.push('⚠️ まもるを多用する傾向があります（使用率' + Math.round(mamoruCount/totalTurns*100) + '%）');
+        const mamoruRate = mamoruCount_all.count / totalTurns;
+        if (mamoruRate >= 0.3) quirkList.push(`まもる多用（${Math.round(mamoruRate*100)}%）`);
         const lowMoves = Object.keys(hpZoneMoves.low);
-        if (lowMoves.length > 0 && oppHpPct <= 33) quirkList.push(`💀 低HP時によく使う技: <b>${lowMoves.slice(0,2).join('・')}</b>`);
+        if (lowMoves.length > 0 && oppHpPct <= 33) quirkList.push(`低HP時: <b>${lowMoves.slice(0,2).join('・')}</b>を好む`);
+        const highMoves = Object.keys(hpZoneMoves.high);
+        if (highMoves.length > 0 && oppHpPct >= 66) quirkList.push(`高HP時: <b>${highMoves.slice(0,2).join('・')}</b>を好む`);
         if (quirkList.length > 0) {
             quirkHtml = `<div style="padding:8px;background:#fff8e1;border-radius:6px;border-left:3px solid #f39c12;font-size:0.85rem;margin-top:6px;">
-                ${quirkList.join('<br>')}
+                🧩 <b>行動パターン:</b> ${quirkList.join(' / ')}
             </div>`;
         }
     }
 
-    const introText = top3.length > 0
-        ? `<div style="margin-bottom:10px;font-size:1rem;">🔮 ログ<b>${totalTurns}ターン</b>の分析から、次の相手の行動を予測します。${top3[0]?`<br><b style="color:#8e44ad;">${top3[0].mv}</b> が最も使用される可能性が高いです。`:''}${oppHpPct<=33?' 低HP帯のため積み技・回復技に注意しましょう。':''}</div>`
+    const introText = top3.length>0
+        ? `<div style="margin-bottom:10px;font-size:1rem;">🔮 最有力: <b>${top3[0].mv}</b>${oppHpPct<=33?' (低HP注意)':''}</div>`
         : '';
 
     return introText + predHtml + quirkHtml;
@@ -12706,77 +13193,543 @@ function switchFieldTab(tab) {
             }
         });
 
-        const allPokes = [...teams.my, ...teams.opp];
-        if (allPokes.length === 0) {
+        if (teams.my.length === 0 && teams.opp.length === 0) {
             container.innerHTML = '<div style="color:#888;font-size:0.82rem;">ポケモンが登録されていません</div>';
             return;
         }
 
-        // ×2以上 or ×0 が1体以上ある行だけ表示、残りは折りたたみ
-        const rows = [];
-        ALL_TYPES.forEach(atkType => {
-            const buckets = {'4':[],'2':[],'1':[],'0.5':[],'0.25':[],'0':[]};
-            allPokes.forEach(p => {
-                const eff = getDefEff(atkType, p.types);
-                const key = eff >= 4 ? '4' : eff >= 2 ? '2' : eff >= 1 ? '1' : eff >= 0.5 ? '0.5' : eff > 0 ? '0.25' : '0';
-                buckets[key].push(p.name);
+        function renderSide(pokes, label, color) {
+            if (pokes.length === 0) return '';
+            const rows = [];
+            ALL_TYPES.forEach(atkType => {
+                const buckets = {'4':[],'2':[],'0.5':[],'0.25':[],'0':[],'1':[]};
+                pokes.forEach(p => {
+                    const eff = getDefEff(atkType, p.types);
+                    const key = eff >= 4 ? '4' : eff >= 2 ? '2' : eff >= 1 ? '1' : eff >= 0.5 ? '0.5' : eff > 0 ? '0.25' : '0';
+                    buckets[key].push(p.name);
+                });
+                rows.push({type: atkType, buckets});
             });
-            rows.push({type: atkType, buckets});
-        });
 
-        // 注目行（×4 or ×2 or ×0 あり）と通常行を分ける
-        const notable = rows.filter(r => r.buckets['4'].length + r.buckets['2'].length + r.buckets['0'].length > 0);
-        const normal  = rows.filter(r => r.buckets['4'].length + r.buckets['2'].length + r.buckets['0'].length === 0);
+            const notable = rows.filter(r => r.buckets['4'].length + r.buckets['2'].length + r.buckets['0.5'].length + r.buckets['0.25'].length + r.buckets['0'].length > 0);
+            const normal  = rows.filter(r => r.buckets['4'].length + r.buckets['2'].length + r.buckets['0.5'].length + r.buckets['0.25'].length + r.buckets['0'].length === 0);
 
-        function renderRows(list) {
-            return list.map(({type, buckets}) => {
-                const col = TYPE_COLORS[type] || '#999';
-                const b4   = buckets['4'];
-                const b2   = buckets['2'];
-                const b0   = buckets['0'];
-                const bh   = buckets['0.5'];
+            function renderRows(list) {
+                return list.map(({type, buckets}) => {
+                    const col = TYPE_COLORS[type] || '#999';
+                    let cells = '';
+                    // ×4
+                    if (buckets['4'].length)
+                        cells += `<span style="background:#e74c3c;color:#fff;border-radius:4px;padding:0 4px;font-weight:700;font-size:0.72rem;">×4</span> ${buckets['4'].join(' / ')} `;
+                    // ×2
+                    if (buckets['2'].length)
+                        cells += `<span style="background:#e67e22;color:#fff;border-radius:4px;padding:0 4px;font-weight:700;font-size:0.72rem;">×2</span> ${buckets['2'].join(' / ')} `;
+                    // ×0.5
+                    if (buckets['0.5'].length)
+                        cells += `<span style="background:#3498db;color:#fff;border-radius:4px;padding:0 4px;font-weight:700;font-size:0.72rem;">×0.5</span> ${buckets['0.5'].join(' / ')} `;
+                    // ×0.25
+                    if (buckets['0.25'].length)
+                        cells += `<span style="background:#2980b9;color:#fff;border-radius:4px;padding:0 4px;font-weight:700;font-size:0.72rem;">×0.25</span> ${buckets['0.25'].join(' / ')} `;
+                    // ×0
+                    if (buckets['0'].length)
+                        cells += `<span style="background:#555;color:#fff;border-radius:4px;padding:0 4px;font-weight:700;font-size:0.72rem;">×0</span> ${buckets['0'].join(' / ')} `;
+                    if (!cells) cells = '<span style="color:#ccc;font-size:0.7rem;">全て等倍</span>';
 
-                let cells = '';
-                // ×4
-                cells += b4.length
-                    ? `<span style="background:#e74c3c;color:#fff;border-radius:4px;padding:0 4px;font-weight:700;font-size:0.72rem;">×4</span> ${b4.join(' / ')} `
-                    : '';
-                // ×2
-                cells += b2.length
-                    ? `<span style="background:#e67e22;color:#fff;border-radius:4px;padding:0 4px;font-weight:700;font-size:0.72rem;">×2</span> ${b2.join(' / ')} `
-                    : '';
-                // ×0
-                cells += b0.length
-                    ? `<span style="background:#555;color:#fff;border-radius:4px;padding:0 4px;font-weight:700;font-size:0.72rem;">×0</span> ${b0.join(' / ')} `
-                    : '';
-                // ×½ (サブ表示)
-                cells += bh.length
-                    ? `<span style="color:#3498db;font-size:0.68rem;">½:${bh.join(',')}</span>`
-                    : '';
-                if (!cells) cells = '<span style="color:#ccc;font-size:0.7rem;">全て等倍</span>';
+                    return `<div style="display:flex;align-items:baseline;gap:6px;padding:3px 0;border-bottom:1px solid var(--bdr);">
+                        <span style="background:${col};color:#fff;border-radius:8px;padding:1px 7px;font-size:0.68rem;font-weight:700;flex-shrink:0;min-width:52px;text-align:center;">${type}</span>
+                        <span style="font-size:0.75rem;line-height:1.5;flex:1;">${cells}</span>
+                    </div>`;
+                }).join('');
+            }
 
-                return `<div style="display:flex;align-items:baseline;gap:6px;padding:3px 0;border-bottom:1px solid var(--bdr);">
-                    <span style="background:${col};color:#fff;border-radius:8px;padding:1px 7px;font-size:0.68rem;font-weight:700;flex-shrink:0;min-width:52px;text-align:center;">${type}</span>
-                    <span style="font-size:0.75rem;line-height:1.5;flex:1;">${cells}</span>
-                </div>`;
-            }).join('');
+            let html = `<div style="font-weight:700;font-size:0.78rem;color:${color};margin:8px 0 4px;">● ${label}（${pokes.map(p=>p.name).join('・')}）</div>`;
+            if (notable.length > 0) {
+                html += renderRows(notable);
+            }
+            if (normal.length > 0) {
+                html += `<details style="margin-top:4px;">
+                    <summary style="font-size:0.72rem;color:#aaa;cursor:pointer;user-select:none;">残り${normal.length}タイプを表示（等倍のみ）</summary>
+                    <div style="margin-top:4px;">${renderRows(normal)}</div>
+                </details>`;
+            }
+            return html;
         }
 
         let html = '';
-        if (notable.length > 0) {
-            html += `<div style="font-size:0.72rem;font-weight:700;color:var(--sub);margin-bottom:4px;">⚠️ 注目タイプ（×2以上 or 無効あり）</div>`;
-            html += renderRows(notable);
-        }
-        if (normal.length > 0) {
-            html += `<details style="margin-top:6px;">
-                <summary style="font-size:0.72rem;color:#aaa;cursor:pointer;user-select:none;">残り${normal.length}タイプを表示（全て等倍）</summary>
-                <div style="margin-top:4px;">${renderRows(normal)}</div>
-            </details>`;
-        }
+        html += renderSide(teams.my,  '自分チーム', '#2980b9');
+        if (teams.my.length > 0 && teams.opp.length > 0)
+            html += '<div style="border-top:2px solid var(--bdr);margin:8px 0;"></div>';
+        html += renderSide(teams.opp, '相手チーム', '#c0392b');
 
         container.innerHTML = html;
     };
 })();
+
+// ================================================================
+// ② ローマ字→カタカナ
+// ================================================================
+(function(){
+const RM={sha:'シャ',shi:'シ',shu:'シュ',sho:'ショ',she:'シェ',chi:'チ',cha:'チャ',chu:'チュ',cho:'チョ',tsu:'ツ',kya:'キャ',kyu:'キュ',kyo:'キョ',gya:'ギャ',gyu:'ギュ',gyo:'ギョ',nya:'ニャ',nyu:'ニュ',nyo:'ニョ',mya:'ミャ',myu:'ミュ',myo:'ミョ',rya:'リャ',ryu:'リュ',ryo:'リョ',hya:'ヒャ',bya:'ビャ',pya:'ピャ',fa:'ファ',fi:'フィ',fu:'フ',fe:'フェ',fo:'フォ',ja:'ジャ',ji:'ジ',ju:'ジュ',jo:'ジョ',ka:'カ',ki:'キ',ku:'ク',ke:'ケ',ko:'コ',sa:'サ',si:'シ',su:'ス',se:'セ',so:'ソ',ta:'タ',ti:'チ',tu:'ツ',te:'テ',to:'ト',na:'ナ',ni:'ニ',nu:'ヌ',ne:'ネ',no:'ノ',ha:'ハ',hi:'ヒ',hu:'フ',he:'ヘ',ho:'ホ',ma:'マ',mi:'ミ',mu:'ム',me:'メ',mo:'モ',ya:'ヤ',yu:'ユ',yo:'ヨ',ra:'ラ',ri:'リ',ru:'ル',re:'レ',ro:'ロ',wa:'ワ',wo:'ヲ',ga:'ガ',gi:'ギ',gu:'グ',ge:'ゲ',go:'ゴ',za:'ザ',zi:'ジ',zu:'ズ',ze:'ゼ',zo:'ゾ',da:'ダ',di:'ヂ',du:'ヅ',de:'デ',do:'ド',ba:'バ',bi:'ビ',bu:'ブ',be:'ベ',bo:'ボ',pa:'パ',pi:'ピ',pu:'プ',pe:'ペ',po:'ポ',a:'ア',i:'イ',u:'ウ',e:'エ',o:'オ',n:'ン',nn:'ン'};
+window._rmToKana=function(s){var r='',i=0,l=s.toLowerCase();while(i<l.length){var ok=false;for(var len=4;len>=1;len--){var ch=l.slice(i,i+len);if(RM[ch]){r+=RM[ch];i+=len;ok=true;break;}}if(!ok){if(i+1<l.length&&l[i]===l[i+1]&&'bcdfghjklmnpqrstvwxyz'.includes(l[i])){r+='ッ';i++;}else{r+=l[i];i++;}}}return r;};
+window._normKana=function(s){return s.replace(/[\u3041-\u3096]/g,function(c){return String.fromCharCode(c.charCodeAt(0)+0x60);});};
+window._matchQ=function(name,q){if(!q||!q.trim())return true;var n=window._normKana(name);var qn=window._normKana(q.trim());if(n.includes(qn))return true;var qk=window._rmToKana(q.trim());if(qk)return n.includes(window._normKana(qk));return false;};
+})();
+
+// ================================================================
+// ④ 技tooltip生成（表記: 【技名】  タイプ  分類  威力:xx  命中:xx%\n追加効果）
+// ================================================================
+window._getMvTipText = function(moveName){
+  if(!moveName || moveName==='' || moveName==='-- 技を手動で入力 --') return '';
+  var md = (typeof moveDex !== 'undefined') ? moveDex[moveName] : null;
+  // 1行目: 技名 / タイプ 分類 威力:xx 命中:xx%
+  var line1 = moveName;
+  if(md){
+    var parts = [];
+    if(md.type)     parts.push(md.type);
+    if(md.category) parts.push(md.category);
+    if(md.power)    parts.push('威力:' + md.power);
+    var acc = md.accuracy != null ? md.accuracy : null;
+    parts.push('命中:' + (acc != null ? acc + '%' : '—'));
+    if(parts.length) line1 += ' / ' + parts.join(' ');
+  }
+  var fx = (typeof MOVE_EFFECTS !== 'undefined') ? (MOVE_EFFECTS[moveName] || '') : '';
+  if(!fx) return line1;
+  // 句読点「。」で分割
+  var sentences = fx.split('。').filter(function(s){ return s.trim(); });
+  // 各文を最大18文字で折り返し
+  function wrapLine(s, maxLen){
+    s = s.trim() + '。';
+    var result = [];
+    while(s.length > maxLen){
+      result.push(s.slice(0, maxLen));
+      s = s.slice(maxLen);
+    }
+    if(s) result.push(s);
+    return result.join('\n');
+  }
+  var fxLines = sentences.map(function(s){ return wrapLine(s, 20); });
+  return line1 + '\n' + fxLines.join('\n');
+};
+
+// ================================================================
+// ② カスタムコンボボックス
+// ================================================================
+(function(){
+window._makeComboBox = function(sel, opts){
+  if(!sel || sel.dataset.comboInit) return;
+  sel.dataset.comboInit = '1';
+  opts = opts || {};
+
+  function _selText(sel){
+    var idx = sel.selectedIndex;
+    if(idx >= 0 && sel.options[idx]) return sel.options[idx].textContent || sel.options[idx].value || '';
+    return sel.value || '';
+  }
+
+  var wrap = document.createElement('div');
+  wrap.className = 'cb-wrap';
+  if(sel.id) wrap.id = sel.id + '-wrap';
+
+  var row = document.createElement('div');
+  row.className = 'cb-input-row';
+
+  var inp = document.createElement('input');
+  inp.type = 'text'; inp.className = 'cb-inp';
+  var isPoke    = sel.id && sel.id.includes('Poke');
+  var isMove    = sel.id && (sel.id.includes('Move') || sel.id === 'moveSelect');
+  var isAbility = sel.id && sel.id.includes('Ability');
+  inp.placeholder = isPoke ? '🔍 ポケモン検索...' : isMove ? '🔍 技を検索...' : isAbility ? '🔍 特性を検索...' : '🔍 検索...';
+  inp.autocomplete = 'off';
+
+  var arrow = document.createElement('span');
+  arrow.className = 'cb-arrow'; arrow.textContent = '▼';
+
+  row.appendChild(inp); row.appendChild(arrow);
+
+  var dd = document.createElement('ul');
+  dd.className = 'cb-dropdown';
+
+  wrap.appendChild(row); wrap.appendChild(dd);
+  sel.parentNode.insertBefore(wrap, sel);
+  wrap.appendChild(sel);
+
+  // ドロップダウン位置を fixed で計算
+  function positionDd(){
+    var rect = row.getBoundingClientRect();
+    dd.style.left   = rect.left + 'px';
+    dd.style.top    = (rect.bottom + 2) + 'px';
+    dd.style.width  = rect.width + 'px';
+  }
+
+  function buildList(query){
+    dd.innerHTML = '';
+    var items = Array.from(sel.options);
+    var q = query ? query.trim() : '';
+    var shown = 0;
+    items.forEach(function(opt){
+      if(!opt.value || opt.value === '') return;
+      var _optTxt = opt.textContent||opt.text||opt.value;
+      if(q && !window._matchQ(_optTxt, q)) return;
+      var li = document.createElement('li');
+      li.className = 'cb-item' + (opt.value === sel.value ? ' active' : '');
+      li.textContent = (opt.textContent||opt.text||opt.value); li.dataset.val = opt.value;
+      li.addEventListener('mousedown', function(e){
+        e.preventDefault(); selectVal(opt.value); close();
+      });
+      dd.appendChild(li); shown++;
+    });
+    if(!shown){
+      var empty = document.createElement('li');
+      empty.className = 'cb-item cb-empty';
+      empty.textContent = '該当なし'; dd.appendChild(empty);
+    }
+  }
+
+  function selectVal(val){
+    sel.value = val; inp.value = _selText(sel);
+    dd.querySelectorAll('.cb-item').forEach(function(li){
+      li.classList.toggle('active', li.dataset.val === val);
+    });
+    var ev = new Event('change', {bubbles:true}); sel.dispatchEvent(ev);
+    if(opts.onSelect) opts.onSelect(val);
+    // tooltip更新
+    if(!isPoke && (isAbility || isMove)){
+      var _tip = isAbility ? window._getAbilityTipText(val) : window._getMvTipText(val);
+      if(_tip) row.setAttribute('data-cb-tip', _tip);
+      else row.removeAttribute('data-cb-tip');
+    } else if(!isPoke && !isAbility && !isMove){
+      row.removeAttribute('data-cb-tip');
+    }
+  }
+
+  function open(){
+    positionDd();
+    buildList('');   // 常に全件
+    dd.classList.add('open'); arrow.textContent = '▲';
+    inp.select();
+    var active = dd.querySelector('.cb-item.active');
+    if(active) active.scrollIntoView({block:'nearest'});
+  }
+  function close(){
+    dd.classList.remove('open'); arrow.textContent = '▼';
+    inp.value = _selText(sel);
+  }
+
+  inp.addEventListener('focus', function(){ open(); });
+  inp.addEventListener('input', function(){ positionDd(); dd.classList.add('open'); buildList(inp.value); });
+  inp.addEventListener('keydown', function(e){
+    var items = Array.from(dd.querySelectorAll('.cb-item:not(.cb-empty)'));
+    var idx = items.findIndex(function(l){ return l.classList.contains('active'); });
+    if(e.key==='ArrowDown'){e.preventDefault();var nx=items[idx+1]||items[0];if(nx){items.forEach(function(l){l.classList.remove('active');});nx.classList.add('active');nx.scrollIntoView({block:'nearest'});}}
+    else if(e.key==='ArrowUp'){e.preventDefault();var pv=items[idx-1]||items[items.length-1];if(pv){items.forEach(function(l){l.classList.remove('active');});pv.classList.add('active');pv.scrollIntoView({block:'nearest'});}}
+    else if(e.key==='Enter'){e.preventDefault();var act=dd.querySelector('.cb-item.active');if(act){selectVal(act.dataset.val);close();inp.blur();}}
+    else if(e.key==='Escape'){close();inp.blur();}
+  });
+  inp.addEventListener('blur', function(){ setTimeout(close, 150); });
+  arrow.addEventListener('mousedown', function(e){
+    e.preventDefault();
+    if(dd.classList.contains('open')){ close(); inp.blur(); } else { inp.focus(); }
+  });
+
+  // 外部変更を定期同期（チーム呼び出し・デフォルト値対応）
+  var lastVal = sel.value;
+  setInterval(function(){
+    if(sel.value !== lastVal){
+      lastVal = sel.value;
+      inp.value = _selText(sel);
+      if(!isPoke && (isAbility || isMove)){
+        var tip2 = isAbility ? window._getAbilityTipText(sel.value) : window._getMvTipText(sel.value);
+        if(tip2) row.setAttribute('data-cb-tip', tip2);
+        else row.removeAttribute('data-cb-tip');
+      } else if(!isPoke && !isAbility && !isMove){
+        row.removeAttribute('data-cb-tip');
+      }
+    }
+  }, 400);
+
+  // MutationObserver でoption変化も監視
+  var mo = new MutationObserver(function(){
+    inp.value = _selText(sel);
+    if(!isPoke && (isAbility || isMove)){
+      var tip3 = isAbility ? window._getAbilityTipText(sel.value) : window._getMvTipText(sel.value);
+      if(tip3) row.setAttribute('data-cb-tip', tip3);
+      else row.removeAttribute('data-cb-tip');
+    } else if(!isPoke && !isAbility && !isMove){
+      row.removeAttribute('data-cb-tip');
+    }
+  });
+  mo.observe(sel, {childList:true});
+
+  // 初期値
+  inp.value = _selText(sel);
+  if(!isPoke && (isAbility || isMove)){
+    var _itip = isAbility ? window._getAbilityTipText(sel.value) : window._getMvTipText(sel.value);
+    if(_itip) row.setAttribute('data-cb-tip', _itip);
+  }
+  return {selectVal:selectVal, refresh:function(){ inp.value=sel.value||''; }};
+};
+
+function applyComboBoxes(){
+  var ids = ['myMove1','myMove2','myMove3','myMove4',
+             'oppMove1','oppMove2','oppMove3','oppMove4',
+             'moveSelect',
+             'myPoke0','myPoke1','myPoke2','myPoke3','myPoke4','myPoke5',
+             'oppPoke0','oppPoke1','oppPoke2','oppPoke3','oppPoke4','oppPoke5',
+             'myAbility','oppAbility',
+             'myItem','oppItem',
+             'myStatus','oppStatus',
+             'myNatureAll','oppNatureAll',
+             'myRankA','myRankD','myRankC','myRankD2','myRankS','myRankAcc','myRankEva',
+             'oppRankA','oppRankD','oppRankC','oppRankD2','oppRankS','oppRankAcc','oppRankEva'];
+  ids.forEach(function(id){
+    var sel = document.getElementById(id);
+    if(sel && !sel.dataset.comboInit){
+      var _cb_onSelect = undefined;
+      if(id==='moveSelect') _cb_onSelect = function(v){ if(typeof applyMoveData==='function') applyMoveData(); };
+      else if(id==='myAbility'||id==='oppAbility'||id==='myItem'||id==='oppItem'||id==='myStatus'||id==='oppStatus') _cb_onSelect = function(v){ if(typeof updateSpeed==='function')updateSpeed(); if(typeof updateItemBadges==='function')updateItemBadges(id.replace('Ability','').replace('Item','').replace('Status',''));};
+      else if(id==='myNatureAll'||id==='oppNatureAll') _cb_onSelect = function(v){ if(typeof applyNature==='function')applyNature(id.includes('my')?'my':'opp',v); if(typeof updateRealStats==='function')updateRealStats(id.includes('my')?'my':'opp'); };
+      else if(id.match(/^(my|opp)Rank/)) _cb_onSelect = function(v){ if(typeof updateSpeed==='function')updateSpeed(); };
+      window._makeComboBox(sel, { onSelect: _cb_onSelect });
+    }
+  });
+}
+if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', function(){ setTimeout(applyComboBoxes, 200); });
+else setTimeout(applyComboBoxes, 200);
+
+// updateActive 後にも再適用
+var _origUA = window.updateActive;
+if(typeof _origUA === 'function'){
+  window.updateActive = function(side){
+    _origUA.apply(this, arguments);
+    setTimeout(applyComboBoxes, 100);
+  };
+}
+})();
+
+// ================================================================
+// ④ 技tooltip (teamTooltip 方式に統一)
+// ================================================================
+(function(){
+  var tip = document.getElementById('teamTooltip');
+  if(!tip) return;
+
+  // cb-input-row[data-cb-tip] へのホバー
+  document.addEventListener('mouseover', function(e){
+    var row = e.target.closest('.cb-input-row[data-cb-tip]');
+    if(!row) return;
+    var txt = row.getAttribute('data-cb-tip');
+    if(!txt) return;
+    // 改行を <br> に変換して2行表示
+    tip.innerHTML = txt.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+    tip.style.display = 'block';
+  });
+  document.addEventListener('mousemove', function(e){
+    if(tip.style.display !== 'block') return;
+    var tw = tip.offsetWidth, th = tip.offsetHeight;
+    var vw = window.innerWidth, vh = window.innerHeight;
+    var x = e.clientX + 14, y = e.clientY + 14;
+    if(x + tw > vw) x = e.clientX - tw - 8;
+    if(y + th > vh) y = e.clientY - th - 8;
+    tip.style.left = Math.max(4,x) + 'px';
+    tip.style.top  = Math.max(4,y) + 'px';
+  });
+  document.addEventListener('mouseout', function(e){
+    var row = e.target.closest('.cb-input-row[data-cb-tip]');
+    if(row) tip.style.display = 'none';
+  });
+})();
+
+// ================================================================
+// ① ダメージログ
+// ================================================================
+window._dmgLog = [];
+window.addDmgLog = function(atkName, defName, moveName, minPct, maxPct){
+  var oe = document.getElementById('resultOutput');
+  var minR = null, maxR = null;
+  if(oe){ var m3 = oe.innerHTML.match(/\(実数(\d+)〜(\d+)\)/); if(m3){minR=parseInt(m3[1]);maxR=parseInt(m3[2]);} }
+  var txt = atkName + '→' + defName + ': ' + moveName + ' ' + minPct.toFixed(1) + '〜' + maxPct.toFixed(1) + '%'
+    + (minR !== null ? ' (実数' + minR + '〜' + maxR + ')' : '');
+  window._dmgLog.unshift({id:Date.now()+Math.random(), text:txt, minPct:minPct, maxPct:maxPct});
+  if(window._dmgLog.length > 20) window._dmgLog.pop();
+  window.renderDmgLog();
+};
+window.renderDmgLog = function(){
+  var list = document.getElementById('dmgLogList');
+  var cnt  = document.getElementById('dmgLogCount');
+  if(!list) return;
+  if(cnt) cnt.textContent = window._dmgLog.length ? '(' + window._dmgLog.length + '件)' : '';
+  if(!window._dmgLog.length){
+    list.innerHTML = '<div style="padding:8px 12px;font-size:.75rem;color:var(--sub)">ログなし</div>';
+    var s = document.getElementById('dmgLogSum'); if(s) s.style.display='none';
+    var si = document.getElementById('dmgLogSumInline'); if(si) si.style.display='none';
+    return;
+  }
+  list.innerHTML = window._dmgLog.map(function(e,i){
+    return '<div class="dlog-row">'
+      + '<input type="checkbox" onchange="window.calcDmgLogSum()" data-idx="'+i+'">'
+      + '<span class="dlog-txt">'+e.text+'</span>'
+      + '<button class="dlog-cp" onclick="window.copyDmgLog('+i+')" title="コピー">📋</button>'
+      + '</div>';
+  }).join('');
+  window.calcDmgLogSum();
+};
+window.calcDmgLogSum = function(){
+  var cbs = document.querySelectorAll('#dmgLogList input[type=checkbox]:checked');
+  var sumEl = document.getElementById('dmgLogSum');
+  var sumInl = document.getElementById('dmgLogSumInline');
+  var sumVal = document.getElementById('dmgLogSumVal');
+  if(!cbs.length){ if(sumEl)sumEl.style.display='none'; if(sumInl)sumInl.style.display='none'; return; }
+  var minS=0, maxS=0;
+  cbs.forEach(function(cb){ var idx=parseInt(cb.dataset.idx); if(window._dmgLog[idx]){minS+=window._dmgLog[idx].minPct;maxS+=window._dmgLog[idx].maxPct;} });
+  if(sumVal) sumVal.textContent = minS.toFixed(1)+'〜'+maxS.toFixed(1)+'% ('+cbs.length+'技)';
+  if(sumEl)  sumEl.style.display='block';
+  if(sumInl){sumInl.textContent='合計 '+minS.toFixed(1)+'〜'+maxS.toFixed(1)+'% ('+cbs.length+'技)';sumInl.style.display='inline';}
+};
+window.copyDmgLog = function(idx){
+  var e = window._dmgLog[idx]; if(!e) return;
+  if(navigator.clipboard) navigator.clipboard.writeText(e.text).catch(function(){});
+  else{ var t=document.createElement('textarea');t.value=e.text;document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t); }
+};
+window.clearDmgLog = function(){ window._dmgLog=[]; window.renderDmgLog(); };
+(function(){ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',function(){setTimeout(window.renderDmgLog,100);}); else setTimeout(window.renderDmgLog,100); })();
+
+// ── ①ログhook (executeCalculation後に自動追記) ──
+(function(){
+  var _orig = window.executeCalculation;
+  if(typeof _orig !== 'function') return;
+  window.executeCalculation = function(){
+    _orig.apply(this, arguments);
+    try{
+      var as = document.querySelector('input[name="attackerSide"]:checked')?.value ?? 'me';
+      var atkS = as==='me'?'my':'opp', defS = atkS==='my'?'opp':'my';
+      var ap = getEffectivePoke(atkS), dp = getEffectivePoke(defS);
+      var mn = document.getElementById('moveSelect')?.value || '';
+      var oe = document.getElementById('resultOutput');
+      if(ap && dp && mn && oe){
+        var m = oe.innerHTML.match(/([0-9.]+)%\s*〜\s*([0-9.]+)%/);
+        if(m) window.addDmgLog(ap.name, dp.name, mn, parseFloat(m[1]), parseFloat(m[2]));
+      }
+    }catch(e){}
+  };
+})();
+
+// ================================================================
+// ⑤ 耐久調整
+// ================================================================
+window.calcDurabilityAdjust = function(defSide){
+  defSide = defSide || 'opp';
+  var res = document.getElementById('durResult_' + defSide);
+  if(!res) return;
+
+  var moveName = document.getElementById('moveSelect') ? document.getElementById('moveSelect').value : '';
+  if(!moveName || moveName==='' || moveName==='-- 技を手動で入力 --'){
+    res.innerHTML='<div style="color:var(--op);padding:4px 0;font-size:.75rem">⚠️ 先に⚡計算欄で技を選択してください</div>'; return;
+  }
+  var atkSide = defSide==='my' ? 'opp' : 'my';
+  var atkP = getEffectivePoke(atkSide), defP = getEffectivePoke(defSide);
+  if(!atkP||!defP){
+    res.innerHTML='<div style="color:var(--op);padding:4px 0;font-size:.75rem">⚠️ ポケモンを選択してください</div>'; return;
+  }
+  var md = (typeof moveDex!=='undefined') ? moveDex[moveName] : null;
+  if(!md||md.category==='変化'||!(md.power>0)){
+    res.innerHTML='<div style="color:var(--op);padding:4px 0;font-size:.75rem">⚠️ ダメージを与える技を選択してください</div>'; return;
+  }
+
+  var cat=md.category, mtype=md.type, pow=md.power;
+  var atkItem = (document.getElementById(atkSide+'Item')||{}).value||'なし';
+  var atkPts  = parseInt((document.getElementById(atkSide+(cat==='物理'?'Atk':'SpA'))||{}).value||0,10);
+  var atkNat  = parseFloat((document.getElementById(atkSide+(cat==='物理'?'NatureAtk':'NatureSpA'))||{}).value||1.0);
+  var atkRnk  = parseInt((document.getElementById(atkSide+(cat==='物理'?'RankA':'RankC'))||{}).value||0,10);
+  var atkAbil = (document.getElementById(atkSide+'Ability')||{}).value||'';
+  var baseA   = cat==='物理' ? atkP.atk : atkP.spa;
+
+  function calcSt(base,ev,nat,isHp){
+    if(isHp) return Math.floor((base*2+31+Math.floor(ev/4))*50/100)+60;
+    return Math.floor(Math.floor((base*2+31+Math.floor(ev/4))*50/100+5)*nat);
+  }
+  function getRnk(r){ var t=[1,1.5,2,2.5,3,3.5,4,0.67,0.5,0.4,0.33,0.29,0.25]; return r>=0?t[r]:t[8+(-r-1)]; }
+
+  var atkReal = Math.floor(calcSt(baseA,atkPts,atkNat,false)*getRnk(atkRnk));
+  if(atkItem==='こだわりハチマキ'&&cat==='物理') atkReal=Math.floor(atkReal*1.5);
+  if(atkItem==='こだわりメガネ'&&cat==='特殊')   atkReal=Math.floor(atkReal*1.5);
+  if(atkItem==='いのちのたま')                    atkReal=Math.floor(atkReal*1.3);
+
+  var stab = atkP.types.includes(mtype) ? (atkAbil==='てきおうりょく'?2.0:1.5) : 1.0;
+  var eff  = (typeof calcTypeEffectiveness==='function') ? calcTypeEffectiveness(mtype,defP.types,atkAbil,(document.getElementById(defSide+'Ability')||{}).value||'') : 1.0;
+  var dmgMod = atkItem==='いのちのたま' ? 1.3 : 1.0;
+  var dsl = cat==='物理' ? 'B' : 'D';
+
+  function calcMaxDmg(hp_p,def_p,def_nat){
+    var hpReal = calcSt(defP.hp,hp_p,1.0,true);
+    var baseD  = cat==='物理' ? defP.def : defP.spd;
+    var dReal  = Math.max(1,Math.floor(calcSt(baseD,def_p,def_nat,false)));
+    var base   = Math.floor(Math.floor(22*pow*atkReal/dReal)/50)+2;
+    var d = Math.floor(Math.floor(Math.floor(Math.floor(base*stab)*eff)*dmgMod));
+    if(d<1&&eff>0) d=1;
+    return {hp:hpReal, dmg:d, pct:d/hpReal*100};
+  }
+
+  function findH(){
+    for(var p=0;p<=32;p++){ var r=calcMaxDmg(p*8,0,1.0); if(r.dmg<r.hp) return {label:'H+'+p+'振り',hp_ev:p*8,def_ev:0,nat:1.0,res:r}; }
+    return null;
+  }
+  function findD(nat,nl){
+    for(var p=0;p<=32;p++){ var r=calcMaxDmg(0,p*8,nat); if(r.dmg<r.hp) return {label:dsl+'+'+p+'振り('+nl+')',hp_ev:0,def_ev:p*8,nat:nat,res:r}; }
+    return null;
+  }
+  function findHD(){
+    for(var total=0;total<=64;total++){
+      for(var hp=0;hp<=Math.min(32,total);hp++){
+        var de=total-hp; if(de>32) continue;
+        var r=calcMaxDmg(hp*8,de*8,1.0);
+        if(r.dmg<r.hp) return {label:'H+'+hp+'/'+dsl+'+'+de+'振り(計'+(hp+de)+'P)',hp_ev:hp*8,def_ev:de*8,nat:1.0,res:r};
+      }
+    }
+    return null;
+  }
+
+  function makeRow(data,tagCls,tagLabel){
+    if(!data) return '<div class="dur-row"><span class="dur-tag'+tagCls+'">'+tagLabel+'</span><span style="color:var(--sub);font-size:.74rem">32振りでも耐えられません</span></div>';
+    var r=data.res;
+    var hpStat=calcSt(defP.hp,data.hp_ev,1.0,true);
+    var baseD2=cat==='物理'?defP.def:defP.spd;
+    var defStat=Math.floor(calcSt(baseD2,data.def_ev,data.nat,false));
+    var zero=data.hp_ev===0&&data.def_ev===0;
+    return '<div class="dur-row">'
+      +'<span class="dur-tag'+tagCls+'">'+tagLabel+'</span>'
+      +'<b>'+(zero?'振り不要':data.label)+'</b>&nbsp;'
+      +'<span style="color:var(--sub);font-size:.74rem">HP:'+hpStat+' / '+dsl+':'+defStat
+      +' → 最高乱数'+r.dmg+'('+r.pct.toFixed(1)+'%)'
+      +(zero?' <span style="color:#2ecc71">✅ 無振りで耐えます</span>':'')
+      +'</span></div>';
+  }
+
+  res.innerHTML=
+    '<div style="font-size:.73rem;color:var(--sub);margin-bottom:5px">'
+    +'<b>'+atkP.name+'</b> の <b>'+moveName+'</b>('+mtype+'/'+cat+'/威力'+pow+')'
+    +' に対して <b>'+defP.name+'</b> が<b>最高乱数以外を耐える</b>最小振り数</div>'
+    +makeRow(findH(),'','H振り')
+    +makeRow(findD(1.0,'等倍'),'.b',dsl+'振り')
+    +makeRow(findD(1.1,'+性格'),'.b',dsl+'+性格')
+    +makeRow(findHD(),'.d','H+'+dsl+'振り');
+};
+
+// 特性ツールチップ
+window._getAbilityTipText = function(abilityName){
+  if(!abilityName || abilityName==='' || abilityName==='なし') return '';
+  var fx = (typeof ABILITY_EFFECTS !== 'undefined') ? (ABILITY_EFFECTS[abilityName] || '') : '';
+  if(!fx) return abilityName;
+  // 20文字で折り返し
+  function wrapLine(s, maxLen){
+    var result = [];
+    while(s.length > maxLen){ result.push(s.slice(0, maxLen)); s = s.slice(maxLen); }
+    if(s) result.push(s);
+    return result.join('\n');
+  }
+  var sentences = fx.split('。').filter(function(s){ return s.trim(); });
+  var fxLines = sentences.map(function(s){ return wrapLine(s.trim()+'。', 22); });
+  return abilityName + '\n' + fxLines.join('\n');
+};
 
 </script>
 </body>
